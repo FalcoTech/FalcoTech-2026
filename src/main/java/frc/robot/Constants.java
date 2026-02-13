@@ -34,65 +34,27 @@ public final class Constants {
     public static final double VISION_OMEGA_CUTOFF_RPS = 2.0; // Don't use vision measurements when rotating faster than this
   }
   
-  public static final class ElevatorConstants {
+  
+  public static final class IntakeConstants {
+    public static final double INTAKE_SPEED = -0.5;
+    public static final double OUTTAKE_SPEED = 1.0;
+    
+  
+  }
+  
+  public static final class ClimbConstants {
+    public static final double CLIMB_SPEED = 0.25;
+
     // SetPoint constants from SetElevatorToPosition.java
     public static final double HOME_POSITION = 0.0;
-    public static final double FLOOR_LOAD_POSITION = 1.0;
-    public static final double L2_SCORE_POSITION = 8.0;
-    public static final double CORAL_STATION_POSITION = 13.5;
-    public static final double L3_SCORE_POSITION = 14.8;
-    public static final double ALGAE_PROCESSOR_POSITION = 5.0;
-    public static final double L4_SCORE_POSITION = 26.0;
-    
-    // Renamed constants to be more specific
-    public static final double L2_ALGAE_POSITION = 12.0;  // For Copilot.a().and(x())
-    public static final double L3_ALGAE_POSITION = 17.0;  // For Copilot.a().and(y())
-    public static final double BARGE_POSITION = 24.7;     // For Copilot.a().and(b())
-    
+  
     // PID constants and other elevator-related values
     public static final double ELEVATOR_CONTROL_SCALE = 0.5; // Scale for Copilot.getRightY()
     public static final double LOWER_ELEVATOR_SPEED = -0.01; //Speed to drop elevator
     
     // Safety thresholds for home position logic
-    public static final double MIN_ELEVATOR_SAFETY_THRESHOLD = 1.0;
-    public static final double MAX_ELEVATOR_SAFETY_THRESHOLD = 4.5;
+    
     public static final double PID_OUTPUT_LIMIT = 0.2;
-  }
-  
-  public static final class WristConstants {
-    public static final double HOME_POSITION = 0.0;
-    public static final double FLOOR_POSITION = 12.0;
-    public static final double L2_SCORE_POSITION = 5.8;
-    public static final double L3_SCORE_POSITION = 5.8;
-    public static final double L4_SCORE_POSITION = 5.8;
-    public static final double CORAL_STATION_POSITION = 20.1;
-    public static final double ALGAE_PROCESSOR_POSITION = 12.0;
-    
-    // Renamed constants to be more specific
-    public static final double L2_ALGAE_POSITION = 12.5;  // For Copilot.a().and(x())
-    public static final double L3_ALGAE_POSITION = 10.0;  // For Copilot.a().and(y())
-    public static final double BARGE_POSITION = 3.0;      // For Copilot.a().and(b())
-    
-    // From SetWristToPosition.java line 42
-    public static final double HOME_THRESHOLD = 0.05;
-    public static final double OVERRIDE_THRESHOLD = 0.2;
-    public static final double POSITION_THRESHOLD = 0.1;
-    
-    // Safety threshold for home position logic
-    public static final double WRIST_SAFETY_THRESHOLD = 18.0;
-  }
-  
-  public static final class IntakeConstants {
-    public static final double ALGAE_INTAKE_SPEED = -0.5;
-    public static final double ALGAE_OUTTAKE_SPEED = 1.0;
-    
-    public static final double CORAL_INTAKE_SPEED = 0.3;
-    public static final double CORAL_OUTTAKE_SPEED = -0.2;
-    public static final double CORAL_SHIMMY_SPEED = 0.2;
-  }
-  
-  public static final class ClimbConstants {
-    public static final double CLIMB_SPEED = 0.25;
   }
   
   public static final class PathPlanningConstants {
@@ -103,20 +65,20 @@ public final class Constants {
     public static final double MAX_ANGULAR_ACCELERATION = Units.degreesToRadians(540); // rad/s²
     
     // Field positions
-    public static final Pose2d LEFT_FEEDER_POSE = new Pose2d(1.14, 6.93, Rotation2d.fromDegrees(127.16));
-    public static final Pose2d ALGAE_SCORE_POSE = new Pose2d(5.98, .58, Rotation2d.fromDegrees(-90));
+    // public static final Pose2d LEFT_FEEDER_POSE = new Pose2d(1.14, 6.93, Rotation2d.fromDegrees(127.16));
+    // public static final Pose2d ALGAE_SCORE_POSE = new Pose2d(5.98, .58, Rotation2d.fromDegrees(-90));
   }
 
   public static final class AlignmentConstants {
     // Distance constants (in meters)
-    public static final double CORAL_FORWARD_DISTANCE = -0.4572;  // 18 inches away from tag
-    public static final double CORAL_LATERAL_DISTANCE = 0.1524;  // 6 inches for left/right offset
+    // public static final double CORAL_FORWARD_DISTANCE = -0.4572;  // 18 inches away from tag
+    // public static final double CORAL_LATERAL_DISTANCE = 0.1524;  // 6 inches for left/right offset
     
-    // Tag-specific offset constants
-    public static final double CORAL_STATION_FORWARD_OFFSET = -0.610;  // 
-    public static final double CORAL_STATION_LATERAL_OFFSET = 0.610;  // 2ft
-    public static final double ALGAE_REEF_LATERAL_OFFSET = 0.0;  // No lateral offset
-    public static final double ALGAE_PROC_FORWARD_OFFSET = -0.5842;  // 23 in
-    public static final double BARGE_FORWARD_OFFSET = -1.0;  // 1 meter
+    // // Tag-specific offset constants
+    // public static final double CORAL_STATION_FORWARD_OFFSET = -0.610;  // 
+    // public static final double CORAL_STATION_LATERAL_OFFSET = 0.610;  // 2ft
+    // public static final double ALGAE_REEF_LATERAL_OFFSET = 0.0;  // No lateral offset
+    // public static final double ALGAE_PROC_FORWARD_OFFSET = -0.5842;  // 23 in
+    // public static final double BARGE_FORWARD_OFFSET = -1.0;  // 1 meter
   }
 }
