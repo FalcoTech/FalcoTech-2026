@@ -12,6 +12,38 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
 
+  public static final class CAN_IDs {
+    // Drivetrain Motors
+    public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 1;
+    public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 2;
+    public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 3;
+    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 4;
+    public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 5;
+    public static final int BACK_LEFT_MODULE_STEER_MOTOR = 6;
+    public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 7;
+    public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 8;
+
+    //Drivetrain Encoders 
+    public static final int FRONT_LEFT_MODULE_ENCODER = 10;
+    public static final int FRONT_RIGHT_MODULE_ENCODER = 20;
+    public static final int BACK_LEFT_MODULE_ENCODER = 30;
+    public static final int BACK_RIGHT_MODULE_ENCODER = 40;
+    public static final int PIGEON_IMU = 50;
+
+    // Shooter Motors
+    public static final int FLYWHEEL_MOTOR = 9;
+    public static final int TURRET_MOTOR = 10;
+
+    // Intake & Feeder Motors
+    public static final int INTAKE_MOTOR = 11;
+    public static final int FEEDER_MOTOR = 12;
+
+    // Climb Motors
+    public static final int ELEVATOR_MOTOR = 13;
+    
+    // Sensors and other devices could also be added here
+  }
+  
   public static final class ControllerConstants {
     public static final int PILOT_CONTROLLER_PORT = 0;
     public static final int COPILOT_CONTROLLER_PORT = 1;
