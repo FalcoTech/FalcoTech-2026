@@ -1,6 +1,6 @@
 package frc.robot.util;
 
-import edu.wpi.first.units.;;;
+// import edu.wpi.first.units.Units;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -33,7 +33,7 @@ public class ShotCalculator {
         return relativePose;
     }
 
-    public bool shotGating() {
+    public boolean shotGating() {
         // This function should determine if the shot is viable based on the current robot pose, target pose, and calculated shot angle
         // It should return true if the shot is viable and false if it is not
         return false;

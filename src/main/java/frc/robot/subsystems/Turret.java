@@ -17,9 +17,7 @@ import static edu.wpi.first.units.Units.Pounds;
 
 
 import java.util.function.Supplier;
-
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.hardware.TalonFXS;
+import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
@@ -35,17 +33,18 @@ import yams.motorcontrollers.SmartMotorControllerConfig;
 import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
-import yams.motorcontrollers.remote.TalonFXSWrapper;
+import yams.motorcontrollers.local.SparkWrapper;
+
 
 public class Turret extends SubsystemBase {
-  private final TalonFXS turretMotor = new TalonFXS(CAN_IDs.TURRET_MOTOR);
+  private final SparkMax turretMotor = new SparkMax(CAN_IDs.TURRET_MOTOR, SparkMax.MotorType.kBrushless);
 
   private final SmartMotorControllerConfig motorConfig = new SmartMotorControllerConfig(this)
       //Config Copied from YAMS Example
       .withControlMode(ControlMode.CLOSED_LOOP)
       .withClosedLoopController(4, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(90))
       // Configure Motor and Mechanism properties
-      .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
+      .withGearing(new MechanismGearing(GearBox.fromTeeth(10, 100)))
       .withIdleMode(MotorMode.BRAKE)
       .withMotorInverted(false)
       // Setup Telemetry
@@ -55,7 +54,7 @@ public class Turret extends SubsystemBase {
       .withClosedLoopRampRate(Seconds.of(0.25))
       .withOpenLoopRampRate(Seconds.of(0.25));
 
-  private final SmartMotorController turretSMC = new TalonFXSWrapper(turretMotor,
+  private final SmartMotorController turretSMC = new SparkWrapper(turretMotor,
     DCMotor.getNEO(1),
     motorConfig);
 
