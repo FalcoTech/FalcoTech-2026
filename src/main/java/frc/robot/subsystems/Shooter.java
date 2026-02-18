@@ -26,34 +26,23 @@ import yams.motorcontrollers.SmartMotorControllerConfig;
 import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
-
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.DutyCycle;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import yams.mechanisms.SmartMechanism;
-import yams.motorcontrollers.SmartMotorControllerConfig;
-import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
-import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
-import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
-  private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
-  .withControlMode(ControlMode.CLOSED_LOOP)
-  // Feedback Constants (PID Constants)
-  .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
-  .withSimClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
- .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-  .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-  // Telemetry name and verbosity level
- 
-    .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
+  private SmartMotorControllerConfig smcConfig =
+      new SmartMotorControllerConfig(this)
+          .withControlMode(ControlMode.CLOSED_LOOP)
+          // Feedback Constants (PID Constants)
+          .withClosedLoopController(
+              50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+          .withSimClosedLoopController(
+              50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+          .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+          .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+          // Telemetry name and verbosity level
+
+          .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
 
           // Motor properties to prevent over currenting.
           .withMotorInverted(false)
@@ -77,27 +66,24 @@ public class Shooter extends SubsystemBase {
 
   private final FlyWheel flywheel = new FlyWheel(shooterConfig);
 
-
-  public Shooter() {
-
-  }
+  public Shooter() {}
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
 
-  
-    /**
-     * Set the dutycycle of the shooter.
-     *
-     * @param dutyCycle DutyCycle to set.
-     * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-     */
-    public Command set(double dutyCycle){
-      return flywheel.set(dutyCycle);
-    }
-    public Command stop(){
-      return flywheel.set(0);
-    }
+  /**
+   * Set the dutycycle of the shooter.
+   *
+   * @param dutyCycle DutyCycle to set.
+   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
+   */
+  public Command set(double dutyCycle) {
+    return flywheel.set(dutyCycle);
+  }
+
+  public Command stop() {
+    return flywheel.set(0);
+  }
 }

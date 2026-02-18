@@ -70,15 +70,14 @@ public class RobotContainer {
   private final CommandXboxController Pilot = new CommandXboxController(0);
   private final CommandXboxController Copilot = new CommandXboxController(1);
 
-    //Subsystems
-    public static final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    public static final Intake intake = new Intake();
-    public static final Feeder feeder = new Feeder();
-    public static final Hopper hopper = new Hopper();
-    public static final LEDS leds = new LEDS();
-    public static final Shooter shooter = new Shooter();
-    public static final Turret turret = new Turret();
-    
+  // Subsystems
+  public static final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  public static final Intake intake = new Intake();
+  public static final Feeder feeder = new Feeder();
+  public static final Hopper hopper = new Hopper();
+  public static final LEDS leds = new LEDS();
+  public static final Shooter shooter = new Shooter();
+  public static final Turret turret = new Turret();
 
   public RobotContainer() {
     RegisterNamedCommands();
