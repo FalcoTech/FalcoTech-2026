@@ -4,42 +4,65 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.AddressableLED;
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 
 /**
- * LED subsystem for the FalcoTech 2026 robot.
+ * LED subsystem driven by a REV Blinkin LED Driver.
  *
- * <p>Drives a WS2812B-compatible addressable LED strip to convey two key states:
+ * <p>The Blinkin accepts a PWM signal (via a {@link Spark}) and selects its pattern/color from a
+ * lookup table based on the set-point value. All set-point constants below are taken from the REV
+ * Blinkin LED Driver pattern guide — verify them against the chart included with your unit.
+ *
+ * <p>Two primary display modes are provided:
  *
  * <ul>
- *   <li><b>Shot likelihood</b> – a 0.0–1.0 scale supplied by external code (e.g. vision/targeting)
- *       that is rendered as a red→yellow→green gradient across the full strip.
- *   <li><b>Alliance shift period</b> – an alternating red/blue flash to alert drivers that the
- *       alliance-shift game period is active.
+ *   <li><b>Shot likelihood</b> – a 0.0–1.0 scale supplied by external targeting/vision code,
+ *       rendered as a smooth red→yellow→green color progression through Blinkin solid-color
+ *       set-points.
+ *   <li><b>Alliance shift period</b> – an alternating red/blue flash so drivers immediately
+ *       recognise the alliance-shift game period.
  * </ul>
- *
- * <p>All rendering happens inside {@link #periodic()} so callers only need to drive the mode via
- * the provided {@link Command} factory methods. The strip port and length are configured via {@link
- * #LED_PWM_PORT} and {@link #LED_LENGTH}.
  */
 public class LEDS extends SubsystemBase {
 
   // ---- Hardware configuration ------------------------------------------------
 
-  /** PWM port on the RoboRIO that the LED strip data line is wired to. */
-  private static final int LED_PWM_PORT = 0;
+  /** PWM port on the RoboRIO the Blinkin signal wire is connected to. */
+  private static final int BLINKIN_PWM_PORT = 0;
 
-  /** Number of individually addressable LEDs on the strip. */
-  private static final int LED_LENGTH = 60;
+  // ---- Blinkin solid-color set-points ----------------------------------------
+  // Values from the REV Blinkin LED Driver pattern guide (solid colors section).
+  // Solid colors run in 0.02 increments from ~0.57 (Hot Pink) up through 0.99 (Black).
+
+  private static final double COLOR_RED    = 0.61;
+  private static final double COLOR_YELLOW = 0.69;
+  private static final double COLOR_GREEN  = 0.77;
+  private static final double COLOR_BLUE   = 0.87;
+  /** Black / off — Blinkin lowest-intensity solid. */
+  private static final double COLOR_OFF    = 0.99;
+
+  // ---- Shot-likelihood display -----------------------------------------------
+
+  /**
+   * PWM set-point for 0 % shot likelihood (red).
+   * Interpolation walks from here toward {@link #LIKELIHOOD_HIGH_PWM}.
+   */
+  private static final double LIKELIHOOD_LOW_PWM  = COLOR_RED;
+
+  /**
+   * PWM set-point for 100 % shot likelihood (green).
+   * Because the Blinkin's solid-color section is strictly monotone between red and green
+   * we can linearly interpolate through orange→yellow→lime on the way.
+   */
+  private static final double LIKELIHOOD_HIGH_PWM = COLOR_GREEN;
 
   // ---- Animation timing ------------------------------------------------------
 
-  /** How long each half-cycle of the alliance-shift flash lasts (seconds). */
+  /** Duration of each red or blue half-flash during the alliance-shift animation (seconds). */
   private static final double ALLIANCE_SHIFT_FLASH_PERIOD_S = 0.5;
 
   // ---- Internal state --------------------------------------------------------
@@ -51,27 +74,17 @@ public class LEDS extends SubsystemBase {
     ALLIANCE_SHIFT
   }
 
-  private final AddressableLED ledStrip;
-  private final AddressableLEDBuffer ledBuffer;
+  private final Spark blinkin;
 
   private LEDMode currentMode = LEDMode.OFF;
-
-  /** Clamped [0.0, 1.0] value set by the shot-likelihood command each cycle. */
   private double shotLikelihood = 0.0;
-
-  /** True = red alliance, false = blue alliance. */
   private boolean isRedAlliance = true;
-
   private final Timer animationTimer = new Timer();
 
   // ---- Constructor -----------------------------------------------------------
 
   public LEDS() {
-    ledStrip = new AddressableLED(LED_PWM_PORT);
-    ledBuffer = new AddressableLEDBuffer(LED_LENGTH);
-    ledStrip.setLength(LED_LENGTH);
-    ledStrip.setData(ledBuffer);
-    ledStrip.start();
+    blinkin = new Spark(BLINKIN_PWM_PORT);
     animationTimer.start();
   }
 
@@ -81,26 +94,26 @@ public class LEDS extends SubsystemBase {
   public void periodic() {
     switch (currentMode) {
       case OFF:
-        applyOff();
+        blinkin.set(COLOR_OFF);
         break;
       case ALLIANCE:
-        applyAllianceColor();
+        blinkin.set(isRedAlliance ? COLOR_RED : COLOR_BLUE);
         break;
       case SHOT_LIKELIHOOD:
-        applyShotLikelihoodColor();
+        blinkin.set(likelihoodToPWM(shotLikelihood));
         break;
       case ALLIANCE_SHIFT:
         applyAllianceShiftAnimation();
         break;
     }
-    ledStrip.setData(ledBuffer);
   }
 
   // ---- Public API ------------------------------------------------------------
 
   /**
-   * Informs the subsystem of the current alliance so that {@link #showAlliance()} and the
-   * post-alliance-shift restore display the correct color.
+   * Stores the robot's alliance so that {@link #showAlliance()} and the post-alliance-shift
+   * restore use the correct color. Call this once after the Driver Station connection is
+   * established (e.g. in {@code teleopInit}).
    *
    * @param isRed {@code true} for red alliance, {@code false} for blue.
    */
@@ -111,14 +124,20 @@ public class LEDS extends SubsystemBase {
   // ---- Command factories -----------------------------------------------------
 
   /**
-   * Returns a command that <em>continuously</em> reads a shot-likelihood value from the supplied
-   * function and updates the LED strip color accordingly.
+   * Returns a command that <em>continuously</em> polls a shot-likelihood value and maps it to
+   * a Blinkin solid color:
    *
-   * <p>The color transitions smoothly from red (0.0 – no chance) through yellow (0.5 – even odds)
-   * to green (1.0 – certain). Intended to run as the default command while the robot is targeting
-   * the Hub, or whenever shot-readiness feedback is desired.
+   * <ul>
+   *   <li>0.0 → red (no chance)
+   *   <li>~0.5 → yellow/orange (even odds)
+   *   <li>1.0 → green (near-certain)
+   * </ul>
    *
-   * @param likelihoodSupplier provides the current shot-likelihood in [0.0, 1.0]
+   * <p>The mapping is a simple linear interpolation through the Blinkin's solid-color set-points,
+   * so the color transitions smoothly as the likelihood changes. All likelihood calculation is
+   * handled outside this subsystem; the LED code only renders what it receives.
+   *
+   * @param likelihoodSupplier provides the current shot probability in [0.0, 1.0]
    */
   public Command showShotLikelihood(DoubleSupplier likelihoodSupplier) {
     return run(
@@ -129,14 +148,11 @@ public class LEDS extends SubsystemBase {
   }
 
   /**
-   * Returns a command that shows an alternating red/blue flash for the duration of the
-   * alliance-shift game period. When the command ends (cancelled or timed out by the caller), the
-   * strip reverts to the robot's alliance color.
-   *
-   * <p>Example usage in {@code RobotContainer}:
+   * Returns a command that flashes the strip between red and blue while it runs, then reverts to
+   * the robot's alliance color when it ends. Bind this to a trigger that is active for the
+   * duration of the alliance-shift game period, e.g.:
    *
    * <pre>{@code
-   * // Trigger tied to the alliance-shift period flag supplied by game state logic:
    * allianceShiftTrigger.whileTrue(leds.allianceShiftIndicator());
    * }</pre>
    */
@@ -150,64 +166,32 @@ public class LEDS extends SubsystemBase {
   }
 
   /**
-   * Returns a command that sets the strip to the robot's alliance color (solid red or blue).
-   * Runs once; the color persists until another command changes the mode.
+   * Returns a command that switches to a solid alliance color (red or blue). Runs once; the
+   * color holds until another command changes the mode.
    */
   public Command showAlliance() {
     return runOnce(() -> currentMode = LEDMode.ALLIANCE);
   }
 
-  /** Returns a command that turns the entire strip off. Runs once. */
+  /** Returns a command that sets the Blinkin to its "black" / off set-point. Runs once. */
   public Command off() {
     return runOnce(() -> currentMode = LEDMode.OFF);
   }
 
-  // ---- Private rendering helpers ---------------------------------------------
-
-  private void applyOff() {
-    for (int i = 0; i < ledBuffer.getLength(); i++) {
-      ledBuffer.setRGB(i, 0, 0, 0);
-    }
-  }
-
-  private void applyAllianceColor() {
-    for (int i = 0; i < ledBuffer.getLength(); i++) {
-      if (isRedAlliance) {
-        ledBuffer.setRGB(i, 200, 0, 0);
-      } else {
-        ledBuffer.setRGB(i, 0, 0, 200);
-      }
-    }
-  }
+  // ---- Private helpers -------------------------------------------------------
 
   /**
-   * Maps {@link #shotLikelihood} → WPILib HSV hue and applies it to every pixel.
-   *
-   * <p>WPILib uses a 0–180 hue range (half the standard 0–360):
-   *
-   * <ul>
-   *   <li>Hue 0 → red (low likelihood)
-   *   <li>Hue 30 → yellow (medium likelihood)
-   *   <li>Hue 60 → green (high likelihood)
-   * </ul>
+   * Linearly interpolates a Blinkin PWM set-point from {@link #LIKELIHOOD_LOW_PWM} (red) to
+   * {@link #LIKELIHOOD_HIGH_PWM} (green). The Blinkin's solid-color block is monotone between
+   * those values, so intermediate PWM values pass through orange, gold, and yellow automatically.
    */
-  private void applyShotLikelihoodColor() {
-    int hue = (int) (shotLikelihood * 60); // 0 (red) → 60 (green)
-    for (int i = 0; i < ledBuffer.getLength(); i++) {
-      ledBuffer.setHSV(i, hue, 255, 200);
-    }
+  private double likelihoodToPWM(double likelihood) {
+    return LIKELIHOOD_LOW_PWM + likelihood * (LIKELIHOOD_HIGH_PWM - LIKELIHOOD_LOW_PWM);
   }
 
-  /** Flashes the strip between red and blue at {@link #ALLIANCE_SHIFT_FLASH_PERIOD_S} intervals. */
+  /** Alternates the Blinkin between solid red and solid blue every half-cycle. */
   private void applyAllianceShiftAnimation() {
-    double elapsed = animationTimer.get();
-    boolean showRed = (int) (elapsed / ALLIANCE_SHIFT_FLASH_PERIOD_S) % 2 == 0;
-    for (int i = 0; i < ledBuffer.getLength(); i++) {
-      if (showRed) {
-        ledBuffer.setRGB(i, 200, 0, 0);
-      } else {
-        ledBuffer.setRGB(i, 0, 0, 200);
-      }
-    }
+    boolean showRed = (int) (animationTimer.get() / ALLIANCE_SHIFT_FLASH_PERIOD_S) % 2 == 0;
+    blinkin.set(showRed ? COLOR_RED : COLOR_BLUE);
   }
 }
