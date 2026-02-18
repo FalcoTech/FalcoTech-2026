@@ -36,6 +36,7 @@ import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import yams.mechanisms.SmartMechanism;
@@ -48,13 +49,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
-  public Shooter() {}
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
-
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
   .withControlMode(ControlMode.CLOSED_LOOP)
   // Feedback Constants (PID Constants)
@@ -86,13 +80,29 @@ private final SmartMotorController motor = new SparkWrapper(spark, DCMotor.getNE
   // Telemetry name and verbosity for the arm.
   .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
 
-private final FlyWheel flywheel = new FlyWheel(shooterConfig);
-  /**
-   * Set the dutycycle of the shooter.
-   *
-   * @param dutyCycle DutyCycle to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
-  public Command set(double dutyCycle) {return flywheel.set(dutyCycle);}
+  private final FlyWheel flywheel = new FlyWheel(shooterConfig);
 
+
+  public Shooter() {
+
+  }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+  }
+
+  
+    /**
+     * Set the dutycycle of the shooter.
+     *
+     * @param dutyCycle DutyCycle to set.
+     * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
+     */
+    public Command set(double dutyCycle){
+      return flywheel.set(dutyCycle);
+    }
+    public Command stop(){
+      return flywheel.set(0);
+    }
 }

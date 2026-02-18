@@ -23,7 +23,12 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PathPlanningConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LEDS;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Turret;
 
 public class RobotContainer {
     //Drive speeds
@@ -60,6 +65,12 @@ public class RobotContainer {
     //Subsystems
     public static final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public static final Intake intake = new Intake();
+    public static final Feeder feeder = new Feeder();
+    public static final Hopper hopper = new Hopper();
+    public static final LEDS leds = new LEDS();
+    public static final Shooter shooter = new Shooter();
+    public static final Turret turret = new Turret();
+    
 
     public RobotContainer() {
         RegisterNamedCommands();
