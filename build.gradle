@@ -1,7 +1,7 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2026.1.1"
-    // id 'com.diffplug.spotless' version '8.2.1'
+    id "edu.wpi.first.GradleRIO" version "2026.2.1"
+    id 'com.diffplug.spotless' version '8.2.1'
 }
 
 java {
@@ -115,40 +115,43 @@ tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
 }
 
-// spotless {
-//     java {
-//         target fileTree('.') {
-//             include '**/*.java'
-//             exclude '**/build/**', '**/build-*/**', '**/bin/**'
-//         }
-//         toggleOffOn()
-//         googleJavaFormat()
-//         removeUnusedImports()
-//         trimTrailingWhitespace()
-//         endWithNewline()
-//     }
-//     groovyGradle {
-//         target fileTree('.') {
-//             include '**/*.gradle'
-//             exclude '**/build/**', '**/build-*/**'
-//         }
-//         greclipse()
-//         indentWithSpaces(4)
-//         trimTrailingWhitespace()
-//         endWithNewline()
-//     }
-//     format 'misc', {
-//         target fileTree('.') {
-//             include '**/*.md', '**/.gitignore'
-//             exclude '**/build/**', '**/build-*/**'
-//             exclude '**/vendor/**'
-//             exclude '**/LimelightHelpers.java'
-//         }
-//         trimTrailingWhitespace()
-//         indentWithSpaces(2)
-//         endWithNewline()
-//     }
-// }
+spotless {
+    java {
+        target fileTree('.') {
+            include '**/*.java'
+            exclude '**/build/**', '**/build-*/**', '**/bin/**'
+            exclude '**/vendor/**'
+            exclude '**/LimelightHelpers.java'
+            exclude '**/TunerConstants.java'
+            exclude '**/CommandSwerveDrivetrain.java'
+        }
+        toggleOffOn()
+        googleJavaFormat()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    groovyGradle {
+        target fileTree('.') {
+            include '**/*.gradle'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        greclipse()
+        leadingTabsToSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    format 'misc', {
+        target fileTree('.') {
+            include '**/*.md', '**/.gitignore'
+            exclude '**/build/**', '**/build-*/**'
+            exclude '**/vendor/**'
+        }
+        trimTrailingWhitespace()
+        leadingTabsToSpaces(2)
+        endWithNewline()
+    }
+}
 // tasks.named("build") {
 //     dependsOn "spotlessApply"
 // }
