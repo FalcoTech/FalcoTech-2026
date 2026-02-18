@@ -152,6 +152,6 @@ spotless {
         endWithNewline()
     }
 }
-// tasks.named("build") {
-//     dependsOn "spotlessApply"
-// }
+tasks.named("build") {
+    dependsOn "spotlessApply"
+}
