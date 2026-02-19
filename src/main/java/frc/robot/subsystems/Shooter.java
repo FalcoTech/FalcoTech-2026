@@ -30,17 +30,16 @@ import yams.motorcontrollers.local.SparkWrapper;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
-  private SmartMotorControllerConfig smcConfig =
-      new SmartMotorControllerConfig(this)
-          .withControlMode(ControlMode.CLOSED_LOOP)
-          // Feedback Constants (PID Constants)
-          .withClosedLoopController(
-              50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
-          .withSimClosedLoopController(
-              50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
-          .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-          .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-          // Telemetry name and verbosity level
+  private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
+  .withControlMode(ControlMode.CLOSED_LOOP)
+  // Feedback Constants (PID Constants)
+  .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+  .withSimClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+//  .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+  .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+  // Telemetry name and verbosity level
+ 
+    .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
 
           .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
 
@@ -50,8 +49,8 @@ public class Shooter extends SubsystemBase {
           .withStatorCurrentLimit(Amps.of(40))
           .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH);
 
-  private SparkMax spark = new SparkMax(4, MotorType.kBrushless);
-  private final SmartMotorController motor = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
+private SparkMax spark = new SparkMax(21, MotorType.kBrushless);
+private final SmartMotorController motor = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
 
   private final FlyWheelConfig shooterConfig =
       new FlyWheelConfig(motor)
