@@ -128,6 +128,11 @@ public class RobotContainer {
     Pilot.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
     drivetrain.registerTelemetry(logger::telemeterize);
+
+    shooter.setDefaultCommand(shooter.stop());
+    Copilot.a().whileTrue(shooter.set(0.5));
+    Copilot.b().whileTrue(shooter.set(0.25));
+    Copilot.y().whileTrue(shooter.set(1));
   }
 
   public Command getAutonomousCommand() {

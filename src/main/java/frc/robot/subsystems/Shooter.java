@@ -15,6 +15,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import yams.gearing.GearBox;
@@ -47,7 +48,7 @@ public class Shooter extends SubsystemBase {
           .withMotorInverted(false)
           .withIdleMode(MotorMode.COAST)
           .withStatorCurrentLimit(Amps.of(40))
-          .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH);
+          .withTelemetry("ShooterMotor", TelemetryVerbosity.LOW);
 
 private SparkMax spark = new SparkMax(21, MotorType.kBrushless);
 private final SmartMotorController motor = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
@@ -70,6 +71,12 @@ private final SmartMotorController motor = new SparkWrapper(spark, DCMotor.getNE
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    flywheel.updateTelemetry();
+  }
+
+  @Override
+  public void simulationPeriodic(){
+    flywheel.simIterate();
   }
 
   /**
@@ -82,7 +89,12 @@ private final SmartMotorController motor = new SparkWrapper(spark, DCMotor.getNE
     return flywheel.set(dutyCycle);
   }
 
-  public Command stop() {
+  public Command stop(){
     return flywheel.set(0);
   }
+
+  public AngularVelocity getVelocity(){
+    return flywheel.getSpeed();
+  }
+
 }
