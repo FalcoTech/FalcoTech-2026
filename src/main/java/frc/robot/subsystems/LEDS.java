@@ -32,7 +32,7 @@ public class LEDS extends SubsystemBase {
   // ---- Hardware configuration ------------------------------------------------
 
   /** PWM port on the RoboRIO the Blinkin signal wire is connected to. */
-  private static final int BLINKIN_PWM_PORT = 0;
+  private static final int BLINKIN_PWM_PORT = Constants.BLINKIN_PWM_PORT;
 
   // ---- Blinkin solid-color set-points ----------------------------------------
   // Values from the REV Blinkin LED Driver pattern guide (solid colors section).
