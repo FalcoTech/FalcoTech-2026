@@ -53,7 +53,8 @@ public class Launcher extends SubsystemBase {
           .withTelemetry("LauncherMotor", TelemetryVerbosity.LOW);
 
   private SparkMax sparkLeft = new SparkMax(21, MotorType.kBrushless);
-  private final SmartMotorController motor = new SparkWrapper(sparkLeft, DCMotor.getNEO(2), smcConfig);
+  private final SmartMotorController motor =
+      new SparkWrapper(sparkLeft, DCMotor.getNEO(2), smcConfig);
 
   private final FlyWheelConfig flywheelConfig =
       new FlyWheelConfig(motor)

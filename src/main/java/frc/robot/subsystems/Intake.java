@@ -9,11 +9,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
   public Intake() {}
-  //Intake Arm will have 1 pivot with rollers 
 
-  //Hopper will have 1 roller mechanism
+  // Intake Arm will have 1 pivot with rollers
 
-  //Feeder will have 1 roller to feed the ball from hopper
+  // Hopper will have 1 roller mechanism
+
+  // Feeder will have 1 roller to feed the ball from hopper
 
   @Override
   public void periodic() {

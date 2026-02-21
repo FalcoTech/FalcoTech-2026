@@ -26,9 +26,7 @@ import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDS;
-import frc.robot.subsystems.Launcher;
 import frc.robot.subsystems.ShooterSystem;
-import frc.robot.subsystems.Turret;
 
 public class RobotContainer {
   // Drive speeds
@@ -77,8 +75,6 @@ public class RobotContainer {
   public static final Feeder feeder = new Feeder();
   public static final Hopper hopper = new Hopper();
   public static final LEDS leds = new LEDS();
-  public static final Launcher launcher = new Launcher();
-  public static final Turret turret = new Turret();
   public static final ShooterSystem shooter = new ShooterSystem();
 
   public RobotContainer() {
@@ -89,8 +85,10 @@ public class RobotContainer {
     configureBindings();
 
     SmartDashboard.putBoolean("Enable MegaTag2", false);
+
     // Push the Git Commit and Branch to SmartDashbaord
-    SmartDashboard.putString("Git Info", BuildConstants.BUILD_DATE.concat(" on ").concat(BuildConstants.GIT_BRANCH));
+    SmartDashboard.putString(
+        "Git Info", BuildConstants.BUILD_DATE.concat(" on ").concat(BuildConstants.GIT_BRANCH));
   }
 
   private void configureBindings() {
@@ -133,10 +131,10 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    launcher.setDefaultCommand(launcher.stop());
-    Copilot.a().whileTrue(launcher.set(0.5));
-    Copilot.b().whileTrue(launcher.set(0.25));
-    Copilot.y().whileTrue(launcher.set(1));
+    shooter.setDefaultCommand(shooter.stop());
+    Copilot.a().whileTrue(shooter.set(0.5));
+    Copilot.b().whileTrue(shooter.set(0.25));
+    Copilot.y().whileTrue(shooter.set(1));
   }
 
   public Command getAutonomousCommand() {
