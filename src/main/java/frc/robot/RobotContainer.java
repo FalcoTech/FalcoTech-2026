@@ -89,6 +89,8 @@ public class RobotContainer {
     configureBindings();
 
     SmartDashboard.putBoolean("Enable MegaTag2", false);
+    // Push the Git Commit and Branch to SmartDashbaord
+    SmartDashboard.putString("Git Info", BuildConstants.BUILD_DATE.concat(" on ").concat(BuildConstants.GIT_BRANCH));
   }
 
   private void configureBindings() {
