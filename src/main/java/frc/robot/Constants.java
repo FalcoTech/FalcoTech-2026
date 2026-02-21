@@ -11,6 +11,7 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final int BLINKIN_PWM_PORT = 9;
 
   public static final class ControllerConstants {
     public static final int PILOT_CONTROLLER_PORT = 0;
