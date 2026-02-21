@@ -29,31 +29,33 @@ import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
-public class Shooter extends SubsystemBase {
+public class Launcher extends SubsystemBase {
   /** Creates a new Shooter. */
-  private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
-  .withControlMode(ControlMode.CLOSED_LOOP)
-  // Feedback Constants (PID Constants)
-  .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
-  .withSimClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
-//  .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-  .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-  // Telemetry name and verbosity level
- 
-    .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
+  private SmartMotorControllerConfig smcConfig =
+      new SmartMotorControllerConfig(this)
+          .withControlMode(ControlMode.CLOSED_LOOP)
+          // Feedback Constants (PID Constants)
+          .withClosedLoopController(
+              50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+          .withSimClosedLoopController(
+              50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+          //  .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+          .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+          // Telemetry name and verbosity level
 
+          .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
           .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
 
           // Motor properties to prevent over currenting.
           .withMotorInverted(false)
           .withIdleMode(MotorMode.COAST)
           .withStatorCurrentLimit(Amps.of(40))
-          .withTelemetry("ShooterMotor", TelemetryVerbosity.LOW);
+          .withTelemetry("LauncherMotor", TelemetryVerbosity.LOW);
 
-private SparkMax spark = new SparkMax(21, MotorType.kBrushless);
-private final SmartMotorController motor = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
+  private SparkMax sparkLeft = new SparkMax(21, MotorType.kBrushless);
+  private final SmartMotorController motor = new SparkWrapper(sparkLeft, DCMotor.getNEO(2), smcConfig);
 
-  private final FlyWheelConfig shooterConfig =
+  private final FlyWheelConfig flywheelConfig =
       new FlyWheelConfig(motor)
           // Diameter of the flywheel.
           .withDiameter(Inches.of(4))
@@ -62,11 +64,11 @@ private final SmartMotorController motor = new SparkWrapper(spark, DCMotor.getNE
           // Maximum speed of the shooter.
           .withUpperSoftLimit(RPM.of(1000))
           // Telemetry name and verbosity for the arm.
-          .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
+          .withTelemetry("FlyWheelMech", TelemetryVerbosity.HIGH);
 
-  private final FlyWheel flywheel = new FlyWheel(shooterConfig);
+  private final FlyWheel flywheel = new FlyWheel(flywheelConfig);
 
-  public Shooter() {}
+  public Launcher() {}
 
   @Override
   public void periodic() {
@@ -75,7 +77,7 @@ private final SmartMotorController motor = new SparkWrapper(spark, DCMotor.getNE
   }
 
   @Override
-  public void simulationPeriodic(){
+  public void simulationPeriodic() {
     flywheel.simIterate();
   }
 
@@ -89,12 +91,11 @@ private final SmartMotorController motor = new SparkWrapper(spark, DCMotor.getNE
     return flywheel.set(dutyCycle);
   }
 
-  public Command stop(){
+  public Command stop() {
     return flywheel.set(0);
   }
 
-  public AngularVelocity getVelocity(){
+  public AngularVelocity getVelocity() {
     return flywheel.getSpeed();
   }
-
 }
