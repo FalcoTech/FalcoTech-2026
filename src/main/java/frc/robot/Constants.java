@@ -23,7 +23,7 @@ public final class Constants {
     public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 7;
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 8;
 
-    //Drivetrain Encoders 
+    // Drivetrain Encoders
     public static final int FRONT_LEFT_MODULE_ENCODER = 10;
     public static final int FRONT_RIGHT_MODULE_ENCODER = 20;
     public static final int BACK_LEFT_MODULE_ENCODER = 30;
@@ -40,10 +40,10 @@ public final class Constants {
 
     // Climb Motors
     public static final int ELEVATOR_MOTOR = 13;
-    
+
     // Sensors and other devices could also be added here
   }
-  
+
   public static final class ControllerConstants {
     public static final int PILOT_CONTROLLER_PORT = 0;
     public static final int COPILOT_CONTROLLER_PORT = 1;
