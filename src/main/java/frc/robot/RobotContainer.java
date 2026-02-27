@@ -140,6 +140,7 @@ public class RobotContainer {
     Copilot.leftBumper().onTrue(shooter.aimAt(() -> Degrees.of(180)));
     Copilot.rightBumper().onTrue(shooter.aimAt(() -> Degrees.of(90)));
     Copilot.povLeft().onTrue(shooter.aimAt(() -> Degrees.of(5)));
+    Copilot.start().onTrue(shooter.aimAt(()-> Degrees.of(230)));
     // Copilot.povUp().whileTrue(shooter.aimClockwise()).onFalse(shooter.aimStop());
     // Copilot.povDown().whileTrue(shooter.aimCounterClockwise()).onFalse(shooter.aimStop());
     Copilot.povUp().onTrue(shooter.aimAt(() -> shooter.getTurretAngle().plus(Degrees.of(10)))); // Continuously moves the turret up instead of just moving 10 degrees from current position
