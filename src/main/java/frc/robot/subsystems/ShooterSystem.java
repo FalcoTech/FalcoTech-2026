@@ -51,6 +51,14 @@ public class ShooterSystem extends SubsystemBase {
     return turret.setAngle(turretAngle);
   }
 
+  public Command aimAt(Supplier<Angle> turretAngle) {
+    return turret.setAngle(turretAngle);
+  }
+
+  public Angle getTurretAngle() {
+    return turret.getAngle();
+  }
+
   /**
    * Set the dutycycle of the shooter.
    *
@@ -67,5 +75,17 @@ public class ShooterSystem extends SubsystemBase {
 
   public AngularVelocity getVelocity() {
     return launcher.getVelocity();
+  }
+
+  public Command aimClockwise() {
+    return turret.setDutyCycle(0.25);    
+  }
+
+  public Command aimCounterClockwise() {
+    return turret.setDutyCycle(-0.25);
+  }
+
+  public Command aimStop() {
+    return turret.setDutyCycle(0);
   }
 }
