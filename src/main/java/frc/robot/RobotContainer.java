@@ -131,10 +131,20 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    shooter.setDefaultCommand(shooter.stop());
+    // shooter.setDefaultCommand(shooter.stop());
     Copilot.a().whileTrue(shooter.set(0.5));
     Copilot.b().whileTrue(shooter.set(0.25));
     Copilot.y().whileTrue(shooter.set(1));
+    Copilot.x().whileTrue(shooter.stop());
+
+    Copilot.leftBumper().onTrue(shooter.aimAt(() -> Degrees.of(180)));
+    Copilot.rightBumper().onTrue(shooter.aimAt(() -> Degrees.of(90)));
+    Copilot.povLeft().onTrue(shooter.aimAt(() -> Degrees.of(5)));
+    // Copilot.povUp().whileTrue(shooter.aimClockwise()).onFalse(shooter.aimStop());
+    // Copilot.povDown().whileTrue(shooter.aimCounterClockwise()).onFalse(shooter.aimStop());
+    Copilot.povUp().onTrue(shooter.aimAt(() -> shooter.getTurretAngle().plus(Degrees.of(10)))); // Continuously moves the turret up instead of just moving 10 degrees from current position
+    // without the supplier it just sets it to 10 degrees instead of moving it up by 10 degrees from current position?
+    Copilot.povDown().onTrue(shooter.aimAt(() -> shooter.getTurretAngle().minus(Degrees.of(10))));
   }
 
   public Command getAutonomousCommand() {
