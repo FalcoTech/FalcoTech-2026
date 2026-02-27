@@ -15,6 +15,8 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkMax;
+
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -41,7 +43,9 @@ public class Turret extends SubsystemBase {
           // Config Copied from YAMS Example
           .withControlMode(ControlMode.CLOSED_LOOP)
           .withClosedLoopController(
-              4, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(90))
+              0.4, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(90))
+          .withFeedforward(new SimpleMotorFeedforward(0.01, 0.0, 0.0))
+          .withClosedLoopTolerance(Degrees.of(1))
           // Configure Motor and Mechanism properties
           .withGearing(new MechanismGearing(GearBox.fromTeeth(10, 100)))
           .withIdleMode(MotorMode.BRAKE)
@@ -50,16 +54,18 @@ public class Turret extends SubsystemBase {
           .withTelemetry("TurretMotor", TelemetryVerbosity.HIGH)
           // Power Optimization
           .withStatorCurrentLimit(Amps.of(40))
-          .withClosedLoopRampRate(Seconds.of(0.25))
-          .withOpenLoopRampRate(Seconds.of(0.25));
+          // .withClosedLoopRampRate(Seconds.of(0.25))
+          // .withOpenLoopRampRate(Seconds.of(0.25))
+          .withVoltageCompensation(Volts.of(12));
 
   private final SmartMotorController turretSMC =
       new SparkWrapper(turretMotor, DCMotor.getNEO(1), motorConfig);
 
   private final PivotConfig turretConfig =
       new PivotConfig(turretSMC)
-          .withStartingPosition(Degrees.of(0))
-          .withHardLimit(Degrees.of(-200), Degrees.of(200))
+          .withStartingPosition(Degrees.of(45))
+          .withHardLimit(Degrees.of(-5), Degrees.of(270))
+          .withSoftLimits(Degrees.of(25), Degrees.of(250))
           .withTelemetry("TurretMech", TelemetryVerbosity.HIGH)
           .withMOI(Meters.of(0.25), Pounds.of(4));
 
