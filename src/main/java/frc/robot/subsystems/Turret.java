@@ -43,9 +43,9 @@ public class Turret extends SubsystemBase {
           // Config Copied from YAMS Example
           .withControlMode(ControlMode.CLOSED_LOOP)
           .withClosedLoopController(
-              0.4, 0, 0, DegreesPerSecond.of(180), DegreesPerSecondPerSecond.of(90))
-          .withFeedforward(new SimpleMotorFeedforward(0.01, 0.0, 0.0))
-          .withClosedLoopTolerance(Degrees.of(1))
+              4, 0, 0.05, DegreesPerSecond.of(240), DegreesPerSecondPerSecond.of(90))
+          .withFeedforward(new SimpleMotorFeedforward(0.4, 0.0, 0.0))
+          .withClosedLoopTolerance(Degrees.of(0.5))
           // Configure Motor and Mechanism properties
           .withGearing(new MechanismGearing(GearBox.fromTeeth(10, 100)))
           .withIdleMode(MotorMode.BRAKE)
@@ -65,7 +65,7 @@ public class Turret extends SubsystemBase {
       new PivotConfig(turretSMC)
           .withStartingPosition(Degrees.of(45))
           .withHardLimit(Degrees.of(-5), Degrees.of(270))
-          .withSoftLimits(Degrees.of(25), Degrees.of(250))
+          .withSoftLimits(Degrees.of(0), Degrees.of(250))
           .withTelemetry("TurretMech", TelemetryVerbosity.HIGH)
           .withMOI(Meters.of(0.25), Pounds.of(4));
 
