@@ -135,11 +135,12 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    shooter.setDefaultCommand(shooter.stop());
+    // shooter.setDefaultCommand(shooter.stop());
     Copilot.a().whileTrue(shooter.set(0.5));
     // Copilot.b().whileTrue(shooter.set(0.25));
     // Copilot.y().whileTrue(shooter.set(1));
     Copilot.y().whileTrue(shooter.setVelocity(RPM.of(1000)));
+    Copilot.b().onTrue(shooter.runVelocityStepTest());
 
     Copilot.x().whileTrue(shooter.stop());
 
@@ -147,8 +148,6 @@ public class RobotContainer {
     Copilot.rightBumper().onTrue(turret.setAngle(() -> Degrees.of(90)));
     Copilot.povLeft().onTrue(turret.setAngle(() -> Degrees.of(-10)));
     Copilot.start().onTrue(turret.setAngle(() -> Degrees.of(220)));
-    // Copilot.povUp().whileTrue(shooter.aimClockwise()).onFalse(shooter.aimStop());
-    // Copilot.povDown().whileTrue(shooter.aimCounterClockwise()).onFalse(shooter.aimStop());
     Copilot.povUp().whileTrue(turret.setAngle(() -> turret.getAngle().plus(Degrees.of(10))));
     // Continuously moves the turret up instead of just moving
     // 10 degrees from current position

@@ -45,18 +45,18 @@ public class Turret extends SubsystemBase {
           .withClosedLoopController(
               4, 0, 0.05, DegreesPerSecond.of(240), DegreesPerSecondPerSecond.of(90))
           .withFeedforward(new SimpleMotorFeedforward(0.01, 0.0, 0.0))
-          .withClosedLoopTolerance(Degrees.of(0.5))
+          // .withClosedLoopTolerance(Degrees.of(0.5)) //doesn't work with TalonFX
           // Configure Motor and Mechanism properties
           .withGearing(new MechanismGearing(GearBox.fromTeeth(10, 100)))
           .withIdleMode(MotorMode.BRAKE)
           .withMotorInverted(false)
           // Setup Telemetry
-          .withTelemetry("TurretMotor", TelemetryVerbosity.LOW)
+          .withTelemetry("TurretMotor", TelemetryVerbosity.HIGH)
           // Power Optimization
-          .withStatorCurrentLimit(Amps.of(40))
-          // .withClosedLoopRampRate(Seconds.of(0.25))
-          // .withOpenLoopRampRate(Seconds.of(0.25))
-          .withVoltageCompensation(Volts.of(12));
+          .withStatorCurrentLimit(Amps.of(40));
+  // .withClosedLoopRampRate(Seconds.of(0.25))
+  // .withOpenLoopRampRate(Seconds.of(0.25))
+  // .withVoltageCompensation(Volts.of(12)) // also doesn't work with TalonFX
 
   private final SmartMotorController turretSMC =
       // new SparkWrapper(turretMotor, DCMotor.getNEO(1), motorConfig);

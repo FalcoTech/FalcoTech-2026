@@ -5,11 +5,12 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -18,10 +19,12 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN_IDs;
+import java.util.function.Supplier;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.mechanisms.config.FlyWheelConfig;
@@ -43,11 +46,11 @@ public class Shooter extends SubsystemBase {
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
           // Feedback Constants (PID Constants)
-          .withClosedLoopController(1, 0, 0, RPM.of(7000), DegreesPerSecondPerSecond.of(1000))
-          .withSimClosedLoopController(
-              1, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
-          .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-          .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+          .withClosedLoopController(.15, 0, 0, RPM.of(7000), DegreesPerSecondPerSecond.of(1000))
+          // .withSimClosedLoopController(
+          //     1, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+          .withFeedforward(new SimpleMotorFeedforward(0, 0.124, 0.02))
+          // .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
           // Telemetry name and verbosity level
 
           .withGearing(new MechanismGearing(GearBox.fromStages("1:1")))
@@ -56,7 +59,7 @@ public class Shooter extends SubsystemBase {
           .withMotorInverted(false)
           .withIdleMode(MotorMode.COAST)
           .withStatorCurrentLimit(Amps.of(40))
-          .withTelemetry("LauncherMotor", TelemetryVerbosity.HIGH)
+          .withTelemetry("FlyWheelMotors", TelemetryVerbosity.HIGH)
           .withVoltageCompensation(Volts.of(12))
           .withFollowers(Pair.of(sparkRight, true));
 
@@ -68,10 +71,10 @@ public class Shooter extends SubsystemBase {
           // Diameter of the flywheel.
           .withDiameter(Inches.of(4))
           // Mass of the flywheel.
-          .withMass(Pounds.of(1))
+          .withMass(Pounds.of(2))
           // Maximum speed of the shooter.
-          .withUpperSoftLimit(RPM.of(1000))
-          // Telemetry name and verbosity for the arm.
+          .withUpperSoftLimit(RPM.of(2000))
+          // Telemetry name and verbosity for the shooter.
           .withTelemetry("FlyWheelMech", TelemetryVerbosity.HIGH);
 
   private final FlyWheel flywheel = new FlyWheel(flywheelConfig);
@@ -109,7 +112,48 @@ public class Shooter extends SubsystemBase {
     return flywheel.run(targetVelocity);
   }
 
+  public Command setAngularVelocity(Supplier<AngularVelocity> targetVelocity) {
+    return flywheel.run(targetVelocity);
+  }
+
+  public Command setVelocity(LinearVelocity targetVelocity) {
+    return flywheel.run(targetVelocity);
+  }
+
+  public Command setLinearVelocity(Supplier<LinearVelocity> targetVelocity) {
+    return flywheel.run(targetVelocity);
+  }
+
   public AngularVelocity getVelocity() {
     return flywheel.getSpeed();
+  }
+
+  public Command sysId() {
+    return flywheel.sysId(
+        Volts.of(12), // Max voltage to apply during the test
+        Volts.per(Second).of(0.5), // Step voltage per second
+        Seconds.of(10) // Duration of the test
+        );
+  }
+
+  public Command runVelocityStepTest() {
+    // This command doesn't work the way I want it to yet
+    final double STEP_DURATION = 0.25;
+    return flywheel
+        .run(RPM.of(1000))
+        .withTimeout(STEP_DURATION)
+        .andThen(flywheel.run(RPM.of(2000)))
+        .withTimeout(STEP_DURATION)
+        .andThen(flywheel.run(RPM.of(3000)))
+        .withTimeout(STEP_DURATION)
+        .andThen(flywheel.run(RPM.of(4000)))
+        .withTimeout(STEP_DURATION)
+        .andThen(flywheel.run(RPM.of(3000)))
+        .withTimeout(STEP_DURATION)
+        .andThen(flywheel.run(RPM.of(2000)))
+        .withTimeout(STEP_DURATION)
+        .andThen(flywheel.run(RPM.of(1000)))
+        .withTimeout(STEP_DURATION)
+        .andThen(flywheel.run(RPM.of(0)));
   }
 }
