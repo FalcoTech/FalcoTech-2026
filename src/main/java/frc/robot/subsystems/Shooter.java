@@ -10,14 +10,17 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CAN_IDs;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.mechanisms.config.FlyWheelConfig;
@@ -29,8 +32,12 @@ import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
-public class Launcher extends SubsystemBase {
-  /** Creates a new Shooter. */
+public class Shooter extends SubsystemBase {
+  private final SparkMax sparkLeft =
+      new SparkMax(CAN_IDs.FLYWHEEL_MOTOR_LEFT, MotorType.kBrushless);
+  private final SparkMax sparkRight =
+      new SparkMax(CAN_IDs.FLYWHEEL_MOTOR_RIGHT, MotorType.kBrushless);
+
   private SmartMotorControllerConfig smcConfig =
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
@@ -39,20 +46,20 @@ public class Launcher extends SubsystemBase {
               50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
           .withSimClosedLoopController(
               50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
-          //  .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+          .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
           .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
           // Telemetry name and verbosity level
 
-          .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
-          .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
+          .withGearing(new MechanismGearing(GearBox.fromStages("1:1")))
 
           // Motor properties to prevent over currenting.
           .withMotorInverted(false)
           .withIdleMode(MotorMode.COAST)
           .withStatorCurrentLimit(Amps.of(40))
-          .withTelemetry("LauncherMotor", TelemetryVerbosity.LOW);
+          .withTelemetry("LauncherMotor", TelemetryVerbosity.LOW)
+          .withVoltageCompensation(Volts.of(12))
+          .withFollowers(Pair.of(sparkRight, true));
 
-  private SparkMax sparkLeft = new SparkMax(21, MotorType.kBrushless);
   private final SmartMotorController motor =
       new SparkWrapper(sparkLeft, DCMotor.getNEO(2), smcConfig);
 
@@ -69,7 +76,8 @@ public class Launcher extends SubsystemBase {
 
   private final FlyWheel flywheel = new FlyWheel(flywheelConfig);
 
-  public Launcher() {}
+  /* Creates new Shooter */
+  public Shooter() {}
 
   @Override
   public void periodic() {

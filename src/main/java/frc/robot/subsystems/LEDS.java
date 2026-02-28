@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-
 import java.util.function.DoubleSupplier;
 
 /**
@@ -40,25 +39,26 @@ public class LEDS extends SubsystemBase {
   // Values from the REV Blinkin LED Driver pattern guide (solid colors section).
   // Solid colors run in 0.02 increments from ~0.57 (Hot Pink) up through 0.99 (Black).
 
-  private static final double COLOR_RED    = 0.61;
+  private static final double COLOR_RED = 0.61;
   private static final double COLOR_YELLOW = 0.69;
-  private static final double COLOR_GREEN  = 0.77;
-  private static final double COLOR_BLUE   = 0.87;
+  private static final double COLOR_GREEN = 0.77;
+  private static final double COLOR_BLUE = 0.87;
+
   /** Black / off — Blinkin lowest-intensity solid. */
-  private static final double COLOR_OFF    = 0.99;
+  private static final double COLOR_OFF = 0.99;
 
   // ---- Shot-likelihood display -----------------------------------------------
 
   /**
-   * PWM set-point for 0 % shot likelihood (red).
-   * Interpolation walks from here toward {@link #LIKELIHOOD_HIGH_PWM}.
+   * PWM set-point for 0 % shot likelihood (red). Interpolation walks from here toward {@link
+   * #LIKELIHOOD_HIGH_PWM}.
    */
-  private static final double LIKELIHOOD_LOW_PWM  = COLOR_RED;
+  private static final double LIKELIHOOD_LOW_PWM = COLOR_RED;
 
   /**
-   * PWM set-point for 100 % shot likelihood (green).
-   * Because the Blinkin's solid-color section is strictly monotone between red and green
-   * we can linearly interpolate through orange→yellow→lime on the way.
+   * PWM set-point for 100 % shot likelihood (green). Because the Blinkin's solid-color section is
+   * strictly monotone between red and green we can linearly interpolate through orange→yellow→lime
+   * on the way.
    */
   private static final double LIKELIHOOD_HIGH_PWM = COLOR_GREEN;
 
@@ -76,7 +76,7 @@ public class LEDS extends SubsystemBase {
     ALLIANCE_SHIFT
   }
 
-  private final Spark blinkin;
+  private final Spark blinkin = new Spark(BLINKIN_PWM_PORT);
 
   private LEDMode currentMode = LEDMode.OFF;
   private double shotLikelihood = 0.0;
@@ -86,7 +86,6 @@ public class LEDS extends SubsystemBase {
   // ---- Constructor -----------------------------------------------------------
 
   public LEDS() {
-    blinkin = new Spark(BLINKIN_PWM_PORT);
     animationTimer.start();
   }
 
@@ -113,9 +112,9 @@ public class LEDS extends SubsystemBase {
   // ---- Public API ------------------------------------------------------------
 
   /**
-   * Stores the robot's alliance so that {@link #showAlliance()} and the post-alliance-shift
-   * restore use the correct color. Call this once after the Driver Station connection is
-   * established (e.g. in {@code teleopInit}).
+   * Stores the robot's alliance so that {@link #showAlliance()} and the post-alliance-shift restore
+   * use the correct color. Call this once after the Driver Station connection is established (e.g.
+   * in {@code teleopInit}).
    *
    * @param isRed {@code true} for red alliance, {@code false} for blue.
    */
@@ -126,8 +125,8 @@ public class LEDS extends SubsystemBase {
   // ---- Command factories -----------------------------------------------------
 
   /**
-   * Returns a command that <em>continuously</em> polls a shot-likelihood value and maps it to
-   * a Blinkin solid color:
+   * Returns a command that <em>continuously</em> polls a shot-likelihood value and maps it to a
+   * Blinkin solid color:
    *
    * <ul>
    *   <li>0.0 → red (no chance)
@@ -151,8 +150,8 @@ public class LEDS extends SubsystemBase {
 
   /**
    * Returns a command that flashes the strip between red and blue while it runs, then reverts to
-   * the robot's alliance color when it ends. Bind this to a trigger that is active for the
-   * duration of the alliance-shift game period, e.g.:
+   * the robot's alliance color when it ends. Bind this to a trigger that is active for the duration
+   * of the alliance-shift game period, e.g.:
    *
    * <pre>{@code
    * allianceShiftTrigger.whileTrue(leds.allianceShiftIndicator());
@@ -168,8 +167,8 @@ public class LEDS extends SubsystemBase {
   }
 
   /**
-   * Returns a command that switches to a solid alliance color (red or blue). Runs once; the
-   * color holds until another command changes the mode.
+   * Returns a command that switches to a solid alliance color (red or blue). Runs once; the color
+   * holds until another command changes the mode.
    */
   public Command showAlliance() {
     return runOnce(() -> currentMode = LEDMode.ALLIANCE);
@@ -183,9 +182,9 @@ public class LEDS extends SubsystemBase {
   // ---- Private helpers -------------------------------------------------------
 
   /**
-   * Linearly interpolates a Blinkin PWM set-point from {@link #LIKELIHOOD_LOW_PWM} (red) to
-   * {@link #LIKELIHOOD_HIGH_PWM} (green). The Blinkin's solid-color block is monotone between
-   * those values, so intermediate PWM values pass through orange, gold, and yellow automatically.
+   * Linearly interpolates a Blinkin PWM set-point from {@link #LIKELIHOOD_LOW_PWM} (red) to {@link
+   * #LIKELIHOOD_HIGH_PWM} (green). The Blinkin's solid-color block is monotone between those
+   * values, so intermediate PWM values pass through orange, gold, and yellow automatically.
    */
   private double likelihoodToPWM(double likelihood) {
     return LIKELIHOOD_LOW_PWM + likelihood * (LIKELIHOOD_HIGH_PWM - LIKELIHOOD_LOW_PWM);

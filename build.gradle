@@ -128,6 +128,7 @@ spotless {
         }
         toggleOffOn()
         googleJavaFormat()
+        leadingTabsToSpaces(2)
         removeUnusedImports()
         trimTrailingWhitespace()
         endWithNewline()
@@ -137,7 +138,6 @@ spotless {
             include '**/*.gradle'
             exclude '**/build/**', '**/build-*/**'
         }
-        greclipse()
         leadingTabsToSpaces(4)
         trimTrailingWhitespace()
         endWithNewline()

@@ -26,7 +26,8 @@ import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDS;
-import frc.robot.subsystems.ShooterSystem;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Turret;
 
 public class RobotContainer {
   // Drive speeds
@@ -75,7 +76,8 @@ public class RobotContainer {
   public static final Feeder feeder = new Feeder();
   public static final Hopper hopper = new Hopper();
   public static final LEDS leds = new LEDS();
-  public static final ShooterSystem shooter = new ShooterSystem();
+  public static final Turret turret = new Turret();
+  public static final Shooter shooter = new Shooter();
 
   public RobotContainer() {
     RegisterNamedCommands();
@@ -137,15 +139,25 @@ public class RobotContainer {
     Copilot.y().whileTrue(shooter.set(1));
     Copilot.x().whileTrue(shooter.stop());
 
-    Copilot.leftBumper().onTrue(shooter.aimAt(() -> Degrees.of(180)));
-    Copilot.rightBumper().onTrue(shooter.aimAt(() -> Degrees.of(90)));
-    Copilot.povLeft().onTrue(shooter.aimAt(() -> Degrees.of(5)));
-    Copilot.start().onTrue(shooter.aimAt(()-> Degrees.of(230)));
+    Copilot.leftBumper().onTrue(turret.setAngle(() -> Degrees.of(180)));
+    Copilot.rightBumper().onTrue(turret.setAngle(() -> Degrees.of(90)));
+    Copilot.povLeft().onTrue(turret.setAngle(() -> Degrees.of(5)));
+    Copilot.start().onTrue(turret.setAngle(() -> Degrees.of(230)));
     // Copilot.povUp().whileTrue(shooter.aimClockwise()).onFalse(shooter.aimStop());
     // Copilot.povDown().whileTrue(shooter.aimCounterClockwise()).onFalse(shooter.aimStop());
-    Copilot.povUp().onTrue(shooter.aimAt(() -> shooter.getTurretAngle().plus(Degrees.of(10)))); // Continuously moves the turret up instead of just moving 10 degrees from current position
-    // without the supplier it just sets it to 10 degrees instead of moving it up by 10 degrees from current position?
-    Copilot.povDown().onTrue(shooter.aimAt(() -> shooter.getTurretAngle().minus(Degrees.of(10))));
+    Copilot.povUp()
+        .onTrue(
+            turret.setAngle(
+                () ->
+                    turret
+                        .getAngle()
+                        .plus(
+                            Degrees.of(
+                                10)))); // Continuously moves the turret up instead of just moving
+    // 10 degrees from current position
+    // without the supplier it just sets it to 10 degrees instead of moving it up by 10 degrees from
+    // current position?
+    Copilot.povDown().onTrue(turret.setAngle(() -> turret.getAngle().minus(Degrees.of(10))));
   }
 
   public Command getAutonomousCommand() {
