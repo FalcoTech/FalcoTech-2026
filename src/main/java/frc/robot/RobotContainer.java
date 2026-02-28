@@ -133,11 +133,15 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    // shooter.setDefaultCommand(shooter.stop());
+    shooter.setDefaultCommand(shooter.stop());
     Copilot.a().whileTrue(shooter.set(0.5));
-    Copilot.b().whileTrue(shooter.set(0.25));
-    Copilot.y().whileTrue(shooter.set(1));
+    // Copilot.b().whileTrue(shooter.set(0.25));
+    // Copilot.y().whileTrue(shooter.set(1));
+    Copilot.y().whileTrue(shooter.setVelocity(RPM.of(1000)));
+
     Copilot.x().whileTrue(shooter.stop());
+
+
 
     turret.setDefaultCommand(turret.stop());
 

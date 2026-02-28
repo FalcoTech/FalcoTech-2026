@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -18,6 +19,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN_IDs;
@@ -43,9 +45,9 @@ public class Shooter extends SubsystemBase {
           .withControlMode(ControlMode.CLOSED_LOOP)
           // Feedback Constants (PID Constants)
           .withClosedLoopController(
-              50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+              1, 0, 0, RPM.of(7000), DegreesPerSecondPerSecond.of(1000))
           .withSimClosedLoopController(
-              50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+              1, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
           .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
           .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
           // Telemetry name and verbosity level
@@ -56,7 +58,7 @@ public class Shooter extends SubsystemBase {
           .withMotorInverted(false)
           .withIdleMode(MotorMode.COAST)
           .withStatorCurrentLimit(Amps.of(40))
-          .withTelemetry("LauncherMotor", TelemetryVerbosity.LOW)
+          .withTelemetry("LauncherMotor", TelemetryVerbosity.HIGH)
           .withVoltageCompensation(Volts.of(12))
           .withFollowers(Pair.of(sparkRight, true));
 
@@ -83,6 +85,7 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     flywheel.updateTelemetry();
+    SmartDashboard.putNumber("Flywheel Velocity", flywheel.getSpeed().in(RPM));
   }
 
   @Override
@@ -102,6 +105,10 @@ public class Shooter extends SubsystemBase {
 
   public Command stop() {
     return flywheel.set(0);
+  }
+
+  public Command setVelocity(AngularVelocity targetVelocity){
+    return flywheel.run(targetVelocity);
   }
 
   public AngularVelocity getVelocity() {
