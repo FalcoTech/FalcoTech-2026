@@ -10,7 +10,6 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -44,8 +43,7 @@ public class Shooter extends SubsystemBase {
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
           // Feedback Constants (PID Constants)
-          .withClosedLoopController(
-              1, 0, 0, RPM.of(7000), DegreesPerSecondPerSecond.of(1000))
+          .withClosedLoopController(1, 0, 0, RPM.of(7000), DegreesPerSecondPerSecond.of(1000))
           .withSimClosedLoopController(
               1, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
           .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
@@ -107,7 +105,7 @@ public class Shooter extends SubsystemBase {
     return flywheel.set(0);
   }
 
-  public Command setVelocity(AngularVelocity targetVelocity){
+  public Command setVelocity(AngularVelocity targetVelocity) {
     return flywheel.run(targetVelocity);
   }
 

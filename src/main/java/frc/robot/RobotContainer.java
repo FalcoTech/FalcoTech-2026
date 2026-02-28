@@ -11,6 +11,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -80,6 +81,7 @@ public class RobotContainer {
   public static final Shooter shooter = new Shooter();
 
   public RobotContainer() {
+    DriverStation.silenceJoystickConnectionWarning(true);
     RegisterNamedCommands();
     autoChooser = AutoBuilder.buildAutoChooser("Tests");
     SmartDashboard.putData("Auto Mode", autoChooser);
@@ -141,19 +143,14 @@ public class RobotContainer {
 
     Copilot.x().whileTrue(shooter.stop());
 
-
-
-    turret.setDefaultCommand(turret.stop());
-
     Copilot.leftBumper().onTrue(turret.setAngle(() -> Degrees.of(180)));
     Copilot.rightBumper().onTrue(turret.setAngle(() -> Degrees.of(90)));
     Copilot.povLeft().onTrue(turret.setAngle(() -> Degrees.of(-10)));
     Copilot.start().onTrue(turret.setAngle(() -> Degrees.of(220)));
     // Copilot.povUp().whileTrue(shooter.aimClockwise()).onFalse(shooter.aimStop());
     // Copilot.povDown().whileTrue(shooter.aimCounterClockwise()).onFalse(shooter.aimStop());
-    
-    
-    Copilot.povUp().whileTrue(turret.setAngle(() -> turret.getAngle().plus(Degrees.of(10)))); // Continuously moves the turret up instead of just moving
+    Copilot.povUp().whileTrue(turret.setAngle(() -> turret.getAngle().plus(Degrees.of(10))));
+    // Continuously moves the turret up instead of just moving
     // 10 degrees from current position
     // without the supplier it just sets it to 10 degrees instead of moving it up by 10 degrees from
     // current position?
