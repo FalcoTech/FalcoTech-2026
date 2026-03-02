@@ -106,7 +106,7 @@ public class RobotContainer {
                     .withVelocityY(
                         -Pilot.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(
-                        Pilot.getRightX()
+                        -Pilot.getRightX()
                             * MaxAngularRate) // Drive counterclockwise with negative X (left)
             ));
 
@@ -133,31 +133,40 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    shooter.setDefaultCommand(shooter.stop());
-    Copilot.a().whileTrue(shooter.set(0.5));
-    // Copilot.b().whileTrue(shooter.set(0.25));
-    // Copilot.y().whileTrue(shooter.set(1));
-    Copilot.y().whileTrue(shooter.setVelocity(RPM.of(1000)));
+    // shooter.setDefaultCommand(shooter.stop());
+    // Copilot.a().whileTrue(shooter.set(0.5));
+    // // Copilot.b().whileTrue(shooter.set(0.25));
+    // // Copilot.y().whileTrue(shooter.set(1));
+    // Copilot.y().whileTrue(shooter.setVelocity(RPM.of(1000)));
 
-    Copilot.x().whileTrue(shooter.stop());
+    // Copilot.x().whileTrue(shooter.stop());
 
+    // turret.setDefaultCommand(turret.stop());
 
-
-    turret.setDefaultCommand(turret.stop());
-
-    Copilot.leftBumper().onTrue(turret.setAngle(() -> Degrees.of(180)));
-    Copilot.rightBumper().onTrue(turret.setAngle(() -> Degrees.of(90)));
-    Copilot.povLeft().onTrue(turret.setAngle(() -> Degrees.of(-10)));
-    Copilot.start().onTrue(turret.setAngle(() -> Degrees.of(220)));
+    // Copilot.x().whileTrue(turret.setAngle(Degrees.of(180)));
+    // Copilot.y().whileTrue(turret.setAngle(Degrees.of(90)));
+    // Copilot.b().whileTrue(turret.setAngle(Degrees.of(0)));
+    // Copilot.rightBumper().whileTrue(turret.setDutyCycle(.25));
+    // Copilot.leftBumper().whileTrue(turret.setDutyCycle(-.25));
+    // Copilot.start().onTrue(turret.setAngle(() -> Degrees.of(220)));
     // Copilot.povUp().whileTrue(shooter.aimClockwise()).onFalse(shooter.aimStop());
     // Copilot.povDown().whileTrue(shooter.aimCounterClockwise()).onFalse(shooter.aimStop());
-    
-    
-    Copilot.povUp().whileTrue(turret.setAngle(() -> turret.getAngle().plus(Degrees.of(10)))); // Continuously moves the turret up instead of just moving
-    // 10 degrees from current position
-    // without the supplier it just sets it to 10 degrees instead of moving it up by 10 degrees from
-    // current position?
-    Copilot.povDown().whileTrue(turret.setAngle(() -> turret.getAngle().minus(Degrees.of(10))));
+
+    // Copilot.povUp()
+    //     .whileTrue(
+    //         turret.setAngle(
+    //             () ->
+    //                 turret
+    //                     .getAngle()
+    //                     .plus(
+    //                         Degrees.of(
+    //                             10)))); // Continuously moves the turret up instead of just
+    // moving
+    // // 10 degrees from current position
+    // // without the supplier it just sets it to 10 degrees instead of moving it up by 10 degrees
+    // from
+    // // current position?
+    // Copilot.povDown().whileTrue(turret.setAngle(() -> turret.getAngle().minus(Degrees.of(10))));
   }
 
   public Command getAutonomousCommand() {

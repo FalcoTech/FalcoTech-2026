@@ -32,12 +32,12 @@ public final class Constants {
     public static final int PIGEON_IMU = 50;
 
     // Shooter Motors
-    public static final int FLYWHEEL_MOTOR_LEFT = 9;
-    public static final int FLYWHEEL_MOTOR_RIGHT = 22;
-    public static final int TURRET_MOTOR = 10;
+    public static final int FLYWHEEL_MOTOR_LEFT = 41;
+    public static final int FLYWHEEL_MOTOR_RIGHT = 42;
+    public static final int TURRET_MOTOR = 43;
 
     // Intake & Feeder Motors
-    public static final int INTAKE_MOTOR = 11;
+    public static final int INTAKE_MOTOR = 50;
     public static final int FEEDER_MOTOR = 12;
 
     // Climb Motors

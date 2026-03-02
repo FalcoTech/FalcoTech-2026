@@ -25,7 +25,7 @@ public class TunerConstants {
     // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
     private static final Slot0Configs steerGains = new Slot0Configs()
         .withKP(50).withKI(0).withKD(0.5)
-        .withKS(0.1).withKV(.2).withKA(0)
+        .withKS(0.1).withKV(2.33).withKA(0)
         .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
@@ -129,45 +129,45 @@ public class TunerConstants {
     private static final int kFrontLeftDriveMotorId = 10;
     private static final int kFrontLeftSteerMotorId = 11;
     private static final int kFrontLeftEncoderId = 1;
-    private static final Angle kFrontLeftEncoderOffset = Rotations.of(-0.22998046875);
+    private static final Angle kFrontLeftEncoderOffset = Rotations.of(0.490234375);
     private static final boolean kFrontLeftSteerMotorInverted = true;
     private static final boolean kFrontLeftEncoderInverted = false;
 
-    private static final Distance kFrontLeftXPos = Inches.of(11.375);
-    private static final Distance kFrontLeftYPos = Inches.of(11.375);
+    private static final Distance kFrontLeftXPos = Inches.of(11);
+    private static final Distance kFrontLeftYPos = Inches.of(11);
 
     // Front Right
     private static final int kFrontRightDriveMotorId = 12;
     private static final int kFrontRightSteerMotorId = 13;
     private static final int kFrontRightEncoderId = 2;
-    private static final Angle kFrontRightEncoderOffset = Rotations.of(-0.267822265625);
+    private static final Angle kFrontRightEncoderOffset = Rotations.of(0.33056640625);
     private static final boolean kFrontRightSteerMotorInverted = true;
     private static final boolean kFrontRightEncoderInverted = false;
 
-    private static final Distance kFrontRightXPos = Inches.of(11.375);
-    private static final Distance kFrontRightYPos = Inches.of(-11.375);
+    private static final Distance kFrontRightXPos = Inches.of(11);
+    private static final Distance kFrontRightYPos = Inches.of(-11);
 
     // Back Left
     private static final int kBackLeftDriveMotorId = 14;
     private static final int kBackLeftSteerMotorId = 15;
     private static final int kBackLeftEncoderId = 3;
-    private static final Angle kBackLeftEncoderOffset = Rotations.of(0.04541015625);
+    private static final Angle kBackLeftEncoderOffset = Rotations.of(0.022705078125);
     private static final boolean kBackLeftSteerMotorInverted = true;
     private static final boolean kBackLeftEncoderInverted = false;
 
-    private static final Distance kBackLeftXPos = Inches.of(-11.375);
-    private static final Distance kBackLeftYPos = Inches.of(11.375);
+    private static final Distance kBackLeftXPos = Inches.of(-11);
+    private static final Distance kBackLeftYPos = Inches.of(11);
 
     // Back Right
     private static final int kBackRightDriveMotorId = 16;
     private static final int kBackRightSteerMotorId = 17;
     private static final int kBackRightEncoderId = 4;
-    private static final Angle kBackRightEncoderOffset = Rotations.of(0.08447265625);
+    private static final Angle kBackRightEncoderOffset = Rotations.of(-0.205322265625);
     private static final boolean kBackRightSteerMotorInverted = true;
     private static final boolean kBackRightEncoderInverted = false;
 
-    private static final Distance kBackRightXPos = Inches.of(-11.375);
-    private static final Distance kBackRightYPos = Inches.of(-11.375);
+    private static final Distance kBackRightXPos = Inches.of(-11);
+    private static final Distance kBackRightYPos = Inches.of(-11);
 
 
     public static final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> FrontLeft =
@@ -262,10 +262,10 @@ public class TunerConstants {
          *                                  unspecified or set to 0 Hz, this is 250 Hz on
          *                                  CAN FD, and 100 Hz on CAN 2.0.
          * @param odometryStandardDeviation The standard deviation for odometry calculation
-         *                                  in the form [x, y, theta]ᵀ, with units in meters
+         *                                  in the form [x, y, theta]áµ€, with units in meters
          *                                  and radians
          * @param visionStandardDeviation   The standard deviation for vision calculation
-         *                                  in the form [x, y, theta]ᵀ, with units in meters
+         *                                  in the form [x, y, theta]áµ€, with units in meters
          *                                  and radians
          * @param modules                   Constants for each specific module
          */
