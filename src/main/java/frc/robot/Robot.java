@@ -8,6 +8,8 @@ import com.ctre.phoenix6.HootAutoReplay;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.VisionConstants;
+import frc.robot.util.LimelightHelpers;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -33,11 +35,15 @@ public class Robot extends TimedRobot {
     //   double headingDeg = driveState.Pose.getRotation().getDegrees();
     //   double omegaRps = Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
 
-    //   // Feed Pigeon heading to both Limelights (required before MegaTag2 pose request)
-    //   LimelightHelpers.SetRobotOrientation(
-    //       VisionConstants.LIMELIGHT_MAIN, headingDeg, 0, 0, 0, 0, 0);
-    //   LimelightHelpers.SetRobotOrientation(
-    //       VisionConstants.LIMELIGHT_REAR, headingDeg, 0, 0, 0, 0, 0);
+      // LimelightHelpers.SetRobotOrientation(VisionConstants.LIMELIGHT_NAME, headingDeg, 0, 0, 0,
+      // 0, 0);
+      var llMeasurement =
+          LimelightHelpers.getBotPoseEstimate_wpiBlue(VisionConstants.LIMELIGHT_NAME);
+      if (llMeasurement != null && llMeasurement.tagCount > 0 && Math.abs(omegaRps) < 2.0) {
+        RobotContainer.drivetrain.addVisionMeasurement(
+            llMeasurement.pose, llMeasurement.timestampSeconds);
+      }
+    }
 
     //   // Only apply vision when not spinning fast
     //   if (Math.abs(omegaRps) < VisionConstants.VISION_OMEGA_CUTOFF_RPS) {
@@ -53,19 +59,22 @@ public class Robot extends TimedRobot {
     //               VisionConstants.MEGATAG2_ROTATION_STDDEV));
     //     }
 
-    //     var rearMeasurement =
-    //         LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.LIMELIGHT_REAR);
-    //     if (rearMeasurement != null && rearMeasurement.tagCount > 0) {
-    //       RobotContainer.drivetrain.addVisionMeasurement(
-    //           rearMeasurement.pose,
-    //           rearMeasurement.timestampSeconds,
-    //           VecBuilder.fill(
-    //               VisionConstants.MEGATAG2_XY_STDDEV,
-    //               VisionConstants.MEGATAG2_XY_STDDEV,
-    //               VisionConstants.MEGATAG2_ROTATION_STDDEV));
-    //     }
-    //   }
-    // }
+    if (enableMegaTag2) {
+      var driveState = RobotContainer.drivetrain.getState();
+      double headingDeg = driveState.Pose.getRotation().getDegrees();
+      double omegaRps = Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
+
+      LimelightHelpers.SetRobotOrientation(
+          VisionConstants.LIMELIGHT_NAME, headingDeg, 0, 0, 0, 0, 0);
+      var llMeasurement =
+          LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.LIMELIGHT_NAME);
+      if (llMeasurement != null && llMeasurement.tagCount > 0 && Math.abs(omegaRps) < 2.0) {
+        RobotContainer.drivetrain.addVisionMeasurement(
+            llMeasurement.pose, llMeasurement.timestampSeconds, VecBuilder.fill(.5, .5, 9999999));
+        // RobotContainer.drivetrain.addVisionMeasurement(llMeasurement.pose,
+        // llMeasurement.timestampSeconds);
+      }
+    }
   }
 
   @Override
