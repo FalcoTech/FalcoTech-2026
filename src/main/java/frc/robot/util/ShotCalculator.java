@@ -79,4 +79,14 @@ public class ShotCalculator extends SubsystemBase {
     // represents an unviable shot
     return 0.0; // Placeholder for actual shot viability scale calculation
   }
+
+  public static double getMinTimeOfFlight() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getMinTimeOfFlight'");
+  }
+
+  public static double getMaxTimeOfFlight() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getMaxTimeOfFlight'");
+  }
 }

@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Climber extends SubsystemBase {
   /** Creates a new Climber. */
   public Climber() {}
+
   // Climber has one or 2 elevator motors and 1 pivot motor
 
   @Override
