@@ -11,7 +11,7 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 
-                                                                                                                 
+// spotless:off                                                                                                                 
 //  ▄    ▄                 ▄           ▄    ▄        ▀▀█                                                           
 //  ██  ██  ▄▄▄    ▄▄▄   ▄▄█▄▄         ▀▄  ▄▀  ▄▄▄     █    ▄   ▄   ▄▄▄    ▄▄▄                                     
 //  █ ██ █ █▀ ▀█  █   ▀    █            █  █  ▀   █    █    █   █  █▀  █  █   ▀                                    
@@ -25,14 +25,13 @@ import edu.wpi.first.math.util.Units;
 //   █  █   █▀  ▀ █▀  █         █▄▄▄█▀   █    ▀   █  █▀  ▀  █▀  █  █▀  █  █▀ ▀█    █    █▀ ▀█  █▀  █   █▀  ▀ █   ▀ 
 //   █▄▄█   █     █▀▀▀▀         █        █    ▄▀▀▀█  █      █▀▀▀▀  █   █  █   █    █    █   █  █▀▀▀▀   █      ▀▀▀▄ 
 //  █    █  █     ▀█▄▄▀         █        ▀▄▄  ▀▄▄▀█  ▀█▄▄▀  ▀█▄▄▀  █   █  ▀█▄█▀    ▀▄▄  ▀█▄██  ▀█▄▄▀   █     ▀▄▄▄▀ 
-                                                                                                                
-                                                                                                                
+// spotless:on
+
 public final class Constants {
   public static final int BLINKIN_PWM_PORT = 9;
 
   public static final class CAN_IDs {
     // Drivetrain IDs are handled by TunerConstants and are omitted here
-
 
     // Shooter Motors
     public static final int TURRET_MOTOR = 20;
@@ -46,7 +45,8 @@ public final class Constants {
 
     // Climb Motors
     public static final int CLIMB_ELEVATOR_MOTOR = 98;
-    public static final int CLIMB_PIVOT_MOTOR = 99;;
+    public static final int CLIMB_PIVOT_MOTOR = 99;
+    ;
 
     // Sensors and other devices could also be added here
   }

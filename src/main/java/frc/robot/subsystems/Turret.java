@@ -18,8 +18,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.CAN_IDs;
-import frc.robot.util.ShotCalculator;
 import java.util.function.Supplier;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -130,7 +128,6 @@ public class Turret extends SubsystemBase {
     // or from a dedicated off-main-thread task.
     // telemetry refresh removed from periodic to avoid blocking NT/remote calls
     turret.updateTelemetry();
-    SmartDashboard.putNumber("Turret Shot Angle", ShotCalculator.getTurretAngle());
     // This method will be called once per scheduler run
 
   }
