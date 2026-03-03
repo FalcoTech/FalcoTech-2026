@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
@@ -38,61 +39,61 @@ import yams.motorcontrollers.local.SparkWrapper;
 
 public class Shooter extends SubsystemBase {
   // private final SparkMax sparkLeft =
-  //     new SparkMax(CAN_IDs.FLYWHEEL_MOTOR_LEFT, MotorType.kBrushless);
+      // new SparkMax(CAN_IDs.FLYWHEEL_MOTOR_LEFT, MotorType.kBrushless);
   // private final SparkMax sparkRight =
-  //     new SparkMax(CAN_IDs.FLYWHEEL_MOTOR_RIGHT, MotorType.kBrushless);
+      // new SparkMax(CAN_IDs.FLYWHEEL_MOTOR_RIGHT, MotorType.kBrushless);
 
-  private SmartMotorControllerConfig smcConfig =
-      new SmartMotorControllerConfig(this)
-          .withControlMode(ControlMode.CLOSED_LOOP)
-          // Feedback Constants (PID Constants)
-          .withClosedLoopController(.15, 0, 0, RPM.of(7000), DegreesPerSecondPerSecond.of(1000))
-          // .withSimClosedLoopController(
-          //     1, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
-          .withFeedforward(new SimpleMotorFeedforward(0, 0.124, 0.02))
-          // .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-          // Telemetry name and verbosity level
+  // private SmartMotorControllerConfig smcConfig =
+  //     new SmartMotorControllerConfig(this)
+  //         .withControlMode(ControlMode.CLOSED_LOOP)
+  //         // Feedback Constants (PID Constants)
+  //         .withClosedLoopController(.15, 0, 0, RPM.of(7000), DegreesPerSecondPerSecond.of(1000))
+  //         .withSimClosedLoopController(
+  //             1, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+  //         .withFeedforward(new SimpleMotorFeedforward(0, 0.124, 0.02))
+  //         .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+  //         // Telemetry name and verbosity level
 
   //         .withGearing(new MechanismGearing(GearBox.fromStages("1:1")))
 
-          // Motor properties to prevent over currenting.
-          .withMotorInverted(false)
-          .withIdleMode(MotorMode.COAST)
-          .withStatorCurrentLimit(Amps.of(40))
-          .withTelemetry("FlyWheelMotors", TelemetryVerbosity.HIGH)
-          .withVoltageCompensation(Volts.of(12))
-          .withFollowers(Pair.of(sparkRight, true));
+  //         // Motor properties to prevent over currenting.
+  //         .withMotorInverted(false)
+  //         .withIdleMode(MotorMode.COAST)
+  //         .withStatorCurrentLimit(Amps.of(40))
+  //         .withTelemetry("FlyWheelMotors", TelemetryVerbosity.HIGH)
+  //         .withVoltageCompensation(Volts.of(12))
+  //         .withFollowers(Pair.of(sparkRight, true));
 
   // private final SmartMotorController motor =
   //     new SparkWrapper(sparkLeft, DCMotor.getNEO(2), smcConfig);
 
-  private final FlyWheelConfig flywheelConfig =
-      new FlyWheelConfig(motor)
-          // Diameter of the flywheel.
-          .withDiameter(Inches.of(4))
-          // Mass of the flywheel.
-          .withMass(Pounds.of(2))
-          // Maximum speed of the shooter.
-          .withUpperSoftLimit(RPM.of(2000))
-          // Telemetry name and verbosity for the shooter.
-          .withTelemetry("FlyWheelMech", TelemetryVerbosity.HIGH);
+  // private final FlyWheelConfig flywheelConfig =
+  //     new FlyWheelConfig(motor)
+  //         // Diameter of the flywheel.
+  //         .withDiameter(Inches.of(4))
+  //         // Mass of the flywheel.
+  //         .withMass(Pounds.of(2))
+  //         // Maximum speed of the shooter.
+  //         .withUpperSoftLimit(RPM.of(2000))
+  //         // Telemetry name and verbosity for the shooter.
+  //         .withTelemetry("FlyWheelMech", TelemetryVerbosity.HIGH);
 
   // private final FlyWheel flywheel = new FlyWheel(flywheelConfig);
 
   /* Creates new Shooter */
   public Shooter() {}
 
-  // @Override
-  // public void periodic() {
-  //   // This method will be called once per scheduler run
-  //   flywheel.updateTelemetry();
-  //   SmartDashboard.putNumber("Flywheel Velocity", flywheel.getSpeed().in(RPM));
-  // }
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+    // flywheel.updateTelemetry();
+    // SmartDashboard.putNumber("Flywheel Velocity", flywheel.getSpeed().in(RPM));
+  }
 
-  // @Override
-  // public void simulationPeriodic() {
-  //   flywheel.simIterate();
-  // }
+  @Override
+  public void simulationPeriodic() {
+    // flywheel.simIterate();
+  }
 
   /**
    * Set the dutycycle of the shooter.
@@ -108,52 +109,52 @@ public class Shooter extends SubsystemBase {
   //   return flywheel.set(0);
   // }
 
-  public Command setVelocity(AngularVelocity targetVelocity) {
-    return flywheel.run(targetVelocity);
-  }
+  // public Command setVelocity(AngularVelocity targetVelocity) {
+  //   return flywheel.run(targetVelocity);
+  // }
 
-  public Command setAngularVelocity(Supplier<AngularVelocity> targetVelocity) {
-    return flywheel.run(targetVelocity);
-  }
+  // public Command setAngularVelocity(Supplier<AngularVelocity> targetVelocity) {
+  //   return flywheel.run(targetVelocity);
+  // }
 
-  public Command setVelocity(LinearVelocity targetVelocity) {
-    return flywheel.run(targetVelocity);
-  }
+  // public Command setVelocity(LinearVelocity targetVelocity) {
+  //   return flywheel.run(targetVelocity);
+  // }
 
-  public Command setLinearVelocity(Supplier<LinearVelocity> targetVelocity) {
-    return flywheel.run(targetVelocity);
-  }
+  // public Command setLinearVelocity(Supplier<LinearVelocity> targetVelocity) {
+  //   return flywheel.run(targetVelocity);
+  // }
 
-  public AngularVelocity getVelocity() {
-    return flywheel.getSpeed();
-  }
+  // public AngularVelocity getVelocity() {
+  //   return flywheel.getSpeed();
+  // }
 
-  public Command sysId() {
-    return flywheel.sysId(
-        Volts.of(12), // Max voltage to apply during the test
-        Volts.per(Second).of(0.5), // Step voltage per second
-        Seconds.of(10) // Duration of the test
-        );
-  }
+  // public Command sysId() {
+  //   return flywheel.sysId(
+  //       Volts.of(12), // Max voltage to apply during the test
+  //       Volts.per(Second).of(0.5), // Step voltage per second
+  //       Seconds.of(10) // Duration of the test
+  //       );
+  // }
 
-  public Command runVelocityStepTest() {
-    // This command doesn't work the way I want it to yet
-    final double STEP_DURATION = 0.25;
-    return flywheel
-        .run(RPM.of(1000))
-        .withTimeout(STEP_DURATION)
-        .andThen(flywheel.run(RPM.of(2000)))
-        .withTimeout(STEP_DURATION)
-        .andThen(flywheel.run(RPM.of(3000)))
-        .withTimeout(STEP_DURATION)
-        .andThen(flywheel.run(RPM.of(4000)))
-        .withTimeout(STEP_DURATION)
-        .andThen(flywheel.run(RPM.of(3000)))
-        .withTimeout(STEP_DURATION)
-        .andThen(flywheel.run(RPM.of(2000)))
-        .withTimeout(STEP_DURATION)
-        .andThen(flywheel.run(RPM.of(1000)))
-        .withTimeout(STEP_DURATION)
-        .andThen(flywheel.run(RPM.of(0)));
-  }
+  // public Command runVelocityStepTest() {
+  //   // This command doesn't work the way I want it to yet
+  //   final double STEP_DURATION = 0.25;
+  //   return flywheel
+  //       .run(RPM.of(1000))
+  //       .withTimeout(STEP_DURATION)
+  //       .andThen(flywheel.run(RPM.of(2000)))
+  //       .withTimeout(STEP_DURATION)
+  //       .andThen(flywheel.run(RPM.of(3000)))
+  //       .withTimeout(STEP_DURATION)
+  //       .andThen(flywheel.run(RPM.of(4000)))
+  //       .withTimeout(STEP_DURATION)
+  //       .andThen(flywheel.run(RPM.of(3000)))
+  //       .withTimeout(STEP_DURATION)
+  //       .andThen(flywheel.run(RPM.of(2000)))
+  //       .withTimeout(STEP_DURATION)
+  //       .andThen(flywheel.run(RPM.of(1000)))
+  //       .withTimeout(STEP_DURATION)
+  //       .andThen(flywheel.run(RPM.of(0)));
+  // }
 }

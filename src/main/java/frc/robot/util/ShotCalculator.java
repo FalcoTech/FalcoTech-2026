@@ -10,23 +10,21 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Turret;
 
 public class ShotCalculator extends SubsystemBase {
-  private final CommandSwerveDrivetrain drivetrain;
-  private final Shooter shooter;
-  private final Turret turret;
+  // private final CommandSwerveDrivetrain drivetrain;
+  // private final Shooter shooter;
+  // private final Turret turret;
 
   // private final Vision vision;
+  public ShotCalculator() {}
 
-  public ShotCalculator(Turret turret, Shooter shooter, CommandSwerveDrivetrain drivetrain) {
-    this.turret = turret;
-    this.shooter = shooter;
-    this.drivetrain = drivetrain;
-    // this.vision = vision;
-  }
+  // public ShotCalculator(Turret turret, Shooter shooter, CommandSwerveDrivetrain drivetrain) {
+  //   this.turret = turret;
+  //   this.shooter = shooter;
+  //   this.drivetrain = drivetrain;
+  //   // this.vision = vision;
+  // }
 
   public static Angle getShotAngle(Distance distanceToTarget, LinearVelocity initialVelocity) {
     double v = initialVelocity.in(MetersPerSecond);

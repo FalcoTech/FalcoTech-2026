@@ -21,13 +21,13 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PathPlanningConstants;
+import frc.robot.commands.RunTurret;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDS;
-import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 
 public class RobotContainer {
@@ -78,7 +78,8 @@ public class RobotContainer {
   public static final Hopper hopper = new Hopper();
   public static final LEDS leds = new LEDS();
   public static final Turret turret = new Turret();
-  public static final Shooter shooter = new Shooter();
+
+  //   public static final Shooter shooter = new Shooter();
 
   public RobotContainer() {
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -143,13 +144,13 @@ public class RobotContainer {
 
     // Copilot.x().whileTrue(shooter.stop());
 
-    // turret.setDefaultCommand(turret.stop());
+    turret.setDefaultCommand(new RunTurret(0));
 
     // Copilot.x().whileTrue(turret.setAngle(Degrees.of(180)));
     // Copilot.y().whileTrue(turret.setAngle(Degrees.of(90)));
     // Copilot.b().whileTrue(turret.setAngle(Degrees.of(0)));
-    // Copilot.rightBumper().whileTrue(turret.setDutyCycle(.25));
-    // Copilot.leftBumper().whileTrue(turret.setDutyCycle(-.25));
+    Copilot.rightBumper().whileTrue(new RunTurret(.15));
+    Copilot.leftBumper().whileTrue(new RunTurret(-.15));
     // Copilot.start().onTrue(turret.setAngle(() -> Degrees.of(220)));
     // Copilot.povUp().whileTrue(shooter.aimClockwise()).onFalse(shooter.aimStop());
     // Copilot.povDown().whileTrue(shooter.aimCounterClockwise()).onFalse(shooter.aimStop());
