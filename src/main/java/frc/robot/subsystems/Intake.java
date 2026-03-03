@@ -14,8 +14,6 @@ public class Intake extends SubsystemBase {
 
   // Hopper will have 1 roller mechanism
 
-  // Feeder will have 1 roller to feed the ball from hopper
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
