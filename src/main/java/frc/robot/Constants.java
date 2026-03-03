@@ -39,13 +39,13 @@ public final class Constants {
     public static final int TURRET_MOTOR = 20;
 
     // Intake & Feeder Motors
-    public static final int INTAKE_MOTOR = 96;
+    public static final int INTAKE_ROLLER_MOTOR = 96;
+    public static final int INTAKE_ARM_MOTOR = 93;
     public static final int FEEDER_MOTOR = 97;
 
     // Climb Motors
     public static final int CLIMB_ELEVATOR_MOTOR = 98;
     public static final int CLIMB_PIVOT_MOTOR = 99;
-    ;
 
     // Sensors and other devices could also be added here
   }
@@ -68,30 +68,13 @@ public final class Constants {
     public static final String LIMELIGHT_NAME = "primary"; // Front facing camera
     public static final String LIMELIGHT2_NAME = "secondary"; // Rear facing camera
     public static final boolean USE_LIMELIGHT = true;
-    public static final double VISION_OMEGA_CUTOFF_RPS =
-        2.0; // Don't use vision measurements when rotating faster than this
+    // Don't use vision measurements when rotating faster than this
+    public static final double VISION_OMEGA_CUTOFF_RPS = 2.0;
   }
 
-  public static final class IntakeConstants {
-    public static final double INTAKE_SPEED = -0.5;
-    public static final double OUTTAKE_SPEED = 1.0;
-  }
+  public static final class IntakeConstants {}
 
-  public static final class ClimbConstants {
-
-    public static final double CLIMB_SPEED = 0.25;
-
-    // SetPoint constants from SetElevatorToPosition.java
-    public static final double HOME_POSITION = 0.0;
-
-    // PID constants and other elevator-related values
-    public static final double ELEVATOR_CONTROL_SCALE = 0.5; // Scale for Copilot.getRightY()
-    public static final double LOWER_ELEVATOR_SPEED = -0.01; // Speed to drop elevator
-
-    // Safety thresholds for home position logic
-
-    public static final double PID_OUTPUT_LIMIT = 0.2;
-  }
+  public static final class ClimbConstants {}
 
   public static final class PathPlanningConstants {
     // From RobotContainer.java

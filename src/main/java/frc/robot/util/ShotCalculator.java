@@ -32,7 +32,7 @@ public class ShotCalculator extends SubsystemBase {
     double v = initialVelocity.in(MetersPerSecond);
     double d = distanceToTarget.in(Meters);
 
-    // TODO: Implement actual projectile motion calculation
+    // TODO: Implement actual projectile motion calculation things
     double angleRadians = 0.0;
     Angle angle = Radians.of(angleRadians);
 

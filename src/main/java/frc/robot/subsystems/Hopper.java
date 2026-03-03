@@ -7,6 +7,9 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Hopper extends SubsystemBase {
+
+  // Hopper will have 1 roller mechanism
+
   /** Creates a new Hopper. */
   public Hopper() {}
 
