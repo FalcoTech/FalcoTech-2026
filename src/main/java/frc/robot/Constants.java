@@ -46,7 +46,6 @@ public final class Constants {
     // Climb Motors
     public static final int CLIMB_ELEVATOR_MOTOR = 98;
     public static final int CLIMB_PIVOT_MOTOR = 99;
-    ;
 
     // Sensors and other devices could also be added here
   }
@@ -76,26 +75,9 @@ public final class Constants {
     public static final double MEGATAG2_ROTATION_STDDEV = 9999999;
   }
 
-  public static final class IntakeConstants {
-    public static final double INTAKE_SPEED = -0.5;
-    public static final double OUTTAKE_SPEED = 1.0;
-  }
+  public static final class IntakeConstants {}
 
-  public static final class ClimbConstants {
-
-    public static final double CLIMB_SPEED = 0.25;
-
-    // SetPoint constants from SetElevatorToPosition.java
-    public static final double HOME_POSITION = 0.0;
-
-    // PID constants and other elevator-related values
-    public static final double ELEVATOR_CONTROL_SCALE = 0.5; // Scale for Copilot.getRightY()
-    public static final double LOWER_ELEVATOR_SPEED = -0.01; // Speed to drop elevator
-
-    // Safety thresholds for home position logic
-
-    public static final double PID_OUTPUT_LIMIT = 0.2;
-  }
+  public static final class ClimbConstants {}
 
   public static final class PathPlanningConstants {
     // From RobotContainer.java
