@@ -10,26 +10,29 @@ import edu.wpi.first.math.util.Units;
  * <p>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
+
+                                                                                                                 
+//  ▄    ▄                 ▄           ▄    ▄        ▀▀█                                                           
+//  ██  ██  ▄▄▄    ▄▄▄   ▄▄█▄▄         ▀▄  ▄▀  ▄▄▄     █    ▄   ▄   ▄▄▄    ▄▄▄                                     
+//  █ ██ █ █▀ ▀█  █   ▀    █            █  █  ▀   █    █    █   █  █▀  █  █   ▀                                    
+//  █ ▀▀ █ █   █   ▀▀▀▄    █            ▀▄▄▀  ▄▀▀▀█    █    █   █  █▀▀▀▀   ▀▀▀▄                                    
+//  █    █ ▀█▄█▀  ▀▄▄▄▀    ▀▄▄           ██   ▀▄▄▀█    ▀▄▄  ▀▄▄▀█  ▀█▄▄▀  ▀▄▄▄▀                                    
+                                                                                                                
+                                                                                                                
+                                                                                                                
+//    ▄▄                        ▄▄▄▄▄  ▀▀█                         █             ▀▀█        █                      
+//    ██    ▄ ▄▄   ▄▄▄          █   ▀█   █     ▄▄▄    ▄▄▄    ▄▄▄   █ ▄▄    ▄▄▄     █     ▄▄▄█   ▄▄▄    ▄ ▄▄   ▄▄▄  
+//   █  █   █▀  ▀ █▀  █         █▄▄▄█▀   █    ▀   █  █▀  ▀  █▀  █  █▀  █  █▀ ▀█    █    █▀ ▀█  █▀  █   █▀  ▀ █   ▀ 
+//   █▄▄█   █     █▀▀▀▀         █        █    ▄▀▀▀█  █      █▀▀▀▀  █   █  █   █    █    █   █  █▀▀▀▀   █      ▀▀▀▄ 
+//  █    █  █     ▀█▄▄▀         █        ▀▄▄  ▀▄▄▀█  ▀█▄▄▀  ▀█▄▄▀  █   █  ▀█▄█▀    ▀▄▄  ▀█▄██  ▀█▄▄▀   █     ▀▄▄▄▀ 
+                                                                                                                
+                                                                                                                
 public final class Constants {
   public static final int BLINKIN_PWM_PORT = 9;
 
   public static final class CAN_IDs {
-    // Drivetrain Motors
-    // public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 1;
-    // public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 2;
-    // public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 3;
-    // public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 4;
-    // public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 5;
-    // public static final int BACK_LEFT_MODULE_STEER_MOTOR = 6;
-    // public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 7;
-    // public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 8;
+    // Drivetrain IDs are handled by TunerConstants and are omitted here
 
-    // // Drivetrain Encoders
-    // public static final int FRONT_LEFT_MODULE_ENCODER = 10;
-    // public static final int FRONT_RIGHT_MODULE_ENCODER = 20;
-    // public static final int BACK_LEFT_MODULE_ENCODER = 70;
-    // public static final int BACK_RIGHT_MODULE_ENCODER = 40;
-    // public static final int PIGEON_IMU = 50;
 
     // Shooter Motors
     public static final int TURRET_MOTOR = 20;
@@ -42,7 +45,8 @@ public final class Constants {
     public static final int HOPPERPUSH_MOTOR = 31;
 
     // Climb Motors
-    public static final int ELEVATOR_MOTOR = 13;
+    public static final int CLIMB_ELEVATOR_MOTOR = 98;
+    public static final int CLIMB_PIVOT_MOTOR = 99;;
 
     // Sensors and other devices could also be added here
   }
@@ -78,6 +82,7 @@ public final class Constants {
   }
 
   public static final class ClimbConstants {
+
     public static final double CLIMB_SPEED = 0.25;
 
     // SetPoint constants from SetElevatorToPosition.java
