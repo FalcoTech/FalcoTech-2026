@@ -37,10 +37,10 @@ import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
 public class Shooter extends SubsystemBase {
-  // private final SparkMax sparkLeft =
-  //     new SparkMax(CAN_IDs.FLYWHEEL_MOTOR_LEFT, MotorType.kBrushless);
-  // private final SparkMax sparkRight =
-  //     new SparkMax(CAN_IDs.FLYWHEEL_MOTOR_RIGHT, MotorType.kBrushless);
+  private final SparkMax sparkLeft =
+      new SparkMax(CAN_IDs.FLYWHEEL_MOTOR_LEFT, MotorType.kBrushless);
+  private final SparkMax sparkRight =
+      new SparkMax(CAN_IDs.FLYWHEEL_MOTOR_RIGHT, MotorType.kBrushless);
 
   private SmartMotorControllerConfig smcConfig =
       new SmartMotorControllerConfig(this)
@@ -63,8 +63,8 @@ public class Shooter extends SubsystemBase {
           .withVoltageCompensation(Volts.of(12))
           .withFollowers(Pair.of(sparkRight, true));
 
-  // private final SmartMotorController motor =
-  //     new SparkWrapper(sparkLeft, DCMotor.getNEO(2), smcConfig);
+  private final SmartMotorController motor =
+      new SparkWrapper(sparkLeft, DCMotor.getNEO(2), smcConfig);
 
   private final FlyWheelConfig flywheelConfig =
       new FlyWheelConfig(motor)
@@ -77,22 +77,22 @@ public class Shooter extends SubsystemBase {
           // Telemetry name and verbosity for the shooter.
           .withTelemetry("FlyWheelMech", TelemetryVerbosity.HIGH);
 
-  // private final FlyWheel flywheel = new FlyWheel(flywheelConfig);
+  private final FlyWheel flywheel = new FlyWheel(flywheelConfig);
 
   /* Creates new Shooter */
   public Shooter() {}
 
-  // @Override
-  // public void periodic() {
-  //   // This method will be called once per scheduler run
-  //   flywheel.updateTelemetry();
-  //   SmartDashboard.putNumber("Flywheel Velocity", flywheel.getSpeed().in(RPM));
-  // }
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+    flywheel.updateTelemetry();
+    SmartDashboard.putNumber("Flywheel Velocity", flywheel.getSpeed().in(RPM));
+  }
 
-  // @Override
-  // public void simulationPeriodic() {
-  //   flywheel.simIterate();
-  // }
+  @Override
+  public void simulationPeriodic() {
+    flywheel.simIterate();
+  }
 
   /**
    * Set the dutycycle of the shooter.
@@ -100,13 +100,13 @@ public class Shooter extends SubsystemBase {
    * @param dutyCycle DutyCycle to set.
    * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
    */
-  // public Command set(double dutyCycle) {
-  //   return flywheel.set(dutyCycle);
-  // }
+  public Command set(double dutyCycle) {
+    return flywheel.set(dutyCycle);
+  }
 
-  // public Command stop() {
-  //   return flywheel.set(0);
-  // }
+  public Command stop() {
+    return flywheel.set(0);
+  }
 
   public Command setVelocity(AngularVelocity targetVelocity) {
     return flywheel.run(targetVelocity);
