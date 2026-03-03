@@ -65,7 +65,8 @@ public final class Constants {
   }
 
   public static final class VisionConstants {
-    public static final String LIMELIGHT_NAME = "";
+    public static final String LIMELIGHT_NAME = "primary"; // Front facing camera
+    public static final String LIMELIGHT2_NAME = "secondary"; // Rear facing camera
     public static final boolean USE_LIMELIGHT = true;
     public static final double VISION_OMEGA_CUTOFF_RPS =
         2.0; // Don't use vision measurements when rotating faster than this
