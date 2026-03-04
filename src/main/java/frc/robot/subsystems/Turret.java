@@ -8,17 +8,20 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.Seconds;
+
+import java.util.function.Supplier;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN_IDs;
-import java.util.function.Supplier;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.mechanisms.config.PivotConfig;
@@ -32,89 +35,86 @@ import yams.motorcontrollers.remote.TalonFXWrapper;
 
 public class Turret extends SubsystemBase {
   // private final SparkMax turretMotor =
-  //     new SparkMax(CAN_IDs.TURRET_MOTOR, SparkMax.MotorType.kBrushless);
+      // new SparkMax(CAN_IDs.TURRET_MOTOR, SparkMax.MotorType.kBrushless);
 
   private final TalonFX turretMotor = new TalonFX(CAN_IDs.TURRET_MOTOR);
-  private TalonFXConfiguration WristMotorConfig = new TalonFXConfiguration();
-  private TalonFXConfigurator WristMotorConfigurator = turretMotor.getConfigurator();
+  // private TalonFXConfiguration WristMotorConfig = new TalonFXConfiguration();
+  // private TalonFXConfigurator WristMotorConfigurator = turretMotor.getConfigurator();
 
-  
-
-  // private final SmartMotorControllerConfig motorConfig =
-  //     new SmartMotorControllerConfig(this)
-  //         .withControlMode(ControlMode.OPEN_LOOP)
-  //         .withClosedLoopController(10, 0, 6)
-  //         // .withLinearClosedLoopController(false)
-  //         // .withFeedforward(new SimpleMotorFeedforward(0.01, 0.0, 0.0))
-  //         // .withClosedLoopTolerance(Degrees.of(0.5)) //doesn't work with TalonFX
-  //         // Configure Motor and Mechanism properties
-  //         .withGearing(new MechanismGearing(GearBox.fromReductionStages(5, 10)))
-  //         .withIdleMode(MotorMode.BRAKE)
-  //         .withMotorInverted(false)
+  private final SmartMotorControllerConfig motorConfig =
+      new SmartMotorControllerConfig(this)
+          .withControlMode(ControlMode.CLOSED_LOOP)
+          .withClosedLoopController(5, 0, 0)
+          // .withLinearClosedLoopController(false)
+          .withFeedforward(new SimpleMotorFeedforward(0.01, 0.0, 0.0))
+          // .withClosedLoopTolerance(Degrees.of(0.5)) //doesn't work with TalonFX
+          // Configure Motor and Mechanism properties
+          // .withGearing(new MechanismGearing(GearBox.fromReductionStages(5, 10)))
+          .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 1)))
+          .withIdleMode(MotorMode.BRAKE)
+          .withMotorInverted(false)
   //         // Setup Telemetry
-  //         .withTelemetry("TurretMotor", TelemetryVerbosity.LOW)
+          .withTelemetry("TurretMotor", TelemetryVerbosity.HIGH)
   //         // Power Optimization
-  //         .withStatorCurrentLimit(Amps.of(40));
-  // // .withClosedLoopRampRate(Seconds.of(0.25))
+          .withStatorCurrentLimit(Amps.of(40))
+  .withClosedLoopRampRate(Seconds.of(0.25));
   // // .withOpenLoopRampRate(Seconds.of(0.25))
   // // .withVoltageCompensation(Volts.of(12)) // also doesn't work with TalonFX
 
-  // private final SmartMotorController turretSMC =
+  private final SmartMotorController turretSMC =
   //     // new SparkWrapper(turretMotor, DCMotor.getNEO(1), motorConfig);
-  //     new TalonFXWrapper(turretMotor, DCMotor.getFalcon500(1), motorConfig);
+      new TalonFXWrapper(turretMotor, DCMotor.getFalcon500(1), motorConfig);
 
-  // private final PivotConfig turretConfig =
-  //     new PivotConfig(turretSMC)
-  //         // .withStartingPosition(Degrees.of(0))
-  //         .withHardLimit(Degrees.of(-20), Degrees.of(220))
-  //         .withSoftLimits(Degrees.of(-20), Degrees.of(220))
-  //         .withTelemetry("TurretMech", TelemetryVerbosity.LOW)
-  //         .withMOI(Meters.of(0.25), Pounds.of(4));
+  private final PivotConfig turretConfig =
+      new PivotConfig(turretSMC)
+          .withStartingPosition(Degrees.of(0))
+          .withHardLimit(Degrees.of(-20), Degrees.of(220))
+          .withSoftLimits(Degrees.of(-20), Degrees.of(220))
+          .withTelemetry("TurretMech", TelemetryVerbosity.HIGH)
+          .withMOI(Meters.of(0.25), Pounds.of(4));
 
-  // private final Pivot turret = new Pivot(turretConfig);
+  private final Pivot turret = new Pivot(turretConfig);
 
   /** Creates a new Turret. */
   public Turret() {
-        WristMotorConfigurator.apply(WristMotorConfig);
-
   }
 
-  // public Command setAngle(Angle targetAngle) {
-  //   return turret.setAngle(targetAngle);
+  public Command setAngle(Angle targetAngle) {
+    return turret.setAngle(targetAngle);
+  }
+
+  public void setAngleDirect(Angle targetAngle) {
+    // turretSMC.setPosition(targetAngle);
+  }
+
+  public Command setAngle(Supplier<Angle> angleSupplier) {
+    return turret.setAngle(angleSupplier);
+  }
+
+  public Angle getAngle() {
+    return turret.getAngle();
+  }
+
+  // public Command sysId() {
+  //   return turret.sysId(
+  //       Volts.of(12), // Max voltage to apply during the test
+  //       Volts.per(Second).of(0.5), // Step voltage per second
+  //       Seconds.of(10) // Duration of the test
+  //       );
   // }
 
-  // public void setAngleDirect(Angle targetAngle) {
-  //   // turretSMC.setPosition(targetAngle);
-  // }
+  public Command setDutyCycle(Supplier<Double> dutyCycleSupplier) {
+    return turret.set(dutyCycleSupplier);
+  }
 
-  // public Command setAngle(Supplier<Angle> angleSupplier) {
-  //   return turret.setAngle(angleSupplier);
-  // }
+  public Command setDutyCycle(double dutyCycle) {
+    return turret.set(dutyCycle);
+  }
+  public Command stop(){
+    return turret.set(0);
+  };
 
-  // public Angle getAngle() {
-  //   return turret.getAngle();
-  // }
-
-  // // public Command sysId() {
-  // //   return turret.sysId(
-  // //       Volts.of(12), // Max voltage to apply during the test
-  // //       Volts.per(Second).of(0.5), // Step voltage per second
-  // //       Seconds.of(10) // Duration of the test
-  // //       );
-  // // }
-
-  // public Command setDutyCycle(Supplier<Double> dutyCycleSupplier) {
-  //   return turret.set(dutyCycleSupplier);
-  // }
-
-  // public Command setDutyCycle(double dutyCycle) {
-  //   return turret.set(dutyCycle);
-  // }
-  // public Command stop(){
-  //   return turret.set(0);
-  // };
-
-  public void setDirectDutyCycle(double speed){
+  public void setDirectDutyCycle(double speed) {
     turretMotor.set(speed);
   }
 
@@ -128,13 +128,13 @@ public class Turret extends SubsystemBase {
     // Station. If you need telemetry, call updateTelemetry() once at init
     // or from a dedicated off-main-thread task.
     // telemetry refresh removed from periodic to avoid blocking NT/remote calls
-    // turret.updateTelemetry();
+    turret.updateTelemetry();
     // This method will be called once per scheduler run
 
   }
 
   @Override
   public void simulationPeriodic() {
-    // turret.simIterate();
+    turret.simIterate();
   }
 }

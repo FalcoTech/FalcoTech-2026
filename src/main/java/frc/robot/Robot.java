@@ -7,7 +7,6 @@ package frc.robot;
 import com.ctre.phoenix6.HootAutoReplay;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -42,8 +41,10 @@ public class Robot extends TimedRobot {
       double headingDeg = driveState.Pose.getRotation().getDegrees();
       double omegaRps = Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
 
-      // LimelightHelpers.SetRobotOrientation(VisionConstants.LIMELIGHT_NAME, headingDeg, 0, 0, 0, 0, 0);
-      var llMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(VisionConstants.LIMELIGHT_NAME);
+      // LimelightHelpers.SetRobotOrientation(VisionConstants.LIMELIGHT_NAME, headingDeg, 0, 0, 0,
+      // 0, 0);
+      var llMeasurement =
+          LimelightHelpers.getBotPoseEstimate_wpiBlue(VisionConstants.LIMELIGHT_NAME);
       if (llMeasurement != null && llMeasurement.tagCount > 0 && Math.abs(omegaRps) < 2.0) {
         RobotContainer.drivetrain.addVisionMeasurement(
             llMeasurement.pose, llMeasurement.timestampSeconds);
@@ -57,8 +58,10 @@ public class Robot extends TimedRobot {
       double headingDeg = driveState.Pose.getRotation().getDegrees();
       double omegaRps = Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
 
-      LimelightHelpers.SetRobotOrientation(VisionConstants.LIMELIGHT_NAME, headingDeg, 0, 0, 0, 0, 0);
-      var llMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.LIMELIGHT_NAME);
+      LimelightHelpers.SetRobotOrientation(
+          VisionConstants.LIMELIGHT_NAME, headingDeg, 0, 0, 0, 0, 0);
+      var llMeasurement =
+          LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.LIMELIGHT_NAME);
       if (llMeasurement != null && llMeasurement.tagCount > 0 && Math.abs(omegaRps) < 2.0) {
         RobotContainer.drivetrain.addVisionMeasurement(
             llMeasurement.pose, llMeasurement.timestampSeconds, VecBuilder.fill(.5, .5, 9999999));

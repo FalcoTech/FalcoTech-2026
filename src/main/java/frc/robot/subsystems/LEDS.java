@@ -4,12 +4,9 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import java.util.function.DoubleSupplier;
 
 /**
  * LED subsystem driven by a REV Blinkin LED Driver.
@@ -86,7 +83,7 @@ public class LEDS extends SubsystemBase {
   // // ---- Constructor -----------------------------------------------------------
 
   public LEDS() {
-  //   animationTimer.start();
+    //   animationTimer.start();
   }
 
   // // ---- Periodic --------------------------------------------------------------
@@ -112,8 +109,10 @@ public class LEDS extends SubsystemBase {
   // // ---- Public API ------------------------------------------------------------
 
   // /**
-  //  * Stores the robot's alliance so that {@link #showAlliance()} and the post-alliance-shift restore
-  //  * use the correct color. Call this once after the Driver Station connection is established (e.g.
+  //  * Stores the robot's alliance so that {@link #showAlliance()} and the post-alliance-shift
+  // restore
+  //  * use the correct color. Call this once after the Driver Station connection is established
+  // (e.g.
   //  * in {@code teleopInit}).
   //  *
   //  * @param isRed {@code true} for red alliance, {@code false} for blue.
@@ -134,7 +133,8 @@ public class LEDS extends SubsystemBase {
   //  *   <li>1.0 → green (near-certain)
   //  * </ul>
   //  *
-  //  * <p>The mapping is a simple linear interpolation through the Blinkin's solid-color set-points,
+  //  * <p>The mapping is a simple linear interpolation through the Blinkin's solid-color
+  // set-points,
   //  * so the color transitions smoothly as the likelihood changes. All likelihood calculation is
   //  * handled outside this subsystem; the LED code only renders what it receives.
   //  *
@@ -150,7 +150,8 @@ public class LEDS extends SubsystemBase {
 
   // /**
   //  * Returns a command that flashes the strip between red and blue while it runs, then reverts to
-  //  * the robot's alliance color when it ends. Bind this to a trigger that is active for the duration
+  //  * the robot's alliance color when it ends. Bind this to a trigger that is active for the
+  // duration
   //  * of the alliance-shift game period, e.g.:
   //  *
   //  * <pre>{@code
@@ -167,7 +168,8 @@ public class LEDS extends SubsystemBase {
   // }
 
   // /**
-  //  * Returns a command that switches to a solid alliance color (red or blue). Runs once; the color
+  //  * Returns a command that switches to a solid alliance color (red or blue). Runs once; the
+  // color
   //  * holds until another command changes the mode.
   //  */
   // public Command showAlliance() {
@@ -182,7 +184,8 @@ public class LEDS extends SubsystemBase {
   // // ---- Private helpers -------------------------------------------------------
 
   // /**
-  //  * Linearly interpolates a Blinkin PWM set-point from {@link #LIKELIHOOD_LOW_PWM} (red) to {@link
+  //  * Linearly interpolates a Blinkin PWM set-point from {@link #LIKELIHOOD_LOW_PWM} (red) to
+  // {@link
   //  * #LIKELIHOOD_HIGH_PWM} (green). The Blinkin's solid-color block is monotone between those
   //  * values, so intermediate PWM values pass through orange, gold, and yellow automatically.
   //  */
