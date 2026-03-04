@@ -1,6 +1,17 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.FeetPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Pounds;
+
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Mass;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -74,7 +85,32 @@ public final class Constants {
 
   public static final class IntakeConstants {}
 
-  public static final class ClimbConstants {}
+  public static final class ClimbConstants {
+    public static final Current LIFTOFF_THRESHOLD = Amps.of(20); // Number of amps seen with Robot weight
+
+    // Elevator motor closed loop controller
+    public static final double ELEVATOR_kP = 4;
+    public static final double ELEVATOR_kI = 0;
+    public static final double ELEVATOR_kD = 0;
+    public static final LinearVelocity ELEVATOR_MAX_VELOCITY = FeetPerSecond.of(0.5);
+    public static final LinearAcceleration ELEVATOR_MAX_ACCELERATION = FeetPerSecondPerSecond.of(1);
+
+    // Elevator feedforward gains (kS, kG, kV)
+    public static final double ELEVATOR_FF_kS = 0;
+    public static final double ELEVATOR_FF_kG = 0;
+    public static final double ELEVATOR_FF_kV = 0;
+
+    // Elevator motor hardware config
+    public static final Current ELEVATOR_STATOR_CURRENT_LIMIT = Amps.of(40);
+    public static final String ELEVATOR_GEARBOX_STAGES = "1:100";
+    public static final String ELEVATOR_SPROCKET_STAGES = "1:4";
+
+    // Elevator physical properties
+    public static final Distance ELEVATOR_STARTING_HEIGHT = Inches.of(0.5);
+    public static final Distance ELEVATOR_MIN_HEIGHT = Inches.of(6);
+    public static final Distance ELEVATOR_MAX_HEIGHT = Inches.of(12);
+    public static final Mass ELEVATOR_MASS = Pounds.of(12);
+  }
 
   public static final class PathPlanningConstants {
     // From RobotContainer.java

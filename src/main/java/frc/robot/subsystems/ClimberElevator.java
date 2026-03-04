@@ -4,12 +4,6 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.FeetPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Pounds;
-
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
@@ -18,6 +12,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN_IDs;
+import frc.robot.Constants.ClimbConstants;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.gearing.Sprocket;
@@ -35,14 +30,14 @@ public class ClimberElevator extends SubsystemBase {
   private SmartMotorControllerConfig climbElevConfig =
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
-          .withClosedLoopController(4, 0, 0, FeetPerSecond.of(0.5), FeetPerSecondPerSecond.of(1))
-          .withFeedforward(new ElevatorFeedforward(0, 0, 0))
+          .withClosedLoopController(ClimbConstants.ELEVATOR_kP, ClimbConstants.ELEVATOR_kI, ClimbConstants.ELEVATOR_kD, ClimbConstants.ELEVATOR_MAX_VELOCITY, ClimbConstants.ELEVATOR_MAX_ACCELERATION)
+          .withFeedforward(new ElevatorFeedforward(ClimbConstants.ELEVATOR_FF_kS, ClimbConstants.ELEVATOR_FF_kG, ClimbConstants.ELEVATOR_FF_kV))
           .withTelemetry("ClimberElevMotor", TelemetryVerbosity.HIGH)
           .withGearing(
-              new MechanismGearing(GearBox.fromStages("1:100"), Sprocket.fromStages("1:4")))
+              new MechanismGearing(GearBox.fromStages(ClimbConstants.ELEVATOR_GEARBOX_STAGES), Sprocket.fromStages(ClimbConstants.ELEVATOR_SPROCKET_STAGES)))
           .withMotorInverted(false)
           .withIdleMode(MotorMode.BRAKE)
-          .withStatorCurrentLimit(Amps.of(40));
+          .withStatorCurrentLimit(ClimbConstants.ELEVATOR_STATOR_CURRENT_LIMIT);
 
   private SparkMax sparkClimbElev =
       new SparkMax(CAN_IDs.CLIMB_ELEVATOR_MOTOR, MotorType.kBrushless);
@@ -52,10 +47,10 @@ public class ClimberElevator extends SubsystemBase {
 
   private ElevatorConfig climbElevatorConfig =
       new ElevatorConfig(climbElevMotorController)
-          .withStartingHeight(Inches.of(0.5))
-          .withHardLimits(Inches.of(6), Inches.of(12))
+          .withStartingHeight(ClimbConstants.ELEVATOR_STARTING_HEIGHT)
+          .withHardLimits(ClimbConstants.ELEVATOR_MIN_HEIGHT, ClimbConstants.ELEVATOR_MAX_HEIGHT)
           .withTelemetry("ClimbElevator", TelemetryVerbosity.HIGH)
-          .withMass(Pounds.of(12));
+          .withMass(ClimbConstants.ELEVATOR_MASS);
 
   private Elevator climbElev = new Elevator(climbElevatorConfig);
 
@@ -110,4 +105,6 @@ public class ClimberElevator extends SubsystemBase {
   public Command set(double dutycycle) {
     return climbElev.set(dutycycle);
   }
+
+  // TODO: Add command to handle a switch to duty cycle once motor is loaded with robot weight
 }
