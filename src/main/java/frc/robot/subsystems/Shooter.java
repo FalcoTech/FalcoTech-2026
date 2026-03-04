@@ -15,6 +15,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -46,7 +47,7 @@ public class Shooter extends SubsystemBase {
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
           // Feedback Constants (PID Constants)
-          .withClosedLoopController(.15, 0, 0, RPM.of(7000), DegreesPerSecondPerSecond.of(1000))
+          .withClosedLoopController(2, 0, 0, RPM.of(7000), DegreesPerSecondPerSecond.of(1000))
           // .withSimClosedLoopController(
           //     1, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
           .withFeedforward(new SimpleMotorFeedforward(0, 0.124, 0.02))
@@ -80,7 +81,13 @@ public class Shooter extends SubsystemBase {
   private final FlyWheel flywheel = new FlyWheel(flywheelConfig);
 
   /* Creates new Shooter */
-  public Shooter() {}
+  public Shooter() {
+    // Idle mode is burned to flash via REV Hardware Client — verify it here at startup.
+    // If this warning fires, reconnect the motor to the REV client and set coast mode, then burn.
+    if (sparkRight.configAccessor.getIdleMode() != IdleMode.kCoast) {
+      System.err.println("[Shooter] WARNING: Right flywheel follower idle mode is not Coast! Burn with REV Hardware Client.");
+    }
+  }
 
   @Override
   public void periodic() {
@@ -137,23 +144,14 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command runVelocityStepTest() {
-    // This command doesn't work the way I want it to yet
-    final double STEP_DURATION = 0.25;
-    return flywheel
-        .run(RPM.of(1000))
-        .withTimeout(STEP_DURATION)
-        .andThen(flywheel.run(RPM.of(2000)))
-        .withTimeout(STEP_DURATION)
-        .andThen(flywheel.run(RPM.of(3000)))
-        .withTimeout(STEP_DURATION)
-        .andThen(flywheel.run(RPM.of(4000)))
-        .withTimeout(STEP_DURATION)
-        .andThen(flywheel.run(RPM.of(3000)))
-        .withTimeout(STEP_DURATION)
-        .andThen(flywheel.run(RPM.of(2000)))
-        .withTimeout(STEP_DURATION)
-        .andThen(flywheel.run(RPM.of(1000)))
-        .withTimeout(STEP_DURATION)
+    final double STEP_DURATION = 5;
+    return flywheel.run(RPM.of(1000)).withTimeout(STEP_DURATION)
+        .andThen(flywheel.run(RPM.of(2000)).withTimeout(STEP_DURATION))
+        .andThen(flywheel.run(RPM.of(3000)).withTimeout(STEP_DURATION))
+        .andThen(flywheel.run(RPM.of(4000)).withTimeout(STEP_DURATION))
+        .andThen(flywheel.run(RPM.of(3000)).withTimeout(STEP_DURATION))
+        .andThen(flywheel.run(RPM.of(2000)).withTimeout(STEP_DURATION))
+        .andThen(flywheel.run(RPM.of(1000)).withTimeout(STEP_DURATION))
         .andThen(flywheel.run(RPM.of(0)));
   }
 }
