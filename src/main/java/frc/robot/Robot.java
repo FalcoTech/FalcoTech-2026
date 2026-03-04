@@ -30,49 +30,42 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     // MegaTag2 with dual Limelights
-    // if (VisionConstants.USE_LIMELIGHT) {
-    //   var driveState = RobotContainer.drivetrain.getState();
-    //   double headingDeg = driveState.Pose.getRotation().getDegrees();
-    //   double omegaRps = Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
-
-      // LimelightHelpers.SetRobotOrientation(VisionConstants.LIMELIGHT_NAME, headingDeg, 0, 0, 0,
-      // 0, 0);
-      var llMeasurement =
-          LimelightHelpers.getBotPoseEstimate_wpiBlue(VisionConstants.LIMELIGHT_NAME);
-      if (llMeasurement != null && llMeasurement.tagCount > 0 && Math.abs(omegaRps) < 2.0) {
-        RobotContainer.drivetrain.addVisionMeasurement(
-            llMeasurement.pose, llMeasurement.timestampSeconds);
-      }
-    }
-
-    //   // Only apply vision when not spinning fast
-    //   if (Math.abs(omegaRps) < VisionConstants.VISION_OMEGA_CUTOFF_RPS) {
-    //     var mainMeasurement =
-    //         LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.LIMELIGHT_MAIN);
-    //     if (mainMeasurement != null && mainMeasurement.tagCount > 0) {
-    //       RobotContainer.drivetrain.addVisionMeasurement(
-    //           mainMeasurement.pose,
-    //           mainMeasurement.timestampSeconds,
-    //           VecBuilder.fill(
-    //               VisionConstants.MEGATAG2_XY_STDDEV,
-    //               VisionConstants.MEGATAG2_XY_STDDEV,
-    //               VisionConstants.MEGATAG2_ROTATION_STDDEV));
-    //     }
-
-    if (enableMegaTag2) {
+    if (VisionConstants.USE_LIMELIGHT) {
       var driveState = RobotContainer.drivetrain.getState();
       double headingDeg = driveState.Pose.getRotation().getDegrees();
       double omegaRps = Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
 
+      // Feed Pigeon heading to both Limelights (required before MegaTag2 pose request)
       LimelightHelpers.SetRobotOrientation(
-          VisionConstants.LIMELIGHT_NAME, headingDeg, 0, 0, 0, 0, 0);
-      var llMeasurement =
-          LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.LIMELIGHT_NAME);
-      if (llMeasurement != null && llMeasurement.tagCount > 0 && Math.abs(omegaRps) < 2.0) {
-        RobotContainer.drivetrain.addVisionMeasurement(
-            llMeasurement.pose, llMeasurement.timestampSeconds, VecBuilder.fill(.5, .5, 9999999));
-        // RobotContainer.drivetrain.addVisionMeasurement(llMeasurement.pose,
-        // llMeasurement.timestampSeconds);
+          VisionConstants.LIMELIGHT_MAIN, headingDeg, 0, 0, 0, 0, 0);
+      LimelightHelpers.SetRobotOrientation(
+          VisionConstants.LIMELIGHT_REAR, headingDeg, 0, 0, 0, 0, 0);
+
+      // Only apply vision when not spinning fast
+      if (Math.abs(omegaRps) < VisionConstants.VISION_OMEGA_CUTOFF_RPS) {
+        var mainMeasurement =
+            LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.LIMELIGHT_MAIN);
+        if (mainMeasurement != null && mainMeasurement.tagCount > 0) {
+          RobotContainer.drivetrain.addVisionMeasurement(
+              mainMeasurement.pose,
+              mainMeasurement.timestampSeconds,
+              VecBuilder.fill(
+                  VisionConstants.MEGATAG2_XY_STDDEV,
+                  VisionConstants.MEGATAG2_XY_STDDEV,
+                  VisionConstants.MEGATAG2_ROTATION_STDDEV));
+        }
+
+        var rearMeasurement =
+            LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.LIMELIGHT_REAR);
+        if (rearMeasurement != null && rearMeasurement.tagCount > 0) {
+          RobotContainer.drivetrain.addVisionMeasurement(
+              rearMeasurement.pose,
+              rearMeasurement.timestampSeconds,
+              VecBuilder.fill(
+                  VisionConstants.MEGATAG2_XY_STDDEV,
+                  VisionConstants.MEGATAG2_XY_STDDEV,
+                  VisionConstants.MEGATAG2_ROTATION_STDDEV));
+        }
       }
     }
   }
@@ -85,13 +78,13 @@ public class Robot extends TimedRobot {
     // Use MegaTag1 to seed heading while robot is stationary pre-match.
     // MegaTag1 solves full pose (including rotation) from tags alone,
     // giving MegaTag2 an accurate heading baseline once the match starts.
-    // if (VisionConstants.USE_LIMELIGHT) {
-    //   var llMeasurement =
-    //       LimelightHelpers.getBotPoseEstimate_wpiBlue(VisionConstants.LIMELIGHT_MAIN);
-    //   if (llMeasurement != null && llMeasurement.tagCount >= 2) {
-    //     RobotContainer.drivetrain.resetPose(llMeasurement.pose);
-    //   }
-    // }
+    if (VisionConstants.USE_LIMELIGHT) {
+      var llMeasurement =
+          LimelightHelpers.getBotPoseEstimate_wpiBlue(VisionConstants.LIMELIGHT_MAIN);
+      if (llMeasurement != null && llMeasurement.tagCount >= 2) {
+        RobotContainer.drivetrain.resetPose(llMeasurement.pose);
+      }
+    }
   }
 
   @Override
