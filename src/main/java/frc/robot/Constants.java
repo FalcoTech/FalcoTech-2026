@@ -62,10 +62,14 @@ public final class Constants {
   }
 
   public static final class VisionConstants {
-    public static final String LIMELIGHT_NAME = "";
+    public static final String LIMELIGHT_MAIN = "primary"; // Front facing Limelight 3
+    public static final String LIMELIGHT_REAR = "secondary"; // Rear facing Limelight 2+
     public static final boolean USE_LIMELIGHT = true;
-    public static final double VISION_OMEGA_CUTOFF_RPS =
-        2.0; // Don't use vision measurements when rotating faster than this
+    // Don't use vision measurements when rotating faster than this
+    public static final double VISION_OMEGA_CUTOFF_RPS = 2.0;
+    // MegaTag2 standard deviations (trust XY from vision, trust rotation from Pigeon)
+    public static final double MEGATAG2_XY_STDDEV = 0.5;
+    public static final double MEGATAG2_ROTATION_STDDEV = 9999999;
   }
 
   public static final class IntakeConstants {
