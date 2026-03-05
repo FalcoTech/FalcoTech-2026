@@ -29,21 +29,19 @@ public class ClimberPivot extends SubsystemBase {
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
           .withClosedLoopController(
-              ClimbConstants.ARM_PIVOT_kP,
-              ClimbConstants.ARM_PIVOT_kI,
-              ClimbConstants.ARM_PIVOT_kD,
-              ClimbConstants.ARM_PIVOT_MAX_VELOCITY,
-              ClimbConstants.ARM_PIVOT_MAX_ACCELERATION)
+              ClimbConstants.ARM_kP,
+              ClimbConstants.ARM_kI,
+              ClimbConstants.ARM_kD,
+              ClimbConstants.ARM_MAX_VELOCITY,
+              ClimbConstants.ARM_MAX_ACCELERATION)
           .withFeedforward(
               new ArmFeedforward(
-                  ClimbConstants.ArmPivot_FF_kS,
-                  ClimbConstants.ArmPivot_FF_kG,
-                  ClimbConstants.ArmPivot_FF_kV))
+                  ClimbConstants.ARM_FF_kS, ClimbConstants.ARM_FF_kG, ClimbConstants.ARM_FF_kV))
           .withTelemetry("ClimberArmMotor", TelemetryVerbosity.HIGH)
           .withGearing(
               new MechanismGearing(
-                  GearBox.fromStages(ClimbConstants.Arm_GEARBOX_STAGES),
-                  Sprocket.fromStages(ClimbConstants.Arm_SPROCKET_STAGES)))
+                  GearBox.fromStages(ClimbConstants.ARM_GEARBOX_STAGES),
+                  Sprocket.fromStages(ClimbConstants.ARM_SPROCKET_STAGES)))
           .withMotorInverted(false)
           .withIdleMode(MotorMode.BRAKE)
           .withStatorCurrentLimit(ClimbConstants.ARM_STATOR_CURRENT_LIMIT);
@@ -56,9 +54,9 @@ public class ClimberPivot extends SubsystemBase {
   private ArmConfig climbArmConfig =
       new ArmConfig(climbArmMotorController)
           // .withStartingPosition(Degrees.of(ClimbConstants.Arm_STARTING_HEIGHT))
-          .withHardLimit(ClimbConstants.Arm_MIN_Position, ClimbConstants.Arm_MAX_Position)
+          .withHardLimit(ClimbConstants.ARM_MIN_Position, ClimbConstants.ARM_MAX_Position)
           .withTelemetry("ClimbArm", TelemetryVerbosity.HIGH)
-          .withMass(ClimbConstants.Arm_MASS);
+          .withMass(ClimbConstants.ARM_MASS);
 
   private Arm climbArm = new Arm(climbArmConfig);
 

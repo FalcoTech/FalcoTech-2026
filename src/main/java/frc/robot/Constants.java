@@ -2,6 +2,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.FeetPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
@@ -9,6 +11,8 @@ import static edu.wpi.first.units.Units.Pounds;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
@@ -107,7 +111,7 @@ public final class Constants {
     // Elevator motor hardware config
     public static final Current ELEVATOR_STATOR_CURRENT_LIMIT = Amps.of(40);
     public static final String ELEVATOR_GEARBOX_STAGES = "1:100";
-    public static final String ELEVATOR_SPROCKET_STAGES = "1:4";
+    public static final String ELEVATOR_SPROCKET_STAGES = "1:1";
 
     // Elevator physical properties
     public static final Distance ELEVATOR_STARTING_HEIGHT = Inches.of(0.5);
@@ -115,33 +119,27 @@ public final class Constants {
     public static final Distance ELEVATOR_MAX_HEIGHT = Inches.of(12);
     public static final Mass ELEVATOR_MASS = Pounds.of(12);
 
-    public static final double ARM_PIVOT_kP = 0;
+    // Arm motor closed loop controller
+    public static final double ARM_kP = 0;
+    public static final double ARM_kI = 0;
+    public static final double ARM_kD = 0;
+    public static final AngularVelocity ARM_MAX_VELOCITY = DegreesPerSecond.of(50);
+    public static final AngularAcceleration ARM_MAX_ACCELERATION = DegreesPerSecondPerSecond.of(25);
 
-    public static final double ARM_PIVOT_kI = 0;
+    // Arm feedforward gains (kS, kG, kV)
+    public static final double ARM_FF_kS = 0;
+    public static final double ARM_FF_kG = 0;
+    public static final double ARM_FF_kV = 0;
 
-    public static final double ArmPivot_FF_kG = 0;
+    // Arm motor hardware config
+    public static final Current ARM_STATOR_CURRENT_LIMIT = Amps.of(40);
+    public static final String ARM_GEARBOX_STAGES = "1:100";
+    public static final String ARM_SPROCKET_STAGES = "1:4";
 
-    public static final double ARM_PIVOT_kD = 0;
-
-    public static final double ArmPivot_FF_kV = 0;
-
-    public static final LinearVelocity ARM_PIVOT_MAX_VELOCITY = null;
-
-    public static final LinearAcceleration ARM_PIVOT_MAX_ACCELERATION = null;
-
-    public static final String Arm_SPROCKET_STAGES = null;
-
-    public static final String Arm_GEARBOX_STAGES = null;
-
-    public static final Current ARM_STATOR_CURRENT_LIMIT = null;
-
-    public static final Mass Arm_MASS = Pounds.of(5);
-
-    public static final Angle Arm_MIN_Position = Degrees.of(0);
-
-    public static final Angle Arm_MAX_Position = Degrees.of(90);
-
-    public static double ArmPivot_FF_kS;
+    // Arm physical properties
+    public static final Angle ARM_MIN_Position = Degrees.of(0);
+    public static final Angle ARM_MAX_Position = Degrees.of(90);
+    public static final Mass ARM_MASS = Pounds.of(2.5);
   }
 
   public static final class PathPlanningConstants {
