@@ -35,11 +35,10 @@ public final class Constants {
     public static final int TURRET_MOTOR = 20;
     public static final int FLYWHEEL_MOTOR_LEFT = 21;
     public static final int FLYWHEEL_MOTOR_RIGHT = 22;
-    
 
     // Intake & Feeder Motors
     public static final int INTAKE_MOTOR = 50;
-    public static final int FEEDER_MOTOR = 12;
+    public static final int FEEDER_MOTOR = 30;
 
     // Climb Motors
     public static final int ELEVATOR_MOTOR = 13;

@@ -10,18 +10,14 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Seconds;
 
-import java.util.function.Supplier;
-
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN_IDs;
+import java.util.function.Supplier;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.mechanisms.config.PivotConfig;
@@ -35,7 +31,7 @@ import yams.motorcontrollers.remote.TalonFXWrapper;
 
 public class Turret extends SubsystemBase {
   // private final SparkMax turretMotor =
-      // new SparkMax(CAN_IDs.TURRET_MOTOR, SparkMax.MotorType.kBrushless);
+  // new SparkMax(CAN_IDs.TURRET_MOTOR, SparkMax.MotorType.kBrushless);
 
   private final TalonFX turretMotor = new TalonFX(CAN_IDs.TURRET_MOTOR);
   // private TalonFXConfiguration WristMotorConfig = new TalonFXConfiguration();
@@ -53,16 +49,16 @@ public class Turret extends SubsystemBase {
           .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 1)))
           .withIdleMode(MotorMode.BRAKE)
           .withMotorInverted(false)
-  //         // Setup Telemetry
+          //         // Setup Telemetry
           .withTelemetry("TurretMotor", TelemetryVerbosity.HIGH)
-  //         // Power Optimization
+          //         // Power Optimization
           .withStatorCurrentLimit(Amps.of(40))
-  .withClosedLoopRampRate(Seconds.of(0.25));
+          .withClosedLoopRampRate(Seconds.of(0.25));
   // // .withOpenLoopRampRate(Seconds.of(0.25))
   // // .withVoltageCompensation(Volts.of(12)) // also doesn't work with TalonFX
 
   private final SmartMotorController turretSMC =
-  //     // new SparkWrapper(turretMotor, DCMotor.getNEO(1), motorConfig);
+      //     // new SparkWrapper(turretMotor, DCMotor.getNEO(1), motorConfig);
       new TalonFXWrapper(turretMotor, DCMotor.getFalcon500(1), motorConfig);
 
   private final PivotConfig turretConfig =
@@ -76,8 +72,7 @@ public class Turret extends SubsystemBase {
   private final Pivot turret = new Pivot(turretConfig);
 
   /** Creates a new Turret. */
-  public Turret() {
-  }
+  public Turret() {}
 
   public Command setAngle(Angle targetAngle) {
     return turret.setAngle(targetAngle);
@@ -110,9 +105,11 @@ public class Turret extends SubsystemBase {
   public Command setDutyCycle(double dutyCycle) {
     return turret.set(dutyCycle);
   }
-  public Command stop(){
+
+  public Command stop() {
     return turret.set(0);
-  };
+  }
+  ;
 
   public void setDirectDutyCycle(double speed) {
     turretMotor.set(speed);

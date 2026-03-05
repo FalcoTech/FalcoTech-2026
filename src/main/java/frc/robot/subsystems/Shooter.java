@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
@@ -21,7 +20,6 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN_IDs;
@@ -39,24 +37,23 @@ import yams.motorcontrollers.local.SparkWrapper;
 
 public class Shooter extends SubsystemBase {
   private final SparkMax sparkLeft =
-  new SparkMax(CAN_IDs.FLYWHEEL_MOTOR_LEFT, MotorType.kBrushless);
+      new SparkMax(CAN_IDs.FLYWHEEL_MOTOR_LEFT, MotorType.kBrushless);
   private final SparkMax sparkRight =
-  new SparkMax(CAN_IDs.FLYWHEEL_MOTOR_RIGHT, MotorType.kBrushless);
+      new SparkMax(CAN_IDs.FLYWHEEL_MOTOR_RIGHT, MotorType.kBrushless);
 
   private SmartMotorControllerConfig smcConfig =
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
-  //         // Feedback Constants (PID Constants)
+          //         // Feedback Constants (PID Constants)
           .withClosedLoopController(0.02, 0, 0, RPM.of(1000), DegreesPerSecondPerSecond.of(7000))
-          .withSimClosedLoopController(
-              .2, 0, 0, RPM.of(5700), DegreesPerSecondPerSecond.of(11000))
+          .withSimClosedLoopController(.2, 0, 0, RPM.of(5700), DegreesPerSecondPerSecond.of(11000))
           .withFeedforward(new SimpleMotorFeedforward(0, .124, 0))
           .withSimFeedforward(new SimpleMotorFeedforward(0, .124, 0))
-  //         // Telemetry name and verbosity level
+          //         // Telemetry name and verbosity level
 
           .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 1)))
 
-  //         // Motor properties to prevent over currenting.
+          //         // Motor properties to prevent over currenting.
           .withMotorInverted(true)
           .withIdleMode(MotorMode.COAST)
           .withStatorCurrentLimit(Amps.of(40))
@@ -76,16 +73,14 @@ public class Shooter extends SubsystemBase {
           // Maximum speed of the shooter.
           .withUpperSoftLimit(RPM.of(2000))
           .withLowerSoftLimit(RPM.of(0))
-          
+
           // Telemetry name and verbosity for the shooter.
           .withTelemetry("FlyWheelMech", TelemetryVerbosity.HIGH);
 
   private final FlyWheel flywheel = new FlyWheel(flywheelConfig);
 
   /* Creates new Shooter */
-  public Shooter() {
-
-  }
+  public Shooter() {}
 
   @Override
   public void periodic() {
@@ -105,7 +100,6 @@ public class Shooter extends SubsystemBase {
    * @param dutyCycle DutyCycle to set.
    * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
    */
-
   public Command set(double dutyCycle) {
     return flywheel.set(dutyCycle);
   }

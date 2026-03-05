@@ -10,7 +10,9 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.function.Supplier;
 
 public class Feeder extends SubsystemBase {
   private final SparkMax feedermotor = new SparkMax(30, MotorType.kBrushless);
@@ -19,14 +21,30 @@ public class Feeder extends SubsystemBase {
 
   /** Creates a new Feeder. */
   public Feeder() {
-    feedermotorconfig.idleMode(IdleMode.kBrake);
+    // feedermotorconfig.idleMode(IdleMode.kBrake);
 
-    feedermotor.configure(
-        feedermotorconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    // feedermotor.configure(
+        // feedermotorconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+
+  public void runShooterVoid(double speed) {
+    feedermotor.set(speed);
+  }
+
+  public Command runFeeder(double speed) {
+    return run(() -> feedermotor.set(speed));
+  }
+
+  public Command runFeeder(Supplier<Double> speedSupplier) {
+    return run(() -> feedermotor.set(speedSupplier.get()));
+  }
+
+  public Command stopFeeder() {
+    return run(() -> feedermotor.set(0));
   }
 }

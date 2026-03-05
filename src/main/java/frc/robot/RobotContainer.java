@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PathPlanningConstants;
+import frc.robot.commands.runFeeder;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
@@ -151,11 +152,17 @@ public class RobotContainer {
 
     turret.setDefaultCommand(turret.stop());
 
-    Copilot.x().whileTrue(turret.setAngle(Degrees.of(180)));
-    Copilot.y().whileTrue(turret.setAngle(Degrees.of(90)));
-    Copilot.b().whileTrue(turret.setAngle(Degrees.of(0)));
-   
+    // Copilot.x().whileTrue(turret.setAngle(Degrees.of(180)));
+    // Copilot.y().whileTrue(turret.setAngle(Degrees.of(90)));
+    // Copilot.b().whileTrue(turret.setAngle(Degrees.of(0)));
 
+    // feeder.setDefaultCommand(feeder.runFeeder(Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()));
+    // feeder.setDefaultCommand(new runFeeder((Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis())));
+    feeder.setDefaultCommand(feeder.stopFeeder());
+
+    Copilot.b().whileTrue(feeder.runFeeder(1));
+    Copilot.x().whileTrue(feeder.runFeeder(-1));
+    Copilot.y().whileTrue(feeder.runFeeder(0));
 
     // Copilot.povUp()
     //     .whileTrue(
