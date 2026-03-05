@@ -26,15 +26,26 @@ import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
 public class ClimberElevator extends SubsystemBase {
-  /** Creates a new ClimberElevator. */
+
   private SmartMotorControllerConfig climbElevConfig =
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
-          .withClosedLoopController(ClimbConstants.ELEVATOR_kP, ClimbConstants.ELEVATOR_kI, ClimbConstants.ELEVATOR_kD, ClimbConstants.ELEVATOR_MAX_VELOCITY, ClimbConstants.ELEVATOR_MAX_ACCELERATION)
-          .withFeedforward(new ElevatorFeedforward(ClimbConstants.ELEVATOR_FF_kS, ClimbConstants.ELEVATOR_FF_kG, ClimbConstants.ELEVATOR_FF_kV))
+          .withClosedLoopController(
+              ClimbConstants.ELEVATOR_kP,
+              ClimbConstants.ELEVATOR_kI,
+              ClimbConstants.ELEVATOR_kD,
+              ClimbConstants.ELEVATOR_MAX_VELOCITY,
+              ClimbConstants.ELEVATOR_MAX_ACCELERATION)
+          .withFeedforward(
+              new ElevatorFeedforward(
+                  ClimbConstants.ELEVATOR_FF_kS,
+                  ClimbConstants.ELEVATOR_FF_kG,
+                  ClimbConstants.ELEVATOR_FF_kV))
           .withTelemetry("ClimberElevMotor", TelemetryVerbosity.HIGH)
           .withGearing(
-              new MechanismGearing(GearBox.fromStages(ClimbConstants.ELEVATOR_GEARBOX_STAGES), Sprocket.fromStages(ClimbConstants.ELEVATOR_SPROCKET_STAGES)))
+              new MechanismGearing(
+                  GearBox.fromStages(ClimbConstants.ELEVATOR_GEARBOX_STAGES),
+                  Sprocket.fromStages(ClimbConstants.ELEVATOR_SPROCKET_STAGES)))
           .withMotorInverted(false)
           .withIdleMode(MotorMode.BRAKE)
           .withStatorCurrentLimit(ClimbConstants.ELEVATOR_STATOR_CURRENT_LIMIT);
@@ -54,6 +65,7 @@ public class ClimberElevator extends SubsystemBase {
 
   private Elevator climbElev = new Elevator(climbElevatorConfig);
 
+  /** Creates a new ClimberElevator. */
   public ClimberElevator() {}
 
   @Override
