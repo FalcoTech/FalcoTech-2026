@@ -87,7 +87,7 @@ public class RobotContainer {
     RegisterNamedCommands();
     autoChooser = AutoBuilder.buildAutoChooser("Tests");
     SmartDashboard.putData("Auto Mode", autoChooser);
-
+    climbElevator.setDefaultCommand(climbElevator.set(0));
     configureBindings();
 
     SmartDashboard.putBoolean("Enable MegaTag2", false);
@@ -174,8 +174,8 @@ public class RobotContainer {
 
     Copilot.povDown().whileTrue(climbElevator.setHeight(Inches.of(3)));
     Copilot.povUp().whileTrue(climbElevator.setHeight(Inches.of(5.5)));
-    Copilot.povLeft().whileTrue(climbElevator.set(0.3));
-    Copilot.povRight().whileTrue(climbElevator.set(-0.3));
+    Copilot.povLeft().whileTrue(climbElevator.set(0.5));
+    Copilot.povRight().whileTrue(climbElevator.set(-0.5));
   }
 
   public Command getAutonomousCommand() {

@@ -49,13 +49,13 @@ public class ClimberElevator extends SubsystemBase {
                   ClimbConstants.ELEVATOR_FF_kS,
                   ClimbConstants.ELEVATOR_FF_kG,
                   ClimbConstants.ELEVATOR_FF_kV))
+          .withSoftLimit(ClimbConstants.ELEVATOR_MIN_HEIGHT, ClimbConstants.ELEVATOR_MAX_HEIGHT.minus(Inches.of(0.125)))
           .withTelemetry("ClimberElevMotor", TelemetryVerbosity.HIGH)
           .withGearing(
               new MechanismGearing(
                   GearBox.fromStages(ClimbConstants.ELEVATOR_GEARBOX_STAGES),
                   Sprocket.fromStages(ClimbConstants.ELEVATOR_SPROCKET_STAGES)))
           // .withWheelDiameter(Inches.of(2))
-
           // .withExternalEncoder(sparkClimbElev.getAbsoluteEncoder())
           .withVoltageCompensation(Constants.VOLTAGE_COMP)
           .withMotorInverted(false)

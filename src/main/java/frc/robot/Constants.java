@@ -100,16 +100,16 @@ public final class Constants {
         Amps.of(20); // Number of amps seen with Robot weight
 
     // Elevator motor closed loop controller
-    public static final double ELEVATOR_kP = 4;
+    public static final double ELEVATOR_kP = 0;
     public static final double ELEVATOR_kI = 0;
     public static final double ELEVATOR_kD = 0;
-    public static final LinearVelocity ELEVATOR_MAX_VELOCITY = FeetPerSecond.of(0.5);
-    public static final LinearAcceleration ELEVATOR_MAX_ACCELERATION = FeetPerSecondPerSecond.of(1);
+    public static final LinearVelocity ELEVATOR_MAX_VELOCITY = FeetPerSecond.of(2);
+    public static final LinearAcceleration ELEVATOR_MAX_ACCELERATION = FeetPerSecondPerSecond.of(4);
 
     // Elevator feedforward gains (kS, kG, kV)
     public static final double ELEVATOR_FF_kS = 0;
-    public static final double ELEVATOR_FF_kG = 0;
-    public static final double ELEVATOR_FF_kV = 0;
+    public static final double ELEVATOR_FF_kG = 0.0622;
+    public static final double ELEVATOR_FF_kV = 10;
 
     // Elevator motor hardware config
     public static final Current ELEVATOR_STATOR_CURRENT_LIMIT = Amps.of(40);
@@ -117,7 +117,7 @@ public final class Constants {
     public static final String ELEVATOR_SPROCKET_STAGES = "1:1";
 
     // Elevator physical properties
-    public static final Distance ELEVATOR_STARTING_HEIGHT = Inches.of(4);
+    public static final Distance ELEVATOR_STARTING_HEIGHT = Inches.of(2.5);
     public static final Distance ELEVATOR_MIN_HEIGHT = Inches.of(2.5);
     public static final Distance ELEVATOR_MAX_HEIGHT =
         ELEVATOR_MIN_HEIGHT.plus(Inches.of(5.25)); // Travel Distance
