@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Inches;
+
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
@@ -11,6 +13,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.CAN_IDs;
 import frc.robot.Constants.ClimbConstants;
 import yams.gearing.GearBox;
@@ -26,9 +29,14 @@ import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
 public class ClimberElevator extends SubsystemBase {
+  private Distance pitch = Inches.of(0.25);
+  private int teeth = 25;
+  private SparkMax sparkClimbElev =
+      new SparkMax(CAN_IDs.CLIMB_ELEVATOR_MOTOR, MotorType.kBrushless);
 
   private SmartMotorControllerConfig climbElevConfig =
       new SmartMotorControllerConfig(this)
+          .withMechanismCircumference(pitch.times(teeth))
           .withControlMode(ControlMode.CLOSED_LOOP)
           .withClosedLoopController(
               ClimbConstants.ELEVATOR_kP,
@@ -46,19 +54,23 @@ public class ClimberElevator extends SubsystemBase {
               new MechanismGearing(
                   GearBox.fromStages(ClimbConstants.ELEVATOR_GEARBOX_STAGES),
                   Sprocket.fromStages(ClimbConstants.ELEVATOR_SPROCKET_STAGES)))
+          // .withWheelDiameter(Inches.of(2))
+
+          // .withExternalEncoder(sparkClimbElev.getAbsoluteEncoder())
+          .withVoltageCompensation(Constants.VOLTAGE_COMP)
           .withMotorInverted(false)
           .withIdleMode(MotorMode.BRAKE)
           .withStatorCurrentLimit(ClimbConstants.ELEVATOR_STATOR_CURRENT_LIMIT);
-
-  private SparkMax sparkClimbElev =
-      new SparkMax(CAN_IDs.CLIMB_ELEVATOR_MOTOR, MotorType.kBrushless);
 
   private SmartMotorController climbElevMotorController =
       new SparkWrapper(sparkClimbElev, DCMotor.getNEO(1), climbElevConfig);
 
   private ElevatorConfig climbElevatorConfig =
       new ElevatorConfig(climbElevMotorController)
-          .withStartingHeight(ClimbConstants.ELEVATOR_STARTING_HEIGHT)
+          .withStartingHeight(
+              ClimbConstants
+                  .ELEVATOR_STARTING_HEIGHT) // The starting position should ONLY be defined if you
+          // are NOT using an absolute encoder.
           .withHardLimits(ClimbConstants.ELEVATOR_MIN_HEIGHT, ClimbConstants.ELEVATOR_MAX_HEIGHT)
           .withTelemetry("ClimbElevator", TelemetryVerbosity.HIGH)
           .withMass(ClimbConstants.ELEVATOR_MASS);

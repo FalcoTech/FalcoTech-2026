@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.FeetPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -18,6 +19,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.Voltage;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -46,6 +48,7 @@ import edu.wpi.first.units.measure.Mass;
 
 public final class Constants {
   public static final int BLINKIN_PWM_PORT = 9;
+  public static final Voltage VOLTAGE_COMP = Volts.of(12);
 
   public static final class CAN_IDs {
     // Drivetrain IDs are handled by TunerConstants and are omitted here
@@ -110,13 +113,14 @@ public final class Constants {
 
     // Elevator motor hardware config
     public static final Current ELEVATOR_STATOR_CURRENT_LIMIT = Amps.of(40);
-    public static final String ELEVATOR_GEARBOX_STAGES = "1:100";
+    public static final String ELEVATOR_GEARBOX_STAGES = "100:1";
     public static final String ELEVATOR_SPROCKET_STAGES = "1:1";
 
     // Elevator physical properties
-    public static final Distance ELEVATOR_STARTING_HEIGHT = Inches.of(0.5);
-    public static final Distance ELEVATOR_MIN_HEIGHT = Inches.of(6);
-    public static final Distance ELEVATOR_MAX_HEIGHT = Inches.of(12);
+    public static final Distance ELEVATOR_STARTING_HEIGHT = Inches.of(4);
+    public static final Distance ELEVATOR_MIN_HEIGHT = Inches.of(2.5);
+    public static final Distance ELEVATOR_MAX_HEIGHT =
+        ELEVATOR_MIN_HEIGHT.plus(Inches.of(5.25)); // Travel Distance
     public static final Mass ELEVATOR_MASS = Pounds.of(12);
 
     // Arm motor closed loop controller
