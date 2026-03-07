@@ -33,7 +33,7 @@ import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
-public class Intake extends SubsystemBase {
+public class IntakeArm extends SubsystemBase {
 
   private SmartMotorControllerConfig intakeArmMotorConfig =
       new SmartMotorControllerConfig(this)
@@ -71,7 +71,7 @@ public class Intake extends SubsystemBase {
   // TODO: Have Logan add the code to add the intake Roller as another SparkMax
 
   /** Creates a new Intake. */
-  public Intake() {}
+  public IntakeArm() {}
 
   // Intake Arm will have 1 arm and also rollers
 

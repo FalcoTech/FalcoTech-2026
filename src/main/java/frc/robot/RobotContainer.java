@@ -22,10 +22,11 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PathPlanningConstants;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.ClimberElevator;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Hopper;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeArm;
 import frc.robot.subsystems.LEDS;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
@@ -73,19 +74,20 @@ public class RobotContainer {
 
   // Subsystems
   public static final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-  public static final Intake intake = new Intake();
+  public static final IntakeArm intake = new IntakeArm();
   public static final Feeder feeder = new Feeder();
   public static final Hopper hopper = new Hopper();
   public static final LEDS leds = new LEDS();
   public static final Turret turret = new Turret();
   public static final Shooter shooter = new Shooter();
+  public static final ClimberElevator climbElevator = new ClimberElevator();
 
   public RobotContainer() {
     DriverStation.silenceJoystickConnectionWarning(true);
     RegisterNamedCommands();
     autoChooser = AutoBuilder.buildAutoChooser("Tests");
     SmartDashboard.putData("Auto Mode", autoChooser);
-
+    climbElevator.setDefaultCommand(climbElevator.set(0));
     configureBindings();
 
     SmartDashboard.putBoolean("Enable MegaTag2", false);
@@ -169,6 +171,11 @@ public class RobotContainer {
     // from
     // // current position?
     // Copilot.povDown().whileTrue(turret.setAngle(() -> turret.getAngle().minus(Degrees.of(10))));
+
+    Copilot.povDown().whileTrue(climbElevator.setHeight(Inches.of(3)));
+    Copilot.povUp().whileTrue(climbElevator.setHeight(Inches.of(5.5)));
+    Copilot.povLeft().whileTrue(climbElevator.set(0.5));
+    Copilot.povRight().whileTrue(climbElevator.set(-0.5));
   }
 
   public Command getAutonomousCommand() {
