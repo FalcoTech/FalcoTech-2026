@@ -9,7 +9,6 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.VisionConstants;
@@ -19,9 +18,6 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
-
-  private final boolean kUseLimelight = true;
-  private boolean enableMegaTag2;
 
   /* log and replay timestamp and joystick data */
   private final HootAutoReplay m_timeAndJoystickReplay =
@@ -36,38 +32,43 @@ public class Robot extends TimedRobot {
     m_timeAndJoystickReplay.update();
     CommandScheduler.getInstance().run();
 
-    enableMegaTag2 = SmartDashboard.getBoolean("Enable MegaTag2", enableMegaTag2);
-    if (kUseLimelight && !enableMegaTag2) {
+    // MegaTag2 with dual Limelights
+    if (VisionConstants.USE_LIMELIGHT) {
       var driveState = RobotContainer.drivetrain.getState();
       double headingDeg = driveState.Pose.getRotation().getDegrees();
       double omegaRps = Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
 
-      // LimelightHelpers.SetRobotOrientation(VisionConstants.LIMELIGHT_NAME, headingDeg, 0, 0, 0,
-      // 0, 0);
-      var llMeasurement =
-          LimelightHelpers.getBotPoseEstimate_wpiBlue(VisionConstants.LIMELIGHT_NAME);
-      if (llMeasurement != null && llMeasurement.tagCount > 0 && Math.abs(omegaRps) < 2.0) {
-        RobotContainer.drivetrain.addVisionMeasurement(
-            llMeasurement.pose, llMeasurement.timestampSeconds);
-      }
-    }
-
-    // SmartDashboard.getBoolean("Enable MegaTag2", enableMegaTag2);
-
-    if (enableMegaTag2) {
-      var driveState = RobotContainer.drivetrain.getState();
-      double headingDeg = driveState.Pose.getRotation().getDegrees();
-      double omegaRps = Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
-
+      // Feed Pigeon heading to both Limelights (required before MegaTag2 pose request)
       LimelightHelpers.SetRobotOrientation(
-          VisionConstants.LIMELIGHT_NAME, headingDeg, 0, 0, 0, 0, 0);
-      var llMeasurement =
-          LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.LIMELIGHT_NAME);
-      if (llMeasurement != null && llMeasurement.tagCount > 0 && Math.abs(omegaRps) < 2.0) {
-        RobotContainer.drivetrain.addVisionMeasurement(
-            llMeasurement.pose, llMeasurement.timestampSeconds, VecBuilder.fill(.5, .5, 9999999));
-        // RobotContainer.drivetrain.addVisionMeasurement(llMeasurement.pose,
-        // llMeasurement.timestampSeconds);
+          VisionConstants.LIMELIGHT_MAIN, headingDeg, 0, 0, 0, 0, 0);
+      LimelightHelpers.SetRobotOrientation(
+          VisionConstants.LIMELIGHT_REAR, headingDeg, 0, 0, 0, 0, 0);
+
+      // Only apply vision when not spinning fast
+      if (Math.abs(omegaRps) < VisionConstants.VISION_OMEGA_CUTOFF_RPS) {
+        var mainMeasurement =
+            LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.LIMELIGHT_MAIN);
+        if (mainMeasurement != null && mainMeasurement.tagCount > 0) {
+          RobotContainer.drivetrain.addVisionMeasurement(
+              mainMeasurement.pose,
+              mainMeasurement.timestampSeconds,
+              VecBuilder.fill(
+                  VisionConstants.MEGATAG2_XY_STDDEV,
+                  VisionConstants.MEGATAG2_XY_STDDEV,
+                  VisionConstants.MEGATAG2_ROTATION_STDDEV));
+        }
+
+        var rearMeasurement =
+            LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.LIMELIGHT_REAR);
+        if (rearMeasurement != null && rearMeasurement.tagCount > 0) {
+          RobotContainer.drivetrain.addVisionMeasurement(
+              rearMeasurement.pose,
+              rearMeasurement.timestampSeconds,
+              VecBuilder.fill(
+                  VisionConstants.MEGATAG2_XY_STDDEV,
+                  VisionConstants.MEGATAG2_XY_STDDEV,
+                  VisionConstants.MEGATAG2_ROTATION_STDDEV));
+        }
       }
     }
   }
@@ -76,7 +77,18 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    // Use MegaTag1 to seed heading while robot is stationary pre-match.
+    // MegaTag1 solves full pose (including rotation) from tags alone,
+    // giving MegaTag2 an accurate heading baseline once the match starts.
+    if (VisionConstants.USE_LIMELIGHT) {
+      var llMeasurement =
+          LimelightHelpers.getBotPoseEstimate_wpiBlue(VisionConstants.LIMELIGHT_MAIN);
+      if (llMeasurement != null && llMeasurement.tagCount >= 2) {
+        RobotContainer.drivetrain.resetPose(llMeasurement.pose);
+      }
+    }
+  }
 
   @Override
   public void disabledExit() {}
