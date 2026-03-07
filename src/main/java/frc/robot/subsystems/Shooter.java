@@ -85,7 +85,8 @@ public class Shooter extends SubsystemBase {
     // Idle mode is burned to flash via REV Hardware Client — verify it here at startup.
     // If this warning fires, reconnect the motor to the REV client and set coast mode, then burn.
     if (sparkRight.configAccessor.getIdleMode() != IdleMode.kCoast) {
-      System.err.println("[Shooter] WARNING: Right flywheel follower idle mode is not Coast! Burn with REV Hardware Client.");
+      System.err.println(
+          "[Shooter] WARNING: Right flywheel follower idle mode is not Coast! Burn with REV Hardware Client.");
     }
   }
 
@@ -145,7 +146,9 @@ public class Shooter extends SubsystemBase {
 
   public Command runVelocityStepTest() {
     final double STEP_DURATION = 5;
-    return flywheel.run(RPM.of(1000)).withTimeout(STEP_DURATION)
+    return flywheel
+        .run(RPM.of(1000))
+        .withTimeout(STEP_DURATION)
         .andThen(flywheel.run(RPM.of(2000)).withTimeout(STEP_DURATION))
         .andThen(flywheel.run(RPM.of(3000)).withTimeout(STEP_DURATION))
         .andThen(flywheel.run(RPM.of(4000)).withTimeout(STEP_DURATION))
