@@ -16,9 +16,14 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN_IDs;
 import java.util.function.Supplier;
@@ -105,6 +110,44 @@ public class Turret extends SubsystemBase {
 
   public Command setDutyCycle(double dutyCycle) {
     return turret.set(dutyCycle);
+  }
+
+  /**
+   * Reset the encoder to the lowest position when the current threshhold is reached. Should be used
+   * when the Mechanism position is unreliable, like startup. Threshhold is only detected if
+   * exceeded for 0.2 seconds, and the motor moves less than 2 degrees per second.
+   *
+   * @param threshhold The current threshhold held when the Mechanism is at it's hard limit.
+   * @return
+   */
+  public Command resetZeroToHardStop(Current threshold) {
+    // copied/ based on the example from YAMS github
+    Debouncer currentDebouncer = new Debouncer(0.2); // Current threshold must last 0.2s
+    Voltage stopVoltage = Volts.of(0); // Voltage to set at end of Command
+    Voltage runVoltage =
+        Volts.of(-3); // Voltage to run mechanism with (variable upon mechanism), negative to run in
+    // reverse 
+    Angle limitAngle =
+        this.turretConfig
+            .getLowerHardLimit()
+            .get(); // Use Mechanism hard limit as the new start point
+    AngularVelocity velocityThreshold =
+        DegreesPerSecond.of(2); // Max amount of movement to be considered stopped
+
+    return Commands.startRun(
+            turretSMC::stopClosedLoopController, () -> turretSMC.setVoltage(runVoltage))
+        .until(
+            () ->
+                currentDebouncer.calculate(
+                    turretSMC.getStatorCurrent().gte(threshold)
+                        && turretSMC.getMechanismVelocity().abs(DegreesPerSecond)
+                            <= velocityThreshold.in(DegreesPerSecond)))
+        .finallyDo(
+            () -> {
+              turretSMC.setVoltage(stopVoltage);
+              turretSMC.setEncoderPosition(limitAngle);
+              turretSMC.startClosedLoopController();
+            });
   }
 
   @Override

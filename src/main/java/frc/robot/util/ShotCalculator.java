@@ -19,13 +19,10 @@ public class ShotCalculator extends SubsystemBase {
   private final Shooter shooter;
   private final Turret turret;
 
-  // private final Vision vision;
-
   public ShotCalculator(Turret turret, Shooter shooter, CommandSwerveDrivetrain drivetrain) {
     this.turret = turret;
     this.shooter = shooter;
     this.drivetrain = drivetrain;
-    // this.vision = vision;
   }
 
   public static Angle getShotAngle(Distance distanceToTarget, LinearVelocity initialVelocity) {
@@ -81,12 +78,12 @@ public class ShotCalculator extends SubsystemBase {
   }
 
   public static double getMinTimeOfFlight() {
-    // TODO Auto-generated method stub
+    // TODO Shortest amount of time a ball will be in the air
     throw new UnsupportedOperationException("Unimplemented method 'getMinTimeOfFlight'");
   }
 
   public static double getMaxTimeOfFlight() {
-    // TODO Auto-generated method stub
+    // TODO Longest amount of tiem a ball will be in the air
     throw new UnsupportedOperationException("Unimplemented method 'getMaxTimeOfFlight'");
   }
 }
