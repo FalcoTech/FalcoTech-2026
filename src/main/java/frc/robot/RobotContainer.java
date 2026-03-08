@@ -30,6 +30,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDS;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
+import frc.robot.util.ShotCalculator;
 
 public class RobotContainer {
   // Drive speeds
@@ -85,7 +86,7 @@ public class RobotContainer {
   public RobotContainer() {
     DriverStation.silenceJoystickConnectionWarning(true);
     RegisterNamedCommands();
-    autoChooser = AutoBuilder.buildAutoChooser("Tests");
+    autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Mode", autoChooser);
 
     configureBindings();
@@ -151,18 +152,24 @@ public class RobotContainer {
     // Copilot.x().whileTrue(shooter.stop());
 
     turret.setDefaultCommand(turret.stop());
+    // turret.setDefaultCommand(turret.setDutyCycle(() -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .25));
 
     // Copilot.x().whileTrue(turret.setAngle(Degrees.of(180)));
     // Copilot.y().whileTrue(turret.setAngle(Degrees.of(90)));
+    // Copilot.a().whileTrue(turret.setAngle(Degrees.of(95)));
     // Copilot.b().whileTrue(turret.setAngle(Degrees.of(0)));
+    Copilot.rightBumper().whileTrue(turret.setAngle(() -> Degrees.of(ShotCalculator.getTurretAngle())));
+    // Copilot.x().whileTrue(turret.setDutyCycle(.1));
+    // Copilot.b().whileTrue(turret.setDutyCycle(-.1));
+    
 
-    // feeder.setDefaultCommand(feeder.runFeeder(Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()));
+    feeder.setDefaultCommand(feeder.runFeeder(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()));
     // feeder.setDefaultCommand(new runFeeder((Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis())));
-    feeder.setDefaultCommand(feeder.stopFeeder());
+    // feeder.setDefaultCommand(feeder.stopFeeder());
 
-    Copilot.b().whileTrue(feeder.runFeeder(1));
-    Copilot.x().whileTrue(feeder.runFeeder(-1));
-    Copilot.y().whileTrue(feeder.runFeeder(0));
+    // Copilot.b().whileTrue(feeder.runFeeder(1));
+    // Copilot.x().whileTrue(feeder.runFeeder(-1));
+    // Copilot.y().whileTrue(feeder.runFeeder(0));
 
     // Copilot.povUp()
     //     .whileTrue(
@@ -183,17 +190,18 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     // Simple drive forward auton
-    final var idle = new SwerveRequest.Idle();
-    return Commands.sequence(
-        // Reset our field centric heading to match the robot
-        // facing away from our alliance station wall (0 deg).
-        drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-        // Then slowly drive forward (away from us) for 5 seconds.
-        drivetrain
-            .applyRequest(() -> drive.withVelocityX(0.5).withVelocityY(0).withRotationalRate(0))
-            .withTimeout(5.0),
-        // Finally idle for the rest of auton
-        drivetrain.applyRequest(() -> idle));
+    // final var idle = new SwerveRequest.Idle();
+    // return Commands.sequence(
+    //     // Reset our field centric heading to match the robot
+    //     // facing away from our alliance station wall (0 deg).
+    //     drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
+    //     // Then slowly drive forward (away from us) for 5 seconds.
+    //     drivetrain
+    //         .applyRequest(() -> drive.withVelocityX(0.5).withVelocityY(0).withRotationalRate(0))
+    //         .withTimeout(5.0),
+    //     // Finally idle for the rest of auton
+    //     drivetrain.applyRequest(() -> idle));
+    return autoChooser.getSelected();
   }
 
   private void RegisterNamedCommands() {}

@@ -5,11 +5,16 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 
+import com.pathplanner.lib.config.RobotConfig;
+
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 
 public class ShotCalculator extends SubsystemBase {
   // private final CommandSwerveDrivetrain drivetrain;
@@ -77,4 +82,44 @@ public class ShotCalculator extends SubsystemBase {
     // represents an unviable shot
     return 0.0; // Placeholder for actual shot viability scale calculation
   }
+
+  public static double getGyroHeading(){
+        return (RobotContainer.drivetrain.getState().RawHeading.getDegrees() + 360000) % 360;        
+    }
+
+  public static double getAngleToHub(){
+    double getX = RobotContainer.drivetrain.getState().Pose.getX();
+    double getY = RobotContainer.drivetrain.getState().Pose.getY();
+
+    Translation2d robotToGoalVector = new Translation2d(
+      4.59 - getX,
+      4.03 - getY
+    );
+
+    double rawAngle = (robotToGoalVector.getAngle().getDegrees()) % 360;
+      if (rawAngle < 0){
+          return rawAngle + 360;
+      } else {
+          return rawAngle;
+      }
+  }
+  public static double getTurretAngle(){
+        double offset = 90;
+        double rawAngle = (getAngleToHub() - getGyroHeading() + offset) % 360;
+        double filteredAngle;
+        if (rawAngle < 0){
+            filteredAngle = rawAngle + 360;
+        } else {
+            filteredAngle = rawAngle;
+        };
+
+        if (filteredAngle > 0 && filteredAngle < 200){
+            SmartDashboard.putBoolean("Turret Possible Shot", true);
+            return filteredAngle;
+            
+        } else {
+            SmartDashboard.putBoolean("Turret Possible Shot", false);
+            return RobotContainer.turret.getAngle().in(Degrees);
+        }
+    }
 }

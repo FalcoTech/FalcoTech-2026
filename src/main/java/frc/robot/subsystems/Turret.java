@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Seconds;
@@ -14,9 +16,12 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN_IDs;
+import frc.robot.util.ShotCalculator;
+
 import java.util.function.Supplier;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -40,20 +45,20 @@ public class Turret extends SubsystemBase {
   private final SmartMotorControllerConfig motorConfig =
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
-          .withClosedLoopController(5, 0, 0)
+          .withClosedLoopController(35, 0, .75, DegreesPerSecond.of(1080), DegreesPerSecondPerSecond.of(2160))
           // .withLinearClosedLoopController(false)
-          .withFeedforward(new SimpleMotorFeedforward(0.01, 0.0, 0.0))
+          .withFeedforward(new SimpleMotorFeedforward(.3, 0, 0.0))
           // .withClosedLoopTolerance(Degrees.of(0.5)) //doesn't work with TalonFX
           // Configure Motor and Mechanism properties
           // .withGearing(new MechanismGearing(GearBox.fromReductionStages(5, 10)))
-          .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 1)))
+          .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 10)))
           .withIdleMode(MotorMode.BRAKE)
-          .withMotorInverted(false)
+          .withMotorInverted(true)
           //         // Setup Telemetry
           .withTelemetry("TurretMotor", TelemetryVerbosity.HIGH)
           //         // Power Optimization
-          .withStatorCurrentLimit(Amps.of(40))
-          .withClosedLoopRampRate(Seconds.of(0.25));
+          .withStatorCurrentLimit(Amps.of(30));
+          // .withClosedLoopRampRate(Seconds.of(0.25))
   // // .withOpenLoopRampRate(Seconds.of(0.25))
   // // .withVoltageCompensation(Volts.of(12)) // also doesn't work with TalonFX
 
@@ -65,7 +70,7 @@ public class Turret extends SubsystemBase {
       new PivotConfig(turretSMC)
           .withStartingPosition(Degrees.of(0))
           .withHardLimit(Degrees.of(-20), Degrees.of(220))
-          .withSoftLimits(Degrees.of(-20), Degrees.of(220))
+          .withSoftLimits(Degrees.of(-10), Degrees.of(210))
           .withTelemetry("TurretMech", TelemetryVerbosity.HIGH)
           .withMOI(Meters.of(0.25), Pounds.of(4));
 
@@ -108,8 +113,7 @@ public class Turret extends SubsystemBase {
 
   public Command stop() {
     return turret.set(0);
-  }
-  ;
+  };
 
   public void setDirectDutyCycle(double speed) {
     turretMotor.set(speed);
@@ -126,6 +130,7 @@ public class Turret extends SubsystemBase {
     // or from a dedicated off-main-thread task.
     // telemetry refresh removed from periodic to avoid blocking NT/remote calls
     turret.updateTelemetry();
+    SmartDashboard.putNumber("Turret Shot Angle", ShotCalculator.getTurretAngle());
     // This method will be called once per scheduler run
 
   }
