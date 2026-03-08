@@ -188,3 +188,6 @@ compile_commands.json
 
 # GVersion generated file for Git
 src/main/java/frc/robot/BuildConstants.java
+
+# Rev Logs
+*.revlog
