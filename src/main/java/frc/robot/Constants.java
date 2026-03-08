@@ -1,6 +1,9 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -74,6 +77,12 @@ public final class Constants {
   public static final class IntakeConstants {
     public static final double INTAKE_SPEED = -0.5;
     public static final double OUTTAKE_SPEED = 1.0;
+  }
+
+  public static final class TurretConstants {
+    // CCW is positive in WPILib (think Unit Circle)
+    public static final Angle HARD_COUNTER_CLOCKWISE_LIMIT = Degrees.of(140);
+    public static final Angle HARD_CLOCKWISE_LIMIT = Degrees.of(-140);
   }
 
   public static final class ClimbConstants {

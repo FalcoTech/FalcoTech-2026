@@ -11,6 +11,7 @@ import frc.robot.RobotContainer;
 public class runFeeder extends Command {
   /** Creates a new runFeeder. */
   public double speed;
+
   public runFeeder(double CMDspeed) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.feeder);
