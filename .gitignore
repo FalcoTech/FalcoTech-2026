@@ -191,3 +191,6 @@ src/main/java/frc/robot/BuildConstants.java
 
 # Rev Logs
 *.revlog
+
+# Claude Settings
+.claude/settings.local.json
