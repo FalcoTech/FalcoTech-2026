@@ -57,11 +57,16 @@ public class ShotCalculator extends SubsystemBase {
 
     if (FieldConstants.allianceZone.contains(robotPositionBlue)) {
       targetLocation = FieldConstants.HUB_TARGET;
-
     } else {
       Collection<Translation2d> locations =
           List.of(FieldConstants.OUTPOST_SIDE_TARGET, FieldConstants.DEPOT_SIDE_TARGET);
       targetLocation = robotPositionBlue.nearest(locations);
+    }
+
+    // Targets are defined in blue-alliance coords; flip to absolute field coords on red alliance
+    // so that callers can use robot pose (always absolute) directly for vector math.
+    if (Constants.isRedAlliance()) {
+      return FlippingUtil.flipFieldPosition(targetLocation);
     }
     return targetLocation;
   }
@@ -116,7 +121,7 @@ public class ShotCalculator extends SubsystemBase {
     return drivetrain.getState().Pose.getRotation().getDegrees();
   }
 
-  public double getAngleToTarget(/* Pose2d targetPose */ ) {
+  public double getAngleToTarget(/* Translation2d targetPosition */ ) {
     double getX = drivetrain.getState().Pose.getX();
     double getY = drivetrain.getState().Pose.getY();
 
@@ -125,7 +130,7 @@ public class ShotCalculator extends SubsystemBase {
             4.59 - getX, // What are these magic numbers? Center of Hub?
             4.03 - getY);
     // Translation2d robotToTargetVector =
-    // targetPose.getTranslation().minus(drivetrain.getState().Pose.getTranslation());
+    // targetPosition.minus(drivetrain.getState().Pose.getTranslation());
 
     return robotToHubVector.getAngle().getDegrees();
   }
