@@ -149,7 +149,7 @@ public class RobotContainer {
 
     // Copilot.x().whileTrue(shooter.stop());
 
-    turret.setDefaultCommand(turret.stop());
+    // turret.setDefaultCommand(turret.stop());
     // turret.setDefaultCommand(turret.setDutyCycle(() -> (Copilot.getLeftTriggerAxis() -
     // Copilot.getRightTriggerAxis()) * .25));
 
