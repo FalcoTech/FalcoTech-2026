@@ -10,18 +10,15 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PathPlanningConstants;
-import frc.robot.commands.runFeeder;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
@@ -152,19 +149,22 @@ public class RobotContainer {
     // Copilot.x().whileTrue(shooter.stop());
 
     turret.setDefaultCommand(turret.stop());
-    // turret.setDefaultCommand(turret.setDutyCycle(() -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .25));
+    // turret.setDefaultCommand(turret.setDutyCycle(() -> (Copilot.getLeftTriggerAxis() -
+    // Copilot.getRightTriggerAxis()) * .25));
 
     // Copilot.x().whileTrue(turret.setAngle(Degrees.of(180)));
     // Copilot.y().whileTrue(turret.setAngle(Degrees.of(90)));
     // Copilot.a().whileTrue(turret.setAngle(Degrees.of(95)));
     // Copilot.b().whileTrue(turret.setAngle(Degrees.of(0)));
-    Copilot.rightBumper().whileTrue(turret.setAngle(() -> Degrees.of(ShotCalculator.getTurretAngle())));
+    Copilot.rightBumper()
+        .whileTrue(turret.setAngle(() -> Degrees.of(ShotCalculator.getTurretAngle())));
     // Copilot.x().whileTrue(turret.setDutyCycle(.1));
     // Copilot.b().whileTrue(turret.setDutyCycle(-.1));
-    
 
-    feeder.setDefaultCommand(feeder.runFeeder(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()));
-    // feeder.setDefaultCommand(new runFeeder((Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis())));
+    feeder.setDefaultCommand(
+        feeder.runFeeder(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()));
+    // feeder.setDefaultCommand(new runFeeder((Copilot.getRightTriggerAxis() -
+    // Copilot.getLeftTriggerAxis())));
     // feeder.setDefaultCommand(feeder.stopFeeder());
 
     // Copilot.b().whileTrue(feeder.runFeeder(1));

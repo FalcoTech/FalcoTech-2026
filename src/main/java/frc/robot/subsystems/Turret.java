@@ -10,7 +10,6 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
-import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -21,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN_IDs;
 import frc.robot.util.ShotCalculator;
-
 import java.util.function.Supplier;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -45,7 +43,8 @@ public class Turret extends SubsystemBase {
   private final SmartMotorControllerConfig motorConfig =
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
-          .withClosedLoopController(35, 0, .75, DegreesPerSecond.of(1080), DegreesPerSecondPerSecond.of(2160))
+          .withClosedLoopController(
+              35, 0, .75, DegreesPerSecond.of(1080), DegreesPerSecondPerSecond.of(2160))
           // .withLinearClosedLoopController(false)
           .withFeedforward(new SimpleMotorFeedforward(.3, 0, 0.0))
           // .withClosedLoopTolerance(Degrees.of(0.5)) //doesn't work with TalonFX
@@ -58,7 +57,7 @@ public class Turret extends SubsystemBase {
           .withTelemetry("TurretMotor", TelemetryVerbosity.HIGH)
           //         // Power Optimization
           .withStatorCurrentLimit(Amps.of(30));
-          // .withClosedLoopRampRate(Seconds.of(0.25))
+  // .withClosedLoopRampRate(Seconds.of(0.25))
   // // .withOpenLoopRampRate(Seconds.of(0.25))
   // // .withVoltageCompensation(Volts.of(12)) // also doesn't work with TalonFX
 
@@ -113,7 +112,8 @@ public class Turret extends SubsystemBase {
 
   public Command stop() {
     return turret.set(0);
-  };
+  }
+  ;
 
   public void setDirectDutyCycle(double speed) {
     turretMotor.set(speed);
