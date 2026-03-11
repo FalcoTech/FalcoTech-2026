@@ -136,8 +136,8 @@ public final class Constants {
     public static final Translation2d OUTPOST_SIDE_TARGET = new Translation2d(2, 2);
     public static final Translation2d DEPOT_SIDE_TARGET = new Translation2d(2, 6);
     public static final Translation2d HUB_TARGET = new Translation2d(4.59, 4.03);
-    public static final FieldZone allianceZone = new FieldZone(0, 4.278, 0, 8);
-    public static final FieldZone neutralZone = new FieldZone(4.278, 12.117, 0, 8);
+    public static final FieldZone allianceZone = new FieldZone(-.5, 4.278, -.5, 8.5);
+    public static final FieldZone neutralZone = new FieldZone(4.278, 12.117, -.5, 8.5);
   }
 
   public static boolean isRedAlliance() {

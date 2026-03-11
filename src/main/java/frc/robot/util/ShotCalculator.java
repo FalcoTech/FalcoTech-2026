@@ -124,11 +124,16 @@ public class ShotCalculator extends SubsystemBase {
     return drivetrain.getState().Pose.getRotation().getDegrees();
   }
 
-  public Translation2d getRobotToTargetVector(Translation2d targetPosition){
-    return targetPosition.minus(drivetrain.getState().Pose.getTranslation());
+
+  public Translation2d getRobotToTargetVector(){
+    return getEffectiveTarget().minus(drivetrain.getState().Pose.getTranslation());
   }
 
-  public double getAngleToTarget(Translation2d targetPosition) {
+  public double getDistanceToTarget (){
+    return getRobotToTargetVector().getNorm();
+  }
+
+  public double getAngleToTarget() {
     // double getX = drivetrain.getState().Pose.getX();
     // double getY = drivetrain.getState().Pose.getY();
 
@@ -137,12 +142,23 @@ public class ShotCalculator extends SubsystemBase {
     //         4.59 - getX, // What are these magic numbers? Center of Hub?
     //         4.03 - getY);
 
-    return getRobotToTargetVector(targetPosition).getAngle().getDegrees();
+    return getRobotToTargetVector().getAngle().getDegrees();
+  }
+
+  public double Clamp(double value, double lowerBound, double upperBound){
+    return Math.max(lowerBound, Math.min(upperBound, value));
   }
 
   public double getIdealTurretAngle() {
-    double idealTurretAngle = (getAngleToTarget(getEffectiveTarget()) - getRobotHeading());
-    return idealTurretAngle = MathUtil.inputModulus(idealTurretAngle, -180, 180);
+    double idealTurretAngle = (getAngleToTarget() - getRobotHeading());
+    double wrappedTurretAngle = MathUtil.inputModulus(idealTurretAngle, -180, 180);
+
+    if ((wrappedTurretAngle < -100) || (wrappedTurretAngle > 100)){
+      turret.stop();
+      return Clamp(wrappedTurretAngle, -100, 100);  
+    } else {
+      return Clamp(wrappedTurretAngle, -100, 100);
+    }
   }
 
   @Override
@@ -150,6 +166,7 @@ public class ShotCalculator extends SubsystemBase {
     // This method will be called once per scheduler run
     
     SmartDashboard.putNumber("Ideal Turret Angle", getIdealTurretAngle());
+    SmartDashboard.putNumber("Distance To Target", getDistanceToTarget());
     // SmartDashboard.putNumber("", getIdealShooterVelocity())
   }
 }
