@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.FieldConstants;
@@ -45,6 +46,8 @@ public class ShotCalculator extends SubsystemBase {
 
     return Degrees.of(angle.in(Degrees));
   }
+
+  
 
   private Translation2d getEffectiveTarget() {
     // Update the target pose based on what FieldZone the Robot currently is in
@@ -121,22 +124,32 @@ public class ShotCalculator extends SubsystemBase {
     return drivetrain.getState().Pose.getRotation().getDegrees();
   }
 
-  public double getAngleToTarget(/* Translation2d targetPosition */ ) {
-    double getX = drivetrain.getState().Pose.getX();
-    double getY = drivetrain.getState().Pose.getY();
+  public Translation2d getRobotToTargetVector(Translation2d targetPosition){
+    return targetPosition.minus(drivetrain.getState().Pose.getTranslation());
+  }
 
-    Translation2d robotToHubVector =
-        new Translation2d(
-            4.59 - getX, // What are these magic numbers? Center of Hub?
-            4.03 - getY);
-    // Translation2d robotToTargetVector =
-    // targetPosition.minus(drivetrain.getState().Pose.getTranslation());
+  public double getAngleToTarget(Translation2d targetPosition) {
+    // double getX = drivetrain.getState().Pose.getX();
+    // double getY = drivetrain.getState().Pose.getY();
 
-    return robotToHubVector.getAngle().getDegrees();
+    // Translation2d robotToHubVector =
+    //     new Translation2d(
+    //         4.59 - getX, // What are these magic numbers? Center of Hub?
+    //         4.03 - getY);
+
+    return getRobotToTargetVector(targetPosition).getAngle().getDegrees();
   }
 
   public double getIdealTurretAngle() {
-    double idealTurretAngle = (getAngleToTarget() - getRobotHeading());
+    double idealTurretAngle = (getAngleToTarget(getEffectiveTarget()) - getRobotHeading());
     return idealTurretAngle = MathUtil.inputModulus(idealTurretAngle, -180, 180);
+  }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+    
+    SmartDashboard.putNumber("Ideal Turret Angle", getIdealTurretAngle());
+    // SmartDashboard.putNumber("", getIdealShooterVelocity())
   }
 }
