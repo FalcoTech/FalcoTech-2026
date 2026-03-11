@@ -21,7 +21,6 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN_IDs;
@@ -46,18 +45,17 @@ public class Shooter extends SubsystemBase {
   private SmartMotorControllerConfig smcConfig =
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
-          // Feedback Constants (PID Constants)
-          .withClosedLoopController(2, 0, 0, RPM.of(7000), DegreesPerSecondPerSecond.of(1000))
-          // .withSimClosedLoopController(
-          //     1, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
-          .withFeedforward(new SimpleMotorFeedforward(0, 0.124, 0.02))
-          // .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-          // Telemetry name and verbosity level
+          //         // Feedback Constants (PID Constants)
+          .withClosedLoopController(0.02, 0, 0, RPM.of(1000), DegreesPerSecondPerSecond.of(7000))
+          .withSimClosedLoopController(.2, 0, 0, RPM.of(5700), DegreesPerSecondPerSecond.of(11000))
+          .withFeedforward(new SimpleMotorFeedforward(0, .124, 0))
+          .withSimFeedforward(new SimpleMotorFeedforward(0, .124, 0))
+          //         // Telemetry name and verbosity level
 
           .withGearing(new MechanismGearing(GearBox.fromStages("1:1")))
 
-          // Motor properties to prevent over currenting.
-          .withMotorInverted(false)
+          //         // Motor properties to prevent over currenting.
+          .withMotorInverted(true)
           .withIdleMode(MotorMode.COAST)
           .withStatorCurrentLimit(Amps.of(40))
           .withTelemetry("FlyWheelMotors", TelemetryVerbosity.HIGH)
@@ -72,9 +70,11 @@ public class Shooter extends SubsystemBase {
           // Diameter of the flywheel.
           .withDiameter(Inches.of(4))
           // Mass of the flywheel.
-          .withMass(Pounds.of(2))
+          .withMass(Pounds.of(2.5))
           // Maximum speed of the shooter.
           .withUpperSoftLimit(RPM.of(2000))
+          .withLowerSoftLimit(RPM.of(0))
+
           // Telemetry name and verbosity for the shooter.
           .withTelemetry("FlyWheelMech", TelemetryVerbosity.HIGH);
 
@@ -140,7 +140,7 @@ public class Shooter extends SubsystemBase {
     return flywheel.sysId(
         Volts.of(12), // Max voltage to apply during the test
         Volts.per(Second).of(0.5), // Step voltage per second
-        Seconds.of(10) // Duration of the test
+        Seconds.of(30) // Duration of the test
         );
   }
 

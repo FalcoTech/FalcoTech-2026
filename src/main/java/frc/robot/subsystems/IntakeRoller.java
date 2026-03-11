@@ -13,13 +13,13 @@ import frc.robot.Constants.CAN_IDs;
 
 import java.util.function.Supplier;
 
-public class Feeder extends SubsystemBase {
-  private final SparkMax feedermotor = new SparkMax(CAN_IDs.FEEDER_MOTOR, MotorType.kBrushless);
+public class IntakeRoller extends SubsystemBase {
+  private final SparkMax Intakemotor = new SparkMax(CAN_IDs.INTAKEROLLER_MOTOR, MotorType.kBrushless);
 
-  private SparkMaxConfig feedermotorconfig = new SparkMaxConfig();
+  private SparkMaxConfig Intakemotorconfig = new SparkMaxConfig();
 
   /** Creates a new Feeder. */
-  public Feeder() {
+  public IntakeRoller() {
     // feedermotorconfig.idleMode(IdleMode.kBrake);
 
     // feedermotor.configure(
@@ -29,18 +29,21 @@ public class Feeder extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Feeder Motor Output", feederMotor.getAppliedOutput());
   }
 
-  public Command runFeeder(double speed) {
-    return run(() -> feederMotor.set(speed));
+  public void runShooterVoid(double speed) {
+    Intakemotor.set(speed);
   }
 
-  public Command runFeeder(Supplier<Double> speedSupplier) {
-    return run(() -> feederMotor.set(speedSupplier.get()));
+  public Command runIntake(double speed) {
+    return run(() -> Intakemotor.set(speed));
   }
 
-  public Command stopFeeder() {
-    return run(() -> feederMotor.set(0));
+  public Command runIntake(Supplier<Double> speedSupplier) {
+    return run(() -> Intakemotor.set(speedSupplier.get()));
+  }
+
+  public Command stopIntake() {
+    return run(() -> Intakemotor.set(0));
   }
 }

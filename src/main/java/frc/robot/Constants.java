@@ -34,14 +34,14 @@ public final class Constants {
     // Drivetrain IDs are handled by TunerConstants and are omitted here
 
     // Shooter Motors
-    public static final int FLYWHEEL_MOTOR_LEFT = 94;
-    public static final int FLYWHEEL_MOTOR_RIGHT = 95;
     public static final int TURRET_MOTOR = 20;
+    public static final int FLYWHEEL_MOTOR_LEFT = 21;
+    public static final int FLYWHEEL_MOTOR_RIGHT = 22;
 
     // Intake & Feeder Motors
-    public static final int INTAKE_ROLLER_MOTOR = 96;
-    public static final int INTAKE_ARM_MOTOR = 93;
-    public static final int FEEDER_MOTOR = 97;
+    public static final int INTAKEROLLER_MOTOR = 80;
+    public static final int FEEDER_MOTOR = 30;
+    public static final int HOPPERPUSH_MOTOR = 31;
 
     // Climb Motors
     public static final int CLIMB_ELEVATOR_MOTOR = 98;

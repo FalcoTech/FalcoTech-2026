@@ -10,12 +10,10 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -24,11 +22,12 @@ import frc.robot.Constants.PathPlanningConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.Hopper;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.HopperPush;
+import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.LEDS;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
+import frc.robot.util.ShotCalculator;
 
 public class RobotContainer {
   // Drive speeds
@@ -73,17 +72,18 @@ public class RobotContainer {
 
   // Subsystems
   public static final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-  public static final Intake intake = new Intake();
+  public static final IntakeRoller intakeRoller = new IntakeRoller();
   public static final Feeder feeder = new Feeder();
-  public static final Hopper hopper = new Hopper();
+  public static final HopperPush hopperPush = new HopperPush();
   public static final LEDS leds = new LEDS();
   public static final Turret turret = new Turret();
+
   public static final Shooter shooter = new Shooter();
 
   public RobotContainer() {
     DriverStation.silenceJoystickConnectionWarning(true);
     RegisterNamedCommands();
-    autoChooser = AutoBuilder.buildAutoChooser("Tests");
+    autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Mode", autoChooser);
 
     configureBindings();
@@ -135,24 +135,44 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    // shooter.setDefaultCommand(shooter.stop());
-    // Copilot.a().whileTrue(shooter.set(0.5));
+    shooter.setDefaultCommand(shooter.stop());
+    Copilot.a().whileTrue(shooter.set(0.5));
+    Copilot.b().whileTrue(shooter.set(0.75));
+    // Copilot.b().whileTrue(shooter.setVelocity(RPM.of(500)));
+    Copilot.y().whileTrue(shooter.setVelocity(RPM.of(1000)));
+    Copilot.x().whileTrue(shooter.setVelocity(RPM.of(2000)));
+
+    Copilot.start().whileTrue(shooter.sysId());
     // // Copilot.b().whileTrue(shooter.set(0.25));
     // // Copilot.y().whileTrue(shooter.set(1));
     // Copilot.y().whileTrue(shooter.setVelocity(RPM.of(1000)));
 
     // Copilot.x().whileTrue(shooter.stop());
 
-    // turret.setDefaultCommand(turret.stop());
+    turret.setDefaultCommand(turret.stop());
+    // turret.setDefaultCommand(turret.setDutyCycle(() -> (Copilot.getLeftTriggerAxis() -
+    // Copilot.getRightTriggerAxis()) * .25));
 
     // Copilot.x().whileTrue(turret.setAngle(Degrees.of(180)));
     // Copilot.y().whileTrue(turret.setAngle(Degrees.of(90)));
+    // Copilot.a().whileTrue(turret.setAngle(Degrees.of(95)));
     // Copilot.b().whileTrue(turret.setAngle(Degrees.of(0)));
-    // Copilot.rightBumper().whileTrue(turret.setDutyCycle(.25));
-    // Copilot.leftBumper().whileTrue(turret.setDutyCycle(-.25));
-    // Copilot.start().onTrue(turret.setAngle(() -> Degrees.of(220)));
-    // Copilot.povUp().whileTrue(shooter.aimClockwise()).onFalse(shooter.aimStop());
-    // Copilot.povDown().whileTrue(shooter.aimCounterClockwise()).onFalse(shooter.aimStop());
+    Copilot.rightBumper()
+        .whileTrue(turret.setAngle(() -> Degrees.of(ShotCalculator.getTurretAngle())));
+    // Copilot.x().whileTrue(turret.setDutyCycle(.1));
+    // Copilot.b().whileTrue(turret.setDutyCycle(-.1));
+
+    feeder.setDefaultCommand(
+        feeder.runFeeder(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()));
+    // feeder.setDefaultCommand(new runFeeder((Copilot.getRightTriggerAxis() -
+    // Copilot.getLeftTriggerAxis())));
+    // feeder.setDefaultCommand(feeder.stopFeeder());
+    hopperPush.setDefaultCommand(hopperPush.runHopperPush(() -> Copilot.getLeftX()));
+    // hopperPush.setDefaultCommand(hopperPush.runHopperPush(0));
+    
+    // Copilot.b().whileTrue(feeder.runFeeder(1));
+    // Copilot.x().whileTrue(feeder.runFeeder(-1));
+    // Copilot.y().whileTrue(feeder.runFeeder(0));
 
     // Copilot.povUp()
     //     .whileTrue(
@@ -173,17 +193,18 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     // Simple drive forward auton
-    final var idle = new SwerveRequest.Idle();
-    return Commands.sequence(
-        // Reset our field centric heading to match the robot
-        // facing away from our alliance station wall (0 deg).
-        drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-        // Then slowly drive forward (away from us) for 5 seconds.
-        drivetrain
-            .applyRequest(() -> drive.withVelocityX(0.5).withVelocityY(0).withRotationalRate(0))
-            .withTimeout(5.0),
-        // Finally idle for the rest of auton
-        drivetrain.applyRequest(() -> idle));
+    // final var idle = new SwerveRequest.Idle();
+    // return Commands.sequence(
+    //     // Reset our field centric heading to match the robot
+    //     // facing away from our alliance station wall (0 deg).
+    //     drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
+    //     // Then slowly drive forward (away from us) for 5 seconds.
+    //     drivetrain
+    //         .applyRequest(() -> drive.withVelocityX(0.5).withVelocityY(0).withRotationalRate(0))
+    //         .withTimeout(5.0),
+    //     // Finally idle for the rest of auton
+    //     drivetrain.applyRequest(() -> idle));
+    return autoChooser.getSelected();
   }
 
   private void RegisterNamedCommands() {}
