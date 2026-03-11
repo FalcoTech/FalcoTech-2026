@@ -96,7 +96,7 @@ public class ClimberElevator extends SubsystemBase {
   /**
    * Set the height of the elevator and does not end the command when reached.
    *
-   * @param angle Distance to go to.
+   * @param height Height to go to.
    * @return a Command
    */
   public Command setHeight(Distance height) {
@@ -107,7 +107,8 @@ public class ClimberElevator extends SubsystemBase {
    * Set the height of the elevator and ends the command when reached, but not the closed loop
    * controller.
    *
-   * @param angle Distance to go to.
+   * @param height to go to.
+   * @param tolerance to accept as end
    * @return A Command
    */
   public Command setHeightAndStop(Distance height, Distance tolerance) {
@@ -117,7 +118,7 @@ public class ClimberElevator extends SubsystemBase {
   /**
    * Set the elevators closed loop controller setpoint.
    *
-   * @param angle Distance to go to.
+   * @param height Distance to go to.
    */
   public void setHeightSetpoint(Distance height) {
     climbElev.setMeasurementPositionSetpoint(height);
