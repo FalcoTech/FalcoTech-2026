@@ -4,8 +4,12 @@
 
 package frc.robot.subsystems;
 
+
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,16 +19,16 @@ import frc.robot.Constants.CAN_IDs;
 import java.util.function.Supplier;
 
 public class Feeder extends SubsystemBase {
-  private final SparkMax feedermotor = new SparkMax(CAN_IDs.FEEDER_MOTOR, MotorType.kBrushless);
+  private final SparkMax feederMotor = new SparkMax(CAN_IDs.FEEDER_MOTOR, MotorType.kBrushless);
 
-  private SparkMaxConfig feedermotorconfig = new SparkMaxConfig();
+  private SparkMaxConfig feederMotorconfig = new SparkMaxConfig();
 
   /** Creates a new Feeder. */
   public Feeder() {
-    // feedermotorconfig.idleMode(IdleMode.kBrake);
+    feederMotorconfig.idleMode(IdleMode.kBrake);
 
-    // feedermotor.configure(
-    // feedermotorconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    feederMotor.configure(
+    feederMotorconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
@@ -43,5 +47,9 @@ public class Feeder extends SubsystemBase {
 
   public Command stopFeeder() {
     return run(() -> feederMotor.set(0));
+  }
+
+  public void runFeederVoid(double speed){
+    feederMotor.set(speed);
   }
 }

@@ -1,3 +1,5 @@
+//LimelightHelpers v1.14 (REQUIRES LLOS 2026.0 OR LATER)
+
 package frc.robot.util;
 
 import edu.wpi.first.networktables.DoubleArrayEntry;
@@ -18,7 +20,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
-// import java.util.Map;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
@@ -35,7 +37,7 @@ import edu.wpi.first.net.PortForwarder;
  */
 public class LimelightHelpers {
 
-    // private static final Map<String, DoubleArrayEntry> doubleArrayEntries = new ConcurrentHashMap<>();
+    private static final Map<String, DoubleArrayEntry> doubleArrayEntries = new ConcurrentHashMap<>();
 
     /**
      * Represents a Color/Retroreflective Target Result extracted from JSON Output
@@ -906,52 +908,52 @@ public class LimelightHelpers {
         return inData[position];
     }
 
-    // private static PoseEstimate getBotPoseEstimate(String limelightName, String entryName, boolean isMegaTag2) {
-    //     DoubleArrayEntry poseEntry = LimelightHelpers.getLimelightDoubleArrayEntry(limelightName, entryName);
+    private static PoseEstimate getBotPoseEstimate(String limelightName, String entryName, boolean isMegaTag2) {
+        DoubleArrayEntry poseEntry = LimelightHelpers.getLimelightDoubleArrayEntry(limelightName, entryName);
         
-    //     TimestampedDoubleArray tsValue = poseEntry.getAtomic();
-    //     double[] poseArray = tsValue.value;
-    //     long timestamp = tsValue.timestamp;
+        TimestampedDoubleArray tsValue = poseEntry.getAtomic();
+        double[] poseArray = tsValue.value;
+        long timestamp = tsValue.timestamp;
         
-    //     if (poseArray.length == 0) {
-    //         // Handle the case where no data is available
-    //         return new PoseEstimate();
-    //     }
+        if (poseArray.length == 0) {
+            // Handle the case where no data is available
+            return new PoseEstimate();
+        }
     
-    //     var pose = toPose2D(poseArray);
-    //     double latency = extractArrayEntry(poseArray, 6);
-    //     int tagCount = (int)extractArrayEntry(poseArray, 7);
-    //     double tagSpan = extractArrayEntry(poseArray, 8);
-    //     double tagDist = extractArrayEntry(poseArray, 9);
-    //     double tagArea = extractArrayEntry(poseArray, 10);
+        var pose = toPose2D(poseArray);
+        double latency = extractArrayEntry(poseArray, 6);
+        int tagCount = (int)extractArrayEntry(poseArray, 7);
+        double tagSpan = extractArrayEntry(poseArray, 8);
+        double tagDist = extractArrayEntry(poseArray, 9);
+        double tagArea = extractArrayEntry(poseArray, 10);
         
-    //     // Convert server timestamp from microseconds to seconds and adjust for latency
-    //     double adjustedTimestamp = (timestamp / 1000000.0) - (latency / 1000.0);
+        // Convert server timestamp from microseconds to seconds and adjust for latency
+        double adjustedTimestamp = (timestamp / 1000000.0) - (latency / 1000.0);
     
-    //     int valsPerFiducial = 7;
-    //     int expectedTotalVals = 11 + valsPerFiducial * tagCount;
-    //     RawFiducial[] rawFiducials;
+        int valsPerFiducial = 7;
+        int expectedTotalVals = 11 + valsPerFiducial * tagCount;
+        RawFiducial[] rawFiducials;
 
-    //     if (poseArray.length != expectedTotalVals) {
-    //         // Array size mismatch - return empty array instead of null-filled array
-    //         rawFiducials = new RawFiducial[0];
-    //     } else {
-    //         rawFiducials = new RawFiducial[tagCount];
-    //         for(int i = 0; i < tagCount; i++) {
-    //             int baseIndex = 11 + (i * valsPerFiducial);
-    //             int id = (int)poseArray[baseIndex];
-    //             double txnc = poseArray[baseIndex + 1];
-    //             double tync = poseArray[baseIndex + 2];
-    //             double ta = poseArray[baseIndex + 3];
-    //             double distToCamera = poseArray[baseIndex + 4];
-    //             double distToRobot = poseArray[baseIndex + 5];
-    //             double ambiguity = poseArray[baseIndex + 6];
-    //             rawFiducials[i] = new RawFiducial(id, txnc, tync, ta, distToCamera, distToRobot, ambiguity);
-    //         }
-    //     }
+        if (poseArray.length != expectedTotalVals) {
+            // Array size mismatch - return empty array instead of null-filled array
+            rawFiducials = new RawFiducial[0];
+        } else {
+            rawFiducials = new RawFiducial[tagCount];
+            for(int i = 0; i < tagCount; i++) {
+                int baseIndex = 11 + (i * valsPerFiducial);
+                int id = (int)poseArray[baseIndex];
+                double txnc = poseArray[baseIndex + 1];
+                double tync = poseArray[baseIndex + 2];
+                double ta = poseArray[baseIndex + 3];
+                double distToCamera = poseArray[baseIndex + 4];
+                double distToRobot = poseArray[baseIndex + 5];
+                double ambiguity = poseArray[baseIndex + 6];
+                rawFiducials[i] = new RawFiducial(id, txnc, tync, ta, distToCamera, distToRobot, ambiguity);
+            }
+        }
     
-    //     return new PoseEstimate(pose, adjustedTimestamp, latency, tagCount, tagSpan, tagDist, tagArea, rawFiducials, isMegaTag2);
-    // }
+        return new PoseEstimate(pose, adjustedTimestamp, latency, tagCount, tagSpan, tagDist, tagArea, rawFiducials, isMegaTag2);
+    }
 
     /**
      * Gets the latest raw fiducial/AprilTag detection results from NetworkTables.
@@ -1124,13 +1126,13 @@ public class LimelightHelpers {
         return getLimelightNTTable(tableName).getEntry(entryName);
     }
 
-    // public static DoubleArrayEntry getLimelightDoubleArrayEntry(String tableName, String entryName) {
-    //     String key = tableName + "/" + entryName;
-    //     return doubleArrayEntries.computeIfAbsent(key, k -> {
-    //         NetworkTable table = getLimelightNTTable(tableName);
-    //         return table.getDoubleArrayTopic(entryName).getEntry(new double[0]);
-    //     });
-    // }
+    public static DoubleArrayEntry getLimelightDoubleArrayEntry(String tableName, String entryName) {
+        String key = tableName + "/" + entryName;
+        return doubleArrayEntries.computeIfAbsent(key, k -> {
+            NetworkTable table = getLimelightNTTable(tableName);
+            return table.getDoubleArrayTopic(entryName).getEntry(new double[0]);
+        });
+    }
     
     public static double getLimelightNTDouble(String tableName, String entryName) {
         return getLimelightNTTableEntry(tableName, entryName).getDouble(0.0);
@@ -1517,54 +1519,54 @@ public class LimelightHelpers {
      * @param limelightName
      * @return
      */
-    // public static PoseEstimate getBotPoseEstimate_wpiBlue(String limelightName) {
-    //     return getBotPoseEstimate(limelightName, "botpose_wpiblue", false);
-    // }
+    public static PoseEstimate getBotPoseEstimate_wpiBlue(String limelightName) {
+        return getBotPoseEstimate(limelightName, "botpose_wpiblue", false);
+    }
 
-    // /**
-    //  * Gets the MegaTag2 Pose2d and timestamp for use with WPILib pose estimator (addVisionMeasurement) in the WPILib Blue alliance coordinate system.
-    //  * Make sure you are calling setRobotOrientation() before calling this method.
-    //  * 
-    //  * @param limelightName
-    //  * @return
-    //  */
-    // public static PoseEstimate getBotPoseEstimate_wpiBlue_MegaTag2(String limelightName) {
-    //     return getBotPoseEstimate(limelightName, "botpose_orb_wpiblue", true);
-    // }
+    /**
+     * Gets the MegaTag2 Pose2d and timestamp for use with WPILib pose estimator (addVisionMeasurement) in the WPILib Blue alliance coordinate system.
+     * Make sure you are calling setRobotOrientation() before calling this method.
+     * 
+     * @param limelightName
+     * @return
+     */
+    public static PoseEstimate getBotPoseEstimate_wpiBlue_MegaTag2(String limelightName) {
+        return getBotPoseEstimate(limelightName, "botpose_orb_wpiblue", true);
+    }
 
-    // /**
-    //  * Gets the Pose2d for easy use with Odometry vision pose estimator
-    //  * (addVisionMeasurement)
-    //  * 
-    //  * @param limelightName
-    //  * @return
-    //  */
-    // public static Pose2d getBotPose2d_wpiRed(String limelightName) {
+    /**
+     * Gets the Pose2d for easy use with Odometry vision pose estimator
+     * (addVisionMeasurement)
+     * 
+     * @param limelightName
+     * @return
+     */
+    public static Pose2d getBotPose2d_wpiRed(String limelightName) {
 
-    //     double[] result = getBotPose_wpiRed(limelightName);
-    //     return toPose2D(result);
+        double[] result = getBotPose_wpiRed(limelightName);
+        return toPose2D(result);
 
-    // }
+    }
 
-    // /**
-    //  * Gets the Pose2d and timestamp for use with WPILib pose estimator (addVisionMeasurement) when you are on the RED
-    //  * alliance
-    //  * @param limelightName
-    //  * @return
-    //  */
-    // public static PoseEstimate getBotPoseEstimate_wpiRed(String limelightName) {
-    //     return getBotPoseEstimate(limelightName, "botpose_wpired", false);
-    // }
+    /**
+     * Gets the Pose2d and timestamp for use with WPILib pose estimator (addVisionMeasurement) when you are on the RED
+     * alliance
+     * @param limelightName
+     * @return
+     */
+    public static PoseEstimate getBotPoseEstimate_wpiRed(String limelightName) {
+        return getBotPoseEstimate(limelightName, "botpose_wpired", false);
+    }
 
-    // /**
-    //  * Gets the Pose2d and timestamp for use with WPILib pose estimator (addVisionMeasurement) when you are on the RED
-    //  * alliance
-    //  * @param limelightName
-    //  * @return
-    //  */
-    // public static PoseEstimate getBotPoseEstimate_wpiRed_MegaTag2(String limelightName) {
-    //     return getBotPoseEstimate(limelightName, "botpose_orb_wpired", true);
-    // }
+    /**
+     * Gets the Pose2d and timestamp for use with WPILib pose estimator (addVisionMeasurement) when you are on the RED
+     * alliance
+     * @param limelightName
+     * @return
+     */
+    public static PoseEstimate getBotPoseEstimate_wpiRed_MegaTag2(String limelightName) {
+        return getBotPoseEstimate(limelightName, "botpose_orb_wpired", true);
+    }
 
     /**
      * Gets the Pose2d for easy use with Odometry vision pose estimator

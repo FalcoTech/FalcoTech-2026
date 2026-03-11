@@ -13,16 +13,16 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Turret;
 
 public class ShotCalculator extends SubsystemBase {
-  // private final CommandSwerveDrivetrain drivetrain;
-  // private final Shooter shooter;
-  // private final Turret turret;
 
   public ShotCalculator(Turret turret, Shooter shooter, CommandSwerveDrivetrain drivetrain) {
-    this.turret = turret;
-    this.shooter = shooter;
-    this.drivetrain = drivetrain;
+    // this.turret = turret;
+    // this.shooter = shooter;
+    // this.drivetrain = drivetrain;
   }
   // private final Vision vision;
   public ShotCalculator() {}

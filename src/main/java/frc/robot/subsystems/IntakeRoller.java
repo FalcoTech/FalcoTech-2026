@@ -14,7 +14,7 @@ import frc.robot.Constants.CAN_IDs;
 import java.util.function.Supplier;
 
 public class IntakeRoller extends SubsystemBase {
-  private final SparkMax Intakemotor = new SparkMax(CAN_IDs.INTAKEROLLER_MOTOR, MotorType.kBrushless);
+  private final SparkMax intakeRollerMotor = new SparkMax(CAN_IDs.INTAKEROLLER_MOTOR, MotorType.kBrushless);
 
   private SparkMaxConfig Intakemotorconfig = new SparkMaxConfig();
 
@@ -32,18 +32,18 @@ public class IntakeRoller extends SubsystemBase {
   }
 
   public void runShooterVoid(double speed) {
-    Intakemotor.set(speed);
+    intakeRollerMotor.set(speed);
   }
 
   public Command runIntake(double speed) {
-    return run(() -> Intakemotor.set(speed));
+    return run(() -> intakeRollerMotor.set(speed));
   }
 
   public Command runIntake(Supplier<Double> speedSupplier) {
-    return run(() -> Intakemotor.set(speedSupplier.get()));
+    return run(() -> intakeRollerMotor.set(speedSupplier.get()));
   }
 
   public Command stopIntake() {
-    return run(() -> Intakemotor.set(0));
+    return run(() -> intakeRollerMotor.set(0));
   }
 }

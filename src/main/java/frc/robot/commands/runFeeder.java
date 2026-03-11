@@ -25,7 +25,7 @@ public class runFeeder extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.feeder.runShooterVoid(speed);
+    RobotContainer.feeder.runFeederVoid(speed);
   }
 
   // Called once the command ends or is interrupted.
