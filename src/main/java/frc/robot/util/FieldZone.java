@@ -21,10 +21,10 @@ public class FieldZone {
 
   public boolean contains(Translation2d position) {
     // Flip Position if on Red
-    if (Constants.isRedAlliance()) {
-      // Mirror X across field centerline; Y stays the same
-      position = FlippingUtil.flipFieldPosition(position);
-    }
+    // if (Constants.isRedAlliance()) {
+    //   // Mirror X across field centerline; Y stays the same
+    //   position = FlippingUtil.flipFieldPosition(position);
+    // }
 
     return position.getX() >= minX
         && position.getX() <= maxX
