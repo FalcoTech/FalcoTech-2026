@@ -9,10 +9,12 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CAN_IDs;
+
 import java.util.function.Supplier;
 
 public class Feeder extends SubsystemBase {
-  private final SparkMax feedermotor = new SparkMax(30, MotorType.kBrushless);
+  private final SparkMax feedermotor = new SparkMax(CAN_IDs.FEEDER_MOTOR, MotorType.kBrushless);
 
   private SparkMaxConfig feedermotorconfig = new SparkMaxConfig();
 

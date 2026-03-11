@@ -22,8 +22,8 @@ import frc.robot.Constants.PathPlanningConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.Hopper;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.HopperPush;
+import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.LEDS;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
@@ -72,9 +72,9 @@ public class RobotContainer {
 
   // Subsystems
   public static final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-  public static final Intake intake = new Intake();
+  public static final IntakeRoller intakeRoller = new IntakeRoller();
   public static final Feeder feeder = new Feeder();
-  public static final Hopper hopper = new Hopper();
+  public static final HopperPush hopperPush = new HopperPush();
   public static final LEDS leds = new LEDS();
   public static final Turret turret = new Turret();
 
@@ -136,10 +136,11 @@ public class RobotContainer {
     drivetrain.registerTelemetry(logger::telemeterize);
 
     shooter.setDefaultCommand(shooter.stop());
-    // Copilot.a().whileTrue(shooter.set(0.15));
+    Copilot.a().whileTrue(shooter.set(0.5));
+    Copilot.b().whileTrue(shooter.set(0.75));
     // Copilot.b().whileTrue(shooter.setVelocity(RPM.of(500)));
-    // Copilot.y().whileTrue(shooter.setVelocity(RPM.of(1000)));
-    // Copilot.x().whileTrue(shooter.setVelocity(RPM.of(2000)));
+    Copilot.y().whileTrue(shooter.setVelocity(RPM.of(1000)));
+    Copilot.x().whileTrue(shooter.setVelocity(RPM.of(2000)));
 
     Copilot.start().whileTrue(shooter.sysId());
     // // Copilot.b().whileTrue(shooter.set(0.25));
@@ -166,7 +167,7 @@ public class RobotContainer {
     // feeder.setDefaultCommand(new runFeeder((Copilot.getRightTriggerAxis() -
     // Copilot.getLeftTriggerAxis())));
     // feeder.setDefaultCommand(feeder.stopFeeder());
-
+    hopperPush.setDefaultCommand(hopperPush.runHopperPush(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()));
     // Copilot.b().whileTrue(feeder.runFeeder(1));
     // Copilot.x().whileTrue(feeder.runFeeder(-1));
     // Copilot.y().whileTrue(feeder.runFeeder(0));

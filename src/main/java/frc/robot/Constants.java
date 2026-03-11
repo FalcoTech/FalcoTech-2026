@@ -15,21 +15,21 @@ public final class Constants {
 
   public static final class CAN_IDs {
     // Drivetrain Motors
-    public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 1;
-    public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 2;
-    public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 3;
-    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 4;
-    public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 5;
-    public static final int BACK_LEFT_MODULE_STEER_MOTOR = 6;
-    public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 7;
-    public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 8;
+    // public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 1;
+    // public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 2;
+    // public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 3;
+    // public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 4;
+    // public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 5;
+    // public static final int BACK_LEFT_MODULE_STEER_MOTOR = 6;
+    // public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 7;
+    // public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 8;
 
-    // Drivetrain Encoders
-    public static final int FRONT_LEFT_MODULE_ENCODER = 10;
-    public static final int FRONT_RIGHT_MODULE_ENCODER = 20;
-    public static final int BACK_LEFT_MODULE_ENCODER = 30;
-    public static final int BACK_RIGHT_MODULE_ENCODER = 40;
-    public static final int PIGEON_IMU = 50;
+    // // Drivetrain Encoders
+    // public static final int FRONT_LEFT_MODULE_ENCODER = 10;
+    // public static final int FRONT_RIGHT_MODULE_ENCODER = 20;
+    // public static final int BACK_LEFT_MODULE_ENCODER = 70;
+    // public static final int BACK_RIGHT_MODULE_ENCODER = 40;
+    // public static final int PIGEON_IMU = 50;
 
     // Shooter Motors
     public static final int TURRET_MOTOR = 20;
@@ -37,8 +37,9 @@ public final class Constants {
     public static final int FLYWHEEL_MOTOR_RIGHT = 22;
 
     // Intake & Feeder Motors
-    public static final int INTAKE_MOTOR = 50;
+    public static final int INTAKEROLLER_MOTOR = 80;
     public static final int FEEDER_MOTOR = 30;
+    public static final int HOPPERPUSH_MOTOR = 31;
 
     // Climb Motors
     public static final int ELEVATOR_MOTOR = 13;

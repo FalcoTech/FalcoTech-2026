@@ -132,7 +132,7 @@ public class Shooter extends SubsystemBase {
     return flywheel.sysId(
         Volts.of(12), // Max voltage to apply during the test
         Volts.per(Second).of(0.5), // Step voltage per second
-        Seconds.of(10) // Duration of the test
+        Seconds.of(30) // Duration of the test
         );
   }
 
