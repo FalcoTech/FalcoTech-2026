@@ -19,6 +19,11 @@ public class ShotCalculator extends SubsystemBase {
   // private final Shooter shooter;
   // private final Turret turret;
 
+  public ShotCalculator(Turret turret, Shooter shooter, CommandSwerveDrivetrain drivetrain) {
+    this.turret = turret;
+    this.shooter = shooter;
+    this.drivetrain = drivetrain;
+  }
   // private final Vision vision;
   public ShotCalculator() {}
 

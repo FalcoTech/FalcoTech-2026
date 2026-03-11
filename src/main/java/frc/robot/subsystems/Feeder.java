@@ -33,19 +33,15 @@ public class Feeder extends SubsystemBase {
     SmartDashboard.putNumber("Feeder Motor Output", feederMotor.getAppliedOutput());
   }
 
-  public void runShooterVoid(double speed) {
-    feedermotor.set(speed);
-  }
-
   public Command runFeeder(double speed) {
-    return run(() -> feedermotor.set(speed));
+    return run(() -> feederMotor.set(speed));
   }
 
   public Command runFeeder(Supplier<Double> speedSupplier) {
-    return run(() -> feedermotor.set(speedSupplier.get()));
+    return run(() -> feederMotor.set(speedSupplier.get()));
   }
 
   public Command stopFeeder() {
-    return run(() -> feedermotor.set(0));
+    return run(() -> feederMotor.set(0));
   }
 }
