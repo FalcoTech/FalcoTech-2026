@@ -167,7 +167,9 @@ public class RobotContainer {
     // feeder.setDefaultCommand(new runFeeder((Copilot.getRightTriggerAxis() -
     // Copilot.getLeftTriggerAxis())));
     // feeder.setDefaultCommand(feeder.stopFeeder());
-    hopperPush.setDefaultCommand(hopperPush.runHopperPush(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()));
+    hopperPush.setDefaultCommand(hopperPush.runHopperPush(() -> Copilot.getLeftX()));
+    // hopperPush.setDefaultCommand(hopperPush.runHopperPush(0));
+    
     // Copilot.b().whileTrue(feeder.runFeeder(1));
     // Copilot.x().whileTrue(feeder.runFeeder(-1));
     // Copilot.y().whileTrue(feeder.runFeeder(0));
