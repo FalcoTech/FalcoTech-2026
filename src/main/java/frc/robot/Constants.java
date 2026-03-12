@@ -1,6 +1,13 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.util.FieldZone;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -77,7 +84,14 @@ public final class Constants {
 
   public static final class IntakeConstants {}
 
-  public static final class ClimbConstants {}
+  public static final class TurretConstants {
+    // CCW is positive in WPILib (think Unit Circle)
+    public static final Angle HARD_COUNTER_CLOCKWISE_LIMIT = Degrees.of(140);
+    public static final Angle HARD_CLOCKWISE_LIMIT = Degrees.of(-140);
+  }
+
+  public static final class ClimbConstants {
+    public static final double CLIMB_SPEED = 0.25;
 
   public static final class PathPlanningConstants {
     // From RobotContainer.java
@@ -93,7 +107,8 @@ public final class Constants {
     // Rotation2d.fromDegrees(-90));
   }
 
-  public static final class AlignmentConstants {
+  public static final class FieldConstants {
+
     // Distance constants (in meters)
     // public static final double CORAL_FORWARD_DISTANCE = -0.4572;  // 18 inches away from tag
     // public static final double CORAL_LATERAL_DISTANCE = 0.1524;  // 6 inches for left/right
@@ -105,5 +120,16 @@ public final class Constants {
     // public static final double ALGAE_REEF_LATERAL_OFFSET = 0.0;  // No lateral offset
     // public static final double ALGAE_PROC_FORWARD_OFFSET = -0.5842;  // 23 in
     // public static final double BARGE_FORWARD_OFFSET = -1.0;  // 1 meter
+
+    // All positions are based on blue side origin and must be flipped when needed
+    public static final Translation2d OUTPOST_SIDE_TARGET = new Translation2d(2, 2);
+    public static final Translation2d DEPOT_SIDE_TARGET = new Translation2d(2, 6);
+    public static final Translation2d HUB_TARGET = new Translation2d(4.59, 4.03);
+    public static final FieldZone allianceZone = new FieldZone(-.5, 4.278, -.5, 8.5);
+    public static final FieldZone neutralZone = new FieldZone(4.278, 12.117, -.5, 8.5);
+  }
+
+  public static boolean isRedAlliance() {
+    return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
   }
 }

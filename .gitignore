@@ -189,5 +189,8 @@ compile_commands.json
 # GVersion generated file for Git
 src/main/java/frc/robot/BuildConstants.java
 
-# Revlog files
+# Rev Logs
 *.revlog
+
+# Claude Settings
+.claude/settings.local.json

@@ -10,6 +10,8 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -23,6 +25,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CAN_IDs;
 import java.util.function.Supplier;
 import yams.gearing.GearBox;
@@ -48,7 +51,7 @@ public class Turret extends SubsystemBase {
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
           .withClosedLoopController(
-              35, 0, .75, DegreesPerSecond.of(1080), DegreesPerSecondPerSecond.of(2160))
+              35, 0, .75, DegreesPerSecond.of(1080), DegreesPerSecondPerSecond.of(2160)) //Vel = 1080, Accel = 2160
           // .withLinearClosedLoopController(false)
           .withFeedforward(new SimpleMotorFeedforward(.3, 0, 0.0))
           // .withClosedLoopTolerance(Degrees.of(0.5)) //doesn't work with TalonFX
@@ -72,8 +75,14 @@ public class Turret extends SubsystemBase {
   private final PivotConfig turretConfig =
       new PivotConfig(turretSMC)
           .withStartingPosition(Degrees.of(0))
-          .withHardLimit(Degrees.of(-20), Degrees.of(220))
-          .withSoftLimits(Degrees.of(-10), Degrees.of(210))
+          // Update to have 0 be forwards to reduce math overheard
+          // .withStartingPosition(HARD_CLOCKWISE_LIMIT))?
+          // .withHardLimit(TurretConstants.HARD_CLOCKWISE_LIMIT,
+          // TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT)
+          // .withSoftLimits(TurretConstants.HARD_CLOCKWISE_LIMIT.plus(Degrees.of(5),
+          // TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT.minus(Degrees.of(5))
+          .withHardLimit(Degrees.of(-110), Degrees.of(110))
+          .withSoftLimits(Degrees.of(-100), Degrees.of(100))
           .withTelemetry("TurretMech", TelemetryVerbosity.HIGH)
           .withMOI(Meters.of(0.25), Pounds.of(4));
 
@@ -98,13 +107,17 @@ public class Turret extends SubsystemBase {
     return turret.getAngle();
   }
 
-  // public Command sysId() {
-  //   return turret.sysId(
-  //       Volts.of(12), // Max voltage to apply during the test
-  //       Volts.per(Second).of(0.5), // Step voltage per second
-  //       Seconds.of(10) // Duration of the test
-  //       );
-  // }
+  public Trigger isNearAngle(Angle target, Angle tolerance) {
+    return turret.isNear(target, tolerance);
+  }
+
+  public Command sysId() {
+    return turret.sysId(
+        Volts.of(12), // Max voltage to apply during the test
+        Volts.per(Second).of(0.5), // Step voltage per second
+        Seconds.of(10) // Duration of the test
+        );
+  }
 
   public Command setDutyCycle(Supplier<Double> dutyCycleSupplier) {
     return turret.set(dutyCycleSupplier);
@@ -173,6 +186,8 @@ public class Turret extends SubsystemBase {
     // or from a dedicated off-main-thread task.
     // telemetry refresh removed from periodic to avoid blocking NT/remote calls
     turret.updateTelemetry();
+    SmartDashboard.putNumber("Turret Position", getAngle().in(Degrees));
+    // SmartDashboard.putNumber("Turret Shot Angle", ShotCalculator.getIdealTurretAngle());
     // This method will be called once per scheduler run
 
   }
