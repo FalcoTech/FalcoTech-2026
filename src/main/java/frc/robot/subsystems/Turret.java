@@ -10,9 +10,6 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Pounds;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -40,38 +37,42 @@ import yams.motorcontrollers.remote.TalonFXWrapper;
 
 public class Turret extends SubsystemBase {
   // private final SparkMax turretMotor =
-  //     new SparkMax(CAN_IDs.TURRET_MOTOR, SparkMax.MotorType.kBrushless);
+  // new SparkMax(CAN_IDs.TURRET_MOTOR, SparkMax.MotorType.kBrushless);
 
   private final TalonFX turretMotor = new TalonFX(CAN_IDs.TURRET_MOTOR);
+  // private TalonFXConfiguration WristMotorConfig = new TalonFXConfiguration();
+  // private TalonFXConfigurator WristMotorConfigurator = turretMotor.getConfigurator();
 
   private final SmartMotorControllerConfig motorConfig =
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
           .withClosedLoopController(
-              4, 0, 0.05, DegreesPerSecond.of(240), DegreesPerSecondPerSecond.of(90))
-          .withFeedforward(new SimpleMotorFeedforward(0.01, 0.0, 0.0))
+              35, 0, .75, DegreesPerSecond.of(1080), DegreesPerSecondPerSecond.of(2160))
+          // .withLinearClosedLoopController(false)
+          .withFeedforward(new SimpleMotorFeedforward(.3, 0, 0.0))
           // .withClosedLoopTolerance(Degrees.of(0.5)) //doesn't work with TalonFX
           // Configure Motor and Mechanism properties
-          .withGearing(new MechanismGearing(GearBox.fromTeeth(10, 100)))
+          // .withGearing(new MechanismGearing(GearBox.fromReductionStages(5, 10)))
+          .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 10)))
           .withIdleMode(MotorMode.BRAKE)
-          .withMotorInverted(false)
-          // Setup Telemetry
+          .withMotorInverted(true)
+          //         // Setup Telemetry
           .withTelemetry("TurretMotor", TelemetryVerbosity.HIGH)
-          // Power Optimization
-          .withStatorCurrentLimit(Amps.of(40));
+          //         // Power Optimization
+          .withStatorCurrentLimit(Amps.of(30));
   // .withClosedLoopRampRate(Seconds.of(0.25))
-  // .withOpenLoopRampRate(Seconds.of(0.25))
-  // .withVoltageCompensation(Volts.of(12)) // also doesn't work with TalonFX
+  // // .withOpenLoopRampRate(Seconds.of(0.25))
+  // // .withVoltageCompensation(Volts.of(12)) // also doesn't work with TalonFX
 
   private final SmartMotorController turretSMC =
-      // new SparkWrapper(turretMotor, DCMotor.getNEO(1), motorConfig);
+      //     // new SparkWrapper(turretMotor, DCMotor.getNEO(1), motorConfig);
       new TalonFXWrapper(turretMotor, DCMotor.getFalcon500(1), motorConfig);
 
   private final PivotConfig turretConfig =
       new PivotConfig(turretSMC)
-          .withStartingPosition(Degrees.of(10))
-          .withHardLimit(Degrees.of(-5), Degrees.of(270))
-          .withSoftLimits(Degrees.of(0), Degrees.of(250))
+          .withStartingPosition(Degrees.of(0))
+          .withHardLimit(Degrees.of(-20), Degrees.of(220))
+          .withSoftLimits(Degrees.of(-10), Degrees.of(210))
           .withTelemetry("TurretMech", TelemetryVerbosity.HIGH)
           .withMOI(Meters.of(0.25), Pounds.of(4));
 
@@ -85,7 +86,7 @@ public class Turret extends SubsystemBase {
   }
 
   public void setAngleDirect(Angle targetAngle) {
-    turretSMC.setPosition(targetAngle);
+    // turretSMC.setPosition(targetAngle);
   }
 
   public Command setAngle(Supplier<Angle> angleSupplier) {
@@ -96,13 +97,13 @@ public class Turret extends SubsystemBase {
     return turret.getAngle();
   }
 
-  public Command sysId() {
-    return turret.sysId(
-        Volts.of(12), // Max voltage to apply during the test
-        Volts.per(Second).of(0.5), // Step voltage per second
-        Seconds.of(10) // Duration of the test
-        );
-  }
+  // public Command sysId() {
+  //   return turret.sysId(
+  //       Volts.of(12), // Max voltage to apply during the test
+  //       Volts.per(Second).of(0.5), // Step voltage per second
+  //       Seconds.of(10) // Duration of the test
+  //       );
+  // }
 
   public Command setDutyCycle(Supplier<Double> dutyCycleSupplier) {
     return turret.set(dutyCycleSupplier);
@@ -150,6 +151,53 @@ public class Turret extends SubsystemBase {
             });
   }
 
+  public Command stop() {
+    return turret.set(0);
+  }
+  ;
+
+  public void setDirectDutyCycle(double speed) {
+    turretMotor.set(speed);
+  }
+
+  /**
+   * Reset the encoder to the lowest position when the current threshhold is reached. Should be used
+   * when the Mechanism position is unreliable, like startup. Threshhold is only detected if
+   * exceeded for 0.2 seconds, and the motor moves less than 2 degrees per second.
+   *
+   * @param threshhold The current threshhold held when the Mechanism is at it's hard limit.
+   * @return
+   */
+  public Command resetZeroToHardStop(Current threshold) {
+    // copied/ based on the example from YAMS github
+    Debouncer currentDebouncer = new Debouncer(0.2); // Current threshold must last 0.2s
+    Voltage stopVoltage = Volts.of(0); // Voltage to set at end of Command
+    Voltage runVoltage =
+        Volts.of(-3); // Voltage to run mechanism with (variable upon mechanism), negative to run in
+    // reverse 
+    Angle limitAngle =
+        this.turretConfig
+            .getLowerHardLimit()
+            .get(); // Use Mechanism hard limit as the new start point
+    AngularVelocity velocityThreshold =
+        DegreesPerSecond.of(2); // Max amount of movement to be considered stopped
+
+    return Commands.startRun(
+            turretSMC::stopClosedLoopController, () -> turretSMC.setVoltage(runVoltage))
+        .until(
+            () ->
+                currentDebouncer.calculate(
+                    turretSMC.getStatorCurrent().gte(threshold)
+                        && turretSMC.getMechanismVelocity().abs(DegreesPerSecond)
+                            <= velocityThreshold.in(DegreesPerSecond)))
+        .finallyDo(
+            () -> {
+              turretSMC.setVoltage(stopVoltage);
+              turretSMC.setEncoderPosition(limitAngle);
+              turretSMC.startClosedLoopController();
+            });
+  }
+
   @Override
   public void periodic() {
     // NOTE: previously this called `turret.updateTelemetry()` which triggers
@@ -160,8 +208,9 @@ public class Turret extends SubsystemBase {
     // Station. If you need telemetry, call updateTelemetry() once at init
     // or from a dedicated off-main-thread task.
     // telemetry refresh removed from periodic to avoid blocking NT/remote calls
-    // turret.updateTelemetry();
+    turret.updateTelemetry();
     // This method will be called once per scheduler run
+
   }
 
   @Override

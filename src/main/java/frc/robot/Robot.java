@@ -5,9 +5,6 @@
 package frc.robot;
 
 import com.ctre.phoenix6.HootAutoReplay;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -113,9 +110,9 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().cancel(m_autonomousCommand);
     }
-    RobotContainer.leds.setAlliance(
-        DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
-            == DriverStation.Alliance.Red);
+    // RobotContainer.leds.setAlliance(
+    //     DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
+    //         == DriverStation.Alliance.Red);
   }
 
   @Override

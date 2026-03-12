@@ -11,19 +11,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN_IDs;
+
 import java.util.function.Supplier;
 
-// Feeder will have 1 roller to feed the ball from hopper
 public class Feeder extends SubsystemBase {
-  private SparkMaxConfig feederConfig = new SparkMaxConfig();
-  // I apparently can't recall how to do this
+  private final SparkMax feedermotor = new SparkMax(CAN_IDs.FEEDER_MOTOR, MotorType.kBrushless);
 
-  // TODO: Finish configuring the feeder motor
-
-  private final SparkMax feederMotor = new SparkMax(CAN_IDs.FEEDER_MOTOR, MotorType.kBrushless);
+  private SparkMaxConfig feedermotorconfig = new SparkMaxConfig();
 
   /** Creates a new Feeder. */
-  public Feeder() {}
+  public Feeder() {
+    // feedermotorconfig.idleMode(IdleMode.kBrake);
+
+    // feedermotor.configure(
+    // feedermotorconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+  }
 
   @Override
   public void periodic() {

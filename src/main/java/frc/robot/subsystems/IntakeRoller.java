@@ -4,14 +4,46 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CAN_IDs;
+
+import java.util.function.Supplier;
 
 public class IntakeRoller extends SubsystemBase {
-  /** Creates a new IntakeRoller. */
-  public IntakeRoller() {}
+  private final SparkMax Intakemotor = new SparkMax(CAN_IDs.INTAKEROLLER_MOTOR, MotorType.kBrushless);
+
+  private SparkMaxConfig Intakemotorconfig = new SparkMaxConfig();
+
+  /** Creates a new Feeder. */
+  public IntakeRoller() {
+    // feedermotorconfig.idleMode(IdleMode.kBrake);
+
+    // feedermotor.configure(
+    // feedermotorconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+
+  public void runShooterVoid(double speed) {
+    Intakemotor.set(speed);
+  }
+
+  public Command runIntake(double speed) {
+    return run(() -> Intakemotor.set(speed));
+  }
+
+  public Command runIntake(Supplier<Double> speedSupplier) {
+    return run(() -> Intakemotor.set(speedSupplier.get()));
+  }
+
+  public Command stopIntake() {
+    return run(() -> Intakemotor.set(0));
   }
 }
