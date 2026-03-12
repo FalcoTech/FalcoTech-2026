@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PathPlanningConstants;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.ClimberElevator;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.HopperPush;
@@ -78,6 +79,7 @@ public class RobotContainer {
   public static final LEDS leds = new LEDS();
   public static final Turret turret = new Turret();
   public static final Shooter shooter = new Shooter();
+  public static final ClimberElevator climbElevator = new ClimberElevator();
   public static final ShotCalculator shotCalculator =
       new ShotCalculator(turret, shooter, drivetrain);
 
@@ -86,7 +88,7 @@ public class RobotContainer {
     RegisterNamedCommands();
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Mode", autoChooser);
-
+    climbElevator.setDefaultCommand(climbElevator.set(0));
     configureBindings();
 
     SmartDashboard.putBoolean("Enable MegaTag2", false);
@@ -200,6 +202,11 @@ public class RobotContainer {
     // from
     // // current position?
     // Copilot.povDown().whileTrue(turret.setAngle(() -> turret.getAngle().minus(Degrees.of(10))));
+
+    Copilot.povDown().whileTrue(climbElevator.setHeight(Inches.of(3)));
+    Copilot.povUp().whileTrue(climbElevator.setHeight(Inches.of(5.5)));
+    Copilot.povLeft().whileTrue(climbElevator.set(0.5));
+    Copilot.povRight().whileTrue(climbElevator.set(-0.5));
   }
 
   public Command getAutonomousCommand() {

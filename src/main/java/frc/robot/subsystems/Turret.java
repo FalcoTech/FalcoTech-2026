@@ -141,7 +141,7 @@ public class Turret extends SubsystemBase {
     Voltage stopVoltage = Volts.of(0); // Voltage to set at end of Command
     Voltage runVoltage =
         Volts.of(-3); // Voltage to run mechanism with (variable upon mechanism), negative to run in
-    // reverse 
+    // reverse
     Angle limitAngle =
         this.turretConfig
             .getLowerHardLimit()

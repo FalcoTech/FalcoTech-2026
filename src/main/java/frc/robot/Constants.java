@@ -1,5 +1,15 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
+import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.FeetPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.Volts;
+
 import static edu.wpi.first.units.Units.Degrees;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -8,6 +18,15 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.util.FieldZone;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.Voltage;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -36,6 +55,7 @@ import frc.robot.util.FieldZone;
 
 public final class Constants {
   public static final int BLINKIN_PWM_PORT = 9;
+  public static final Voltage VOLTAGE_COMP = Volts.of(12);
 
   public static final class CAN_IDs {
     // Drivetrain IDs are handled by TunerConstants and are omitted here
@@ -53,6 +73,7 @@ public final class Constants {
     // Climb Motors
     public static final int CLIMB_ELEVATOR_MOTOR = 98;
     public static final int CLIMB_PIVOT_MOTOR = 99;
+    public static final int CLIMB_Arm_MOTOR = 0;
 
     // Sensors and other devices could also be added here
   }
@@ -89,9 +110,56 @@ public final class Constants {
     public static final Angle HARD_COUNTER_CLOCKWISE_LIMIT = Degrees.of(140);
     public static final Angle HARD_CLOCKWISE_LIMIT = Degrees.of(-140);
   }
-
   public static final class ClimbConstants {
-    public static final double CLIMB_SPEED = 0.25;
+    public static final Current LIFTOFF_THRESHOLD =
+        Amps.of(20); // Number of amps seen with Robot weight
+
+    // Elevator motor closed loop controller
+    public static final double ELEVATOR_kP = 0;
+    public static final double ELEVATOR_kI = 0;
+    public static final double ELEVATOR_kD = 0;
+    public static final LinearVelocity ELEVATOR_MAX_VELOCITY = FeetPerSecond.of(2);
+    public static final LinearAcceleration ELEVATOR_MAX_ACCELERATION = FeetPerSecondPerSecond.of(4);
+
+    // Elevator feedforward gains (kS, kG, kV)
+    public static final double ELEVATOR_FF_kS = 0;
+    public static final double ELEVATOR_FF_kG = 0.0622;
+    public static final double ELEVATOR_FF_kV = 10;
+
+    // Elevator motor hardware config
+    public static final Current ELEVATOR_STATOR_CURRENT_LIMIT = Amps.of(40);
+    public static final String ELEVATOR_GEARBOX_STAGES = "100:1";
+    public static final String ELEVATOR_SPROCKET_STAGES = "1:1";
+
+    // Elevator physical properties
+    public static final Distance ELEVATOR_STARTING_HEIGHT = Inches.of(2.5);
+    public static final Distance ELEVATOR_MIN_HEIGHT = Inches.of(2.5);
+    public static final Distance ELEVATOR_MAX_HEIGHT =
+        ELEVATOR_MIN_HEIGHT.plus(Inches.of(5.25)); // Travel Distance
+    public static final Mass ELEVATOR_MASS = Pounds.of(12);
+
+    // Arm motor closed loop controller
+    public static final double ARM_kP = 0;
+    public static final double ARM_kI = 0;
+    public static final double ARM_kD = 0;
+    public static final AngularVelocity ARM_MAX_VELOCITY = DegreesPerSecond.of(50);
+    public static final AngularAcceleration ARM_MAX_ACCELERATION = DegreesPerSecondPerSecond.of(25);
+
+    // Arm feedforward gains (kS, kG, kV)
+    public static final double ARM_FF_kS = 0;
+    public static final double ARM_FF_kG = 0;
+    public static final double ARM_FF_kV = 0;
+
+    // Arm motor hardware config
+    public static final Current ARM_STATOR_CURRENT_LIMIT = Amps.of(40);
+    public static final String ARM_GEARBOX_STAGES = "1:100";
+    public static final String ARM_SPROCKET_STAGES = "1:4";
+
+    // Arm physical properties
+    public static final Angle ARM_MIN_Position = Degrees.of(0);
+    public static final Angle ARM_MAX_Position = Degrees.of(90);
+    public static final Mass ARM_MASS = Pounds.of(2.5);
+  }
 
   public static final class PathPlanningConstants {
     // From RobotContainer.java
