@@ -18,6 +18,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -46,7 +47,7 @@ public class Turret extends SubsystemBase {
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
           .withClosedLoopController(
-              35, 0, .75, DegreesPerSecond.of(1080), DegreesPerSecondPerSecond.of(2160))
+              35, 0, .75, DegreesPerSecond.of(1080), DegreesPerSecondPerSecond.of(2160)) //Vel = 1080, Accel = 2160
           // .withLinearClosedLoopController(false)
           .withFeedforward(new SimpleMotorFeedforward(.3, 0, 0.0))
           // .withClosedLoopTolerance(Degrees.of(0.5)) //doesn't work with TalonFX
@@ -142,6 +143,7 @@ public class Turret extends SubsystemBase {
     // or from a dedicated off-main-thread task.
     // telemetry refresh removed from periodic to avoid blocking NT/remote calls
     turret.updateTelemetry();
+    SmartDashboard.putNumber("Turret Position", getAngle().in(Degrees));
     // SmartDashboard.putNumber("Turret Shot Angle", ShotCalculator.getIdealTurretAngle());
     // This method will be called once per scheduler run
 

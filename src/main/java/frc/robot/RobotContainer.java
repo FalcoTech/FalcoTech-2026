@@ -32,9 +32,9 @@ import frc.robot.util.ShotCalculator;
 public class RobotContainer {
   // Drive speeds
   private static double MaxSpeed =
-      .5 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+      .2 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   private static double MaxAngularRate =
-      RotationsPerSecond.of(0.75)
+      .4 * RotationsPerSecond.of(0.75)
           .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
   /* Setting up bindings for necessary control of the swerve drive platform */
@@ -157,13 +157,23 @@ public class RobotContainer {
     // Copilot.y().whileTrue(turret.setAngle(Degrees.of(90)));
     // Copilot.a().whileTrue(turret.setAngle(Degrees.of(95)));
     // Copilot.b().whileTrue(turret.setAngle(Degrees.of(0)));
-    Copilot.rightBumper()
-        .whileTrue(turret.setAngle(() -> Degrees.of(shotCalculator.getIdealTurretAngle())));
+    // Copilot.rightBumper()
+        // .whileTrue(turret.setAngle(() -> Degrees.of(shotCalculator.getIdealTurretAngle())));
+
+    Copilot.a().whileTrue(turret.setAngle(() -> Degrees.of(shotCalculator.getIdealTurretAngle())));
+    Copilot.x().whileTrue(shooter.set(.6));
     // Copilot.x().whileTrue(turret.setDutyCycle(.1));
     // Copilot.b().whileTrue(turret.setDutyCycle(-.1));
 
     feeder.setDefaultCommand(
-        feeder.runFeeder(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()));
+        feeder.runFeeder(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis())
+    );
+
+    hopper.setDefaultCommand(
+        hopper.runHopperPush(() -> Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis())
+    );
+
+
     // feeder.setDefaultCommand(new runFeeder((Copilot.getRightTriggerAxis() -
     // Copilot.getLeftTriggerAxis())));
     // feeder.setDefaultCommand(feeder.stopFeeder());

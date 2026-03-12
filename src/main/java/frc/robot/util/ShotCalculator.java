@@ -153,11 +153,11 @@ public class ShotCalculator extends SubsystemBase {
     double idealTurretAngle = (getAngleToTarget() - getRobotHeading());
     double wrappedTurretAngle = MathUtil.inputModulus(idealTurretAngle, -180, 180);
 
-    if ((wrappedTurretAngle < -100) || (wrappedTurretAngle > 100)){
+    if ((wrappedTurretAngle < -50) || (wrappedTurretAngle > 50)){
       turret.stop();
-      return Clamp(wrappedTurretAngle, -100, 100);  
+      return Clamp(wrappedTurretAngle, -50, 50);  
     } else {
-      return Clamp(wrappedTurretAngle, -100, 100);
+      return Clamp(wrappedTurretAngle, -50, 50);
     }
   }
 
