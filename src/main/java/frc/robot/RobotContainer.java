@@ -172,8 +172,8 @@ public class RobotContainer {
         feeder.runFeeder(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis())
     );
 
-    hopper.setDefaultCommand(
-        hopper.runHopperPush(() -> Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis())
+    hopperPush.setDefaultCommand(
+        hopperPush.runHopperPush(() -> Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis())
     );
 
 

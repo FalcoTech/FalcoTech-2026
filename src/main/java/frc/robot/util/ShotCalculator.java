@@ -16,6 +16,7 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
@@ -124,9 +125,7 @@ public class ShotCalculator extends SubsystemBase {
     return drivetrain.getState().Pose.getRotation().getDegrees();
   }
 
-  public static double getAngleToHub(){
-    double getX = RobotContainer.drivetrain.getState().Pose.getX();
-    double getY = RobotContainer.drivetrain.getState().Pose.getY();
+  
 
   public Translation2d getRobotToTargetVector(){
     return getEffectiveTarget().minus(drivetrain.getState().Pose.getTranslation());
