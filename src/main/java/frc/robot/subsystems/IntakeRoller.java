@@ -10,11 +10,11 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN_IDs;
-
 import java.util.function.Supplier;
 
 public class IntakeRoller extends SubsystemBase {
-  private final SparkMax intakeRollerMotor = new SparkMax(CAN_IDs.INTAKEROLLER_MOTOR, MotorType.kBrushless);
+  private final SparkMax intakeRollerMotor =
+      new SparkMax(CAN_IDs.INTAKEROLLER_MOTOR, MotorType.kBrushless);
 
   private SparkMaxConfig Intakemotorconfig = new SparkMaxConfig();
 

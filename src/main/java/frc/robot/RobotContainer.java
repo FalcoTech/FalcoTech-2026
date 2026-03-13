@@ -35,8 +35,9 @@ public class RobotContainer {
   private static double MaxSpeed =
       .2 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   private static double MaxAngularRate =
-      .4 * RotationsPerSecond.of(0.75)
-          .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+      .4
+          * RotationsPerSecond.of(0.75)
+              .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   public static final SwerveRequest.FieldCentric drive =
@@ -161,7 +162,7 @@ public class RobotContainer {
     // Copilot.a().whileTrue(turret.setAngle(Degrees.of(95)));
     // Copilot.b().whileTrue(turret.setAngle(Degrees.of(0)));
     // Copilot.rightBumper()
-        // .whileTrue(turret.setAngle(() -> Degrees.of(shotCalculator.getIdealTurretAngle())));
+    // .whileTrue(turret.setAngle(() -> Degrees.of(shotCalculator.getIdealTurretAngle())));
 
     Copilot.a().whileTrue(turret.setAngle(() -> Degrees.of(shotCalculator.getIdealTurretAngle())));
     Copilot.x().whileTrue(shooter.set(.6));
@@ -169,20 +170,18 @@ public class RobotContainer {
     // Copilot.b().whileTrue(turret.setDutyCycle(-.1));
 
     feeder.setDefaultCommand(
-        feeder.runFeeder(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis())
-    );
+        feeder.runFeeder(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()));
 
     hopperPush.setDefaultCommand(
-        hopperPush.runHopperPush(() -> Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis())
-    );
-
+        hopperPush.runHopperPush(
+            () -> Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()));
 
     // feeder.setDefaultCommand(new runFeeder((Copilot.getRightTriggerAxis() -
     // Copilot.getLeftTriggerAxis())));
     // feeder.setDefaultCommand(feeder.stopFeeder());
     hopperPush.setDefaultCommand(hopperPush.runHopperPush(() -> Copilot.getLeftX()));
     // hopperPush.setDefaultCommand(hopperPush.runHopperPush(0));
-    
+
     // Copilot.b().whileTrue(feeder.runFeeder(1));
     // Copilot.x().whileTrue(feeder.runFeeder(-1));
     // Copilot.y().whileTrue(feeder.runFeeder(0));

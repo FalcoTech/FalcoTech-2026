@@ -34,7 +34,7 @@ public class HopperPush extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void runShooterVoid(double speed) {
+  public void runHopperPushVoid(double speed) {
     HopperPushmotor.set(speed);
   }
 

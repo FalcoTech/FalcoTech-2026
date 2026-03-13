@@ -52,7 +52,11 @@ public class Turret extends SubsystemBase {
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
           .withClosedLoopController(
-              35, 0, .75, DegreesPerSecond.of(1080), DegreesPerSecondPerSecond.of(2160)) //Vel = 1080, Accel = 2160
+              35,
+              0,
+              .75,
+              DegreesPerSecond.of(1080),
+              DegreesPerSecondPerSecond.of(2160)) // Vel = 1080, Accel = 2160
           // .withLinearClosedLoopController(false)
           .withFeedforward(new SimpleMotorFeedforward(.3, 0, 0.0))
           // .withClosedLoopTolerance(Degrees.of(0.5)) //doesn't work with TalonFX
@@ -174,7 +178,6 @@ public class Turret extends SubsystemBase {
   public void setDirectDutyCycle(double speed) {
     turretMotor.set(speed);
   }
-
 
   @Override
   public void periodic() {

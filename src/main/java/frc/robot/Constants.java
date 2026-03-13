@@ -10,14 +10,8 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Volts;
 
-import static edu.wpi.first.units.Units.Degrees;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import frc.robot.util.FieldZone;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -27,6 +21,9 @@ import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.util.FieldZone;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -36,23 +33,6 @@ import edu.wpi.first.units.measure.Voltage;
  * <p>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
-
-// spotless:off                                                                                                                 
-//  ▄    ▄                 ▄           ▄    ▄        ▀▀█                                                           
-//  ██  ██  ▄▄▄    ▄▄▄   ▄▄█▄▄         ▀▄  ▄▀  ▄▄▄     █    ▄   ▄   ▄▄▄    ▄▄▄                                     
-//  █ ██ █ █▀ ▀█  █   ▀    █            █  █  ▀   █    █    █   █  █▀  █  █   ▀                                    
-//  █ ▀▀ █ █   █   ▀▀▀▄    █            ▀▄▄▀  ▄▀▀▀█    █    █   █  █▀▀▀▀   ▀▀▀▄                                    
-//  █    █ ▀█▄█▀  ▀▄▄▄▀    ▀▄▄           ██   ▀▄▄▀█    ▀▄▄  ▀▄▄▀█  ▀█▄▄▀  ▀▄▄▄▀                                    
-                                                                                                                
-                                                                                                                
-                                                                                                                
-//    ▄▄                        ▄▄▄▄▄  ▀▀█                         █             ▀▀█        █                      
-//    ██    ▄ ▄▄   ▄▄▄          █   ▀█   █     ▄▄▄    ▄▄▄    ▄▄▄   █ ▄▄    ▄▄▄     █     ▄▄▄█   ▄▄▄    ▄ ▄▄   ▄▄▄  
-//   █  █   █▀  ▀ █▀  █         █▄▄▄█▀   █    ▀   █  █▀  ▀  █▀  █  █▀  █  █▀ ▀█    █    █▀ ▀█  █▀  █   █▀  ▀ █   ▀ 
-//   █▄▄█   █     █▀▀▀▀         █        █    ▄▀▀▀█  █      █▀▀▀▀  █   █  █   █    █    █   █  █▀▀▀▀   █      ▀▀▀▄ 
-//  █    █  █     ▀█▄▄▀         █        ▀▄▄  ▀▄▄▀█  ▀█▄▄▀  ▀█▄▄▀  █   █  ▀█▄█▀    ▀▄▄  ▀█▄██  ▀█▄▄▀   █     ▀▄▄▄▀ 
-// spotless:on
-
 public final class Constants {
   public static final int BLINKIN_PWM_PORT = 9;
   public static final Voltage VOLTAGE_COMP = Volts.of(12);
@@ -73,8 +53,7 @@ public final class Constants {
     // Climb Motors
     public static final int CLIMB_ELEVATOR_MOTOR = 98;
     public static final int CLIMB_PIVOT_MOTOR = 99;
-    public static final int CLIMB_Arm_MOTOR = 0;
-    public static final int INTAKE_ARM_MOTOR = 0;
+    public static final int CLIMB_ARM_MOTOR = 97;
 
     // Sensors and other devices could also be added here
   }
@@ -111,6 +90,7 @@ public final class Constants {
     public static final Angle HARD_COUNTER_CLOCKWISE_LIMIT = Degrees.of(140);
     public static final Angle HARD_CLOCKWISE_LIMIT = Degrees.of(-140);
   }
+
   public static final class ClimbConstants {
     public static final Current LIFTOFF_THRESHOLD =
         Amps.of(20); // Number of amps seen with Robot weight
