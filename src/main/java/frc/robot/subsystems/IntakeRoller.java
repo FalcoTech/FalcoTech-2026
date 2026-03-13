@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -16,11 +17,12 @@ public class IntakeRoller extends SubsystemBase {
   private final SparkMax intakeRollerMotor =
       new SparkMax(CAN_IDs.INTAKEROLLER_MOTOR, MotorType.kBrushless);
 
-  private SparkMaxConfig Intakemotorconfig = new SparkMaxConfig();
+  private SparkMaxConfig intakerollerMotorconfig = new SparkMaxConfig();
 
   /** Creates a new Feeder. */
   public IntakeRoller() {
-    // feedermotorconfig.idleMode(IdleMode.kBrake);
+    intakerollerMotorconfig.voltageCompensation(11);
+    intakerollerMotorconfig.idleMode(IdleMode.kBrake);
 
     // feedermotor.configure(
     // feedermotorconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

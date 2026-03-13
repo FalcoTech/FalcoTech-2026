@@ -24,6 +24,7 @@ public class HopperPush extends SubsystemBase {
   /** Creates a new Feeder. */
   public HopperPush() {
     HopperPushmotorconfig.idleMode(IdleMode.kCoast);
+    HopperPushmotorconfig.voltageCompensation(11);
 
     HopperPushmotor.configure(
         HopperPushmotorconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
