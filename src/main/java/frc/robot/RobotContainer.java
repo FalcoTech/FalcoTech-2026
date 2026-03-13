@@ -85,8 +85,7 @@ public class RobotContainer {
   public static final Turret turret = new Turret();
   public static final Shooter shooter = new Shooter();
   //   public static final ClimberElevator climbElevator = new ClimberElevator();
-  public static final ShotCalculator shotCalculator =
-      new ShotCalculator(turret, shooter, drivetrain);
+  public static final ShotCalculator shotCalculator = new ShotCalculator(drivetrain);
 
   public Pose2d testPose = new Pose2d(2, 2, Rotation2d.fromDegrees(0));
 
@@ -166,6 +165,10 @@ public class RobotContainer {
     // Copilot.a().whileTrue(shooter.set(.65));
 
 
+    Copilot.a().whileTrue(turret.setAngle(() -> shotCalculator.getIdealTurretAngle()));
+    Copilot.x().whileTrue(shooter.set(.6));
+    // Copilot.x().whileTrue(turret.setDutyCycle(.1));
+    // Copilot.b().whileTrue(turret.setDutyCycle(-.1));
     intakeSlide.setDefaultCommand(intakeSlide.runDutyCycle(() -> 0.4 * (Copilot.getLeftX())));
 
     intakeRoller.setDefaultCommand(intakeRoller.runIntakeRollers(() -> Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()));
