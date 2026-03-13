@@ -1,50 +1,32 @@
 package frc.robot.util;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Radians;
 
 import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Turret;
 import java.util.Collection;
 import java.util.List;
 
 public class ShotCalculator extends SubsystemBase {
-  private final Turret turret;
-  private final Shooter shooter;
+
   private final CommandSwerveDrivetrain drivetrain;
 
   private Translation2d targetLocation;
 
-  public ShotCalculator(Turret turret, Shooter shooter, CommandSwerveDrivetrain drivetrain) {
-    this.turret = turret;
-    this.shooter = shooter;
+  public ShotCalculator(CommandSwerveDrivetrain drivetrain) {
     this.drivetrain = drivetrain;
-  }
-
-  public Angle getShotAngle(Distance distanceToTarget, LinearVelocity initialVelocity) {
-    double v = initialVelocity.in(MetersPerSecond);
-    double d = distanceToTarget.in(Meters);
-
-    // TODO: This probably can be scrapped
-    double angleRadians = 0.0;
-    Angle angle = Radians.of(angleRadians);
-
-    return Degrees.of(angle.in(Degrees));
   }
 
   private Translation2d getEffectiveTarget() {
@@ -72,25 +54,27 @@ public class ShotCalculator extends SubsystemBase {
     return targetLocation;
   }
 
-  public boolean shotGating() {
-    // Report if the turret is near the ideal angle and also check shooter speed
-    double angleTolerance = 2; // Degrees
-    Boolean angleGood =
-        turret
-            .isNearAngle(Degrees.of(getIdealTurretAngle()), Degrees.of(angleTolerance))
-            .getAsBoolean();
-    double velocityTolerance = 100; // RPMs
-    Boolean velocityGood =
-        shooter
-            .isNearVelocity(RPM.of(getIdealShooterVelocity()), RPM.of(velocityTolerance))
-            .getAsBoolean();
+  // TODO: MOVE Shot Checking to better location
+  // public boolean shotGating() {
+  //   // Report if the turret is near the ideal angle and also check shooter speed
+  //   double angleTolerance = 2; // Degrees
+  //   Boolean angleGood =
+  //       turret
+  //           .isNearAngle(Degrees.of(getIdealTurretAngle()), Degrees.of(angleTolerance))
+  //           .getAsBoolean();
+  //   double velocityTolerance = 100; // RPMs
+  //   Boolean velocityGood =
+  //       shooter
+  //           .isNearVelocity(RPM.of(getIdealShooterVelocity()), RPM.of(velocityTolerance))
+  //           .getAsBoolean();
 
-    return angleGood && velocityGood;
-  }
+  //   return angleGood && velocityGood;
+  // }
 
-  private double getIdealShooterVelocity() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getIdealShooterVelocity'");
+  private AngularVelocity getIdealShooterVelocity() {
+    // TODO Add actual math using LUT
+    AngularVelocity idealAngularVelocity = RPM.of(3000);
+    return idealAngularVelocity;
   }
 
   public Angle getCompensatedShotAngle() {
@@ -146,23 +130,29 @@ public class ShotCalculator extends SubsystemBase {
     return Math.max(lowerBound, Math.min(upperBound, value));
   }
 
-  public double getIdealTurretAngle() {
+  /**
+   * @return Turret Angle in WPILib Blue Coordinate?
+   */
+  public Angle getIdealTurretAngle() {
     double idealTurretAngle = (getAngleToTarget() - getRobotHeading());
     double wrappedTurretAngle = MathUtil.inputModulus(idealTurretAngle, -180, 180);
 
-    if ((wrappedTurretAngle < -50) || (wrappedTurretAngle > 50)) {
-      turret.stop();
-      return Clamp(wrappedTurretAngle, -50, 50);
-    } else {
-      return Clamp(wrappedTurretAngle, -50, 50);
-    }
+    // TODO: HIGH PRIORITY - Move this to the actual named command that will handling turret
+    // alignment
+    // if ((wrappedTurretAngle < -50) || (wrappedTurretAngle > 50)) {
+    //   turret.stop();
+    //   return Clamp(wrappedTurretAngle, -50, 50);
+    // } else {
+    //   return Clamp(wrappedTurretAngle, -50, 50);
+    // }
+    return Degrees.of(wrappedTurretAngle);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
 
-    SmartDashboard.putNumber("Ideal Turret Angle", getIdealTurretAngle());
+    SmartDashboard.putNumber("Ideal Turret Angle", getIdealTurretAngle().in(Degrees));
     SmartDashboard.putNumber("Distance To Target", getDistanceToTarget());
     // SmartDashboard.putNumber("", getIdealShooterVelocity())
   }

@@ -81,8 +81,7 @@ public class RobotContainer {
   public static final Turret turret = new Turret();
   public static final Shooter shooter = new Shooter();
   public static final ClimberElevator climbElevator = new ClimberElevator();
-  public static final ShotCalculator shotCalculator =
-      new ShotCalculator(turret, shooter, drivetrain);
+  public static final ShotCalculator shotCalculator = new ShotCalculator(drivetrain);
 
   public RobotContainer() {
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -164,7 +163,7 @@ public class RobotContainer {
     // Copilot.rightBumper()
     // .whileTrue(turret.setAngle(() -> Degrees.of(shotCalculator.getIdealTurretAngle())));
 
-    Copilot.a().whileTrue(turret.setAngle(() -> Degrees.of(shotCalculator.getIdealTurretAngle())));
+    Copilot.a().whileTrue(turret.setAngle(() -> shotCalculator.getIdealTurretAngle()));
     Copilot.x().whileTrue(shooter.set(.6));
     // Copilot.x().whileTrue(turret.setDutyCycle(.1));
     // Copilot.b().whileTrue(turret.setDutyCycle(-.1));
