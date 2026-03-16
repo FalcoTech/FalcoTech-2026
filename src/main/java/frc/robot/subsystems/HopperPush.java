@@ -24,6 +24,7 @@ public class HopperPush extends SubsystemBase {
   /** Creates a new Feeder. */
   public HopperPush() {
     HopperPushmotorconfig.idleMode(IdleMode.kCoast);
+    HopperPushmotorconfig.voltageCompensation(11);
 
     HopperPushmotor.configure(
         HopperPushmotorconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -34,7 +35,7 @@ public class HopperPush extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void runShooterVoid(double speed) {
+  public void runHopperPushVoid(double speed) {
     HopperPushmotor.set(speed);
   }
 

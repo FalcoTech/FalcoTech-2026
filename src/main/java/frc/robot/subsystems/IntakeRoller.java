@@ -21,7 +21,7 @@ public class IntakeRoller extends SubsystemBase {
   private final SparkFlex intakeRollerMotor =
       new SparkFlex(CAN_IDs.INTAKEROLLER_MOTOR, MotorType.kBrushless);
 
-  private SparkMaxConfig Intakemotorconfig = new SparkMaxConfig();
+  private SparkMaxConfig intakerollerMotorconfig = new SparkMaxConfig();
 
   // /** Creates a new Feeder. */
   public IntakeRoller() {
