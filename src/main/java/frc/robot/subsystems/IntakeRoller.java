@@ -9,6 +9,7 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,14 +22,14 @@ public class IntakeRoller extends SubsystemBase {
   private final SparkFlex intakeRollerMotor =
       new SparkFlex(CAN_IDs.INTAKEROLLER_MOTOR, MotorType.kBrushless);
 
-  private SparkMaxConfig intakerollerMotorconfig = new SparkMaxConfig();
+  private SparkFlexConfig intakerollerMotorconfig = new SparkFlexConfig();
 
   // /** Creates a new Feeder. */
   public IntakeRoller() {
-    Intakemotorconfig.idleMode(IdleMode.kBrake);
+    intakerollerMotorconfig.idleMode(IdleMode.kBrake);
 
     intakeRollerMotor.configure(
-        Intakemotorconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        intakerollerMotorconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
