@@ -10,6 +10,8 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,12 +21,11 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PathPlanningConstants;
+import frc.robot.commands.shootingCommands.alignAndShoot;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.ClimberElevator;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.HopperPush;
-import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.LEDS;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
@@ -35,8 +36,9 @@ public class RobotContainer {
   private static double MaxSpeed =
       .2 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   private static double MaxAngularRate =
-      .4 * RotationsPerSecond.of(0.75)
-          .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+      .4
+          * RotationsPerSecond.of(0.75)
+              .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   public static final SwerveRequest.FieldCentric drive =
@@ -73,22 +75,24 @@ public class RobotContainer {
 
   // Subsystems
   public static final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-  public static final IntakeRoller intakeRoller = new IntakeRoller();
+  //   public static final IntakeRoller intakeRoller = new IntakeRoller();
   public static final Feeder feeder = new Feeder();
   public static final HopperPush hopperPush = new HopperPush();
   public static final LEDS leds = new LEDS();
   public static final Turret turret = new Turret();
   public static final Shooter shooter = new Shooter();
-  public static final ClimberElevator climbElevator = new ClimberElevator();
+  //   public static final ClimberElevator climbElevator = new ClimberElevator();
   public static final ShotCalculator shotCalculator =
       new ShotCalculator(turret, shooter, drivetrain);
+
+  public Pose2d testPose = new Pose2d(2, 2, Rotation2d.fromDegrees(0));
 
   public RobotContainer() {
     DriverStation.silenceJoystickConnectionWarning(true);
     RegisterNamedCommands();
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Mode", autoChooser);
-    climbElevator.setDefaultCommand(climbElevator.set(0));
+    // climbElevator.setDefaultCommand(climbElevator.set(0));
     configureBindings();
 
     SmartDashboard.putBoolean("Enable MegaTag2", false);
@@ -122,6 +126,10 @@ public class RobotContainer {
         .whileTrue(drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
     Pilot.a().whileTrue(drivetrain.applyRequest(() -> XForm));
+
+    // Pilot.b().whileTrue(drivetrain.pathFindToPose(testPose));
+    // Pilot.b().whileTrue(drivetrain.rotateThenPathfind(0, testPose));
+
     // Pilot.b().whileTrue(drivetrain.applyRequest(() ->
     //     point.withModuleDirection(new Rotation2d(-Pilot.getLeftY(), -Pilot.getLeftX()))
     // ));
@@ -138,51 +146,34 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
+    turret.setDefaultCommand(turret.stop());
+
     shooter.setDefaultCommand(shooter.stop());
-    Copilot.a().whileTrue(shooter.set(0.5));
-    Copilot.b().whileTrue(shooter.set(0.75));
-    // Copilot.b().whileTrue(shooter.setVelocity(RPM.of(500)));
-    Copilot.y().whileTrue(shooter.setVelocity(RPM.of(1000)));
-    Copilot.x().whileTrue(shooter.setVelocity(RPM.of(2000)));
 
     Copilot.start().whileTrue(shooter.sysId());
-    // // Copilot.b().whileTrue(shooter.set(0.25));
-    // // Copilot.y().whileTrue(shooter.set(1));
-    // Copilot.y().whileTrue(shooter.setVelocity(RPM.of(1000)));
 
-    // Copilot.x().whileTrue(shooter.stop());
+    Copilot.a().whileTrue(new alignAndShoot());
 
-    // turret.setDefaultCommand(turret.stop());
-    // turret.setDefaultCommand(turret.setDutyCycle(() -> (Copilot.getLeftTriggerAxis() -
-    // Copilot.getRightTriggerAxis()) * .25));
-
-    // Copilot.x().whileTrue(turret.setAngle(Degrees.of(180)));
-    // Copilot.y().whileTrue(turret.setAngle(Degrees.of(90)));
-    // Copilot.a().whileTrue(turret.setAngle(Degrees.of(95)));
-    // Copilot.b().whileTrue(turret.setAngle(Degrees.of(0)));
-    // Copilot.rightBumper()
-        // .whileTrue(turret.setAngle(() -> Degrees.of(shotCalculator.getIdealTurretAngle())));
-
-    Copilot.a().whileTrue(turret.setAngle(() -> Degrees.of(shotCalculator.getIdealTurretAngle())));
-    Copilot.x().whileTrue(shooter.set(.6));
-    // Copilot.x().whileTrue(turret.setDutyCycle(.1));
-    // Copilot.b().whileTrue(turret.setDutyCycle(-.1));
+    Copilot.b().whileTrue(shooter.setAngularVelocity(() -> RPM.of(300)));
+    Copilot.y().whileTrue(shooter.setAngularVelocity(() -> RPM.of(2000)));
+    Copilot.x().whileTrue(shooter.setAngularVelocity(() -> RPM.of(3000)));
+    // Copilot.a().whileTrue(turret.setAngle(() ->
+    // Degrees.of(shotCalculator.getIdealTurretAngle())));
+    // Copilot.a().whileTrue(shooter.set(.65));
 
     feeder.setDefaultCommand(
-        feeder.runFeeder(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis())
-    );
+        feeder.runFeeder(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()));
 
     hopperPush.setDefaultCommand(
-        hopperPush.runHopperPush(() -> Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis())
-    );
-
+        hopperPush.runHopperPush(
+            () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5));
 
     // feeder.setDefaultCommand(new runFeeder((Copilot.getRightTriggerAxis() -
     // Copilot.getLeftTriggerAxis())));
     // feeder.setDefaultCommand(feeder.stopFeeder());
-    hopperPush.setDefaultCommand(hopperPush.runHopperPush(() -> Copilot.getLeftX()));
+    // hopperPush.setDefaultCommand(hopperPush.runHopperPush(() -> Copilot.getLeftX()));
     // hopperPush.setDefaultCommand(hopperPush.runHopperPush(0));
-    
+
     // Copilot.b().whileTrue(feeder.runFeeder(1));
     // Copilot.x().whileTrue(feeder.runFeeder(-1));
     // Copilot.y().whileTrue(feeder.runFeeder(0));
@@ -203,10 +194,10 @@ public class RobotContainer {
     // // current position?
     // Copilot.povDown().whileTrue(turret.setAngle(() -> turret.getAngle().minus(Degrees.of(10))));
 
-    Copilot.povDown().whileTrue(climbElevator.setHeight(Inches.of(3)));
-    Copilot.povUp().whileTrue(climbElevator.setHeight(Inches.of(5.5)));
-    Copilot.povLeft().whileTrue(climbElevator.set(0.5));
-    Copilot.povRight().whileTrue(climbElevator.set(-0.5));
+    // Copilot.povDown().whileTrue(climbElevator.setHeight(Inches.of(3)));
+    // Copilot.povUp().whileTrue(climbElevator.setHeight(Inches.of(5.5)));
+    // Copilot.povLeft().whileTrue(climbElevator.set(0.5));
+    // Copilot.povRight().whileTrue(climbElevator.set(-0.5));
   }
 
   public Command getAutonomousCommand() {

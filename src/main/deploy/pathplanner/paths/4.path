@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.585,
-        "y": 0.585
+        "x": 5.968296362023071,
+        "y": 0.6578266383409528
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3356482518976924,
-        "y": 0.602991823651966
+        "x": 5.718944613920764,
+        "y": 0.6758184619929188
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.46949578385454416,
+        "x": 3.3366282165039927,
         "y": 0.6578266383409528
       },
       "prevControl": {
-        "x": 0.7189974719175564,
-        "y": 0.6420498308784979
+        "x": 3.5866282165039927,
+        "y": 0.6578266383409528
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "Human Player Run",

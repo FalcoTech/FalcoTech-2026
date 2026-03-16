@@ -4,9 +4,7 @@
 
 package frc.robot.util;
 
-import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.geometry.Translation2d;
-import frc.robot.Constants;
 
 public class FieldZone {
   private final double minX, maxX, minY, maxY;

@@ -14,20 +14,24 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
 /**
@@ -132,6 +136,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * @param drivetrainConstants   Drivetrain-wide constants for the swerve drive
      * @param modules               Constants for each specific module
      */
+
+
     public CommandSwerveDrivetrain(
         SwerveDrivetrainConstants drivetrainConstants,
         SwerveModuleConstants<?, ?, ?>... modules
@@ -342,4 +348,31 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Optional<Pose2d> samplePoseAt(double timestampSeconds) {
         return super.samplePoseAt(Utils.fpgaToCurrentTime(timestampSeconds));
     }
+
+    // public Command pathFindToPose(Pose2d pose){
+    //     PathConstraints pathConstraints = new PathConstraints(
+    //         MetersPerSecond.of(5), MetersPerSecondPerSecond.of(4), RadiansPerSecond.of(720), RadiansPerSecondPerSecond.of(720));
+    //     return AutoBuilder.pathfindToPose(pose, pathConstraints);
+    // }
+
+    // public SequentialCommandGroup rotateThenPathfind(double rotationTarget, Pose2d pose){
+    //     PathConstraints pathConstraints = new PathConstraints(
+    //         MetersPerSecond.of(5), MetersPerSecondPerSecond.of(4), RadiansPerSecond.of(720), RadiansPerSecondPerSecond.of(720));
+    //     Pose2d currentPose = new Pose2d(
+    //         getState().Pose.getX(),
+    //         getState().Pose.getY(),
+    //         Rotation2d.fromDegrees(rotationTarget)
+    //     );
+
+    //     return new SequentialCommandGroup(
+    //         AutoBuilder.pathfindToPose(currentPose, pathConstraints),
+    //         AutoBuilder.pathfindToPose(pose, pathConstraints)
+    //     );
+    // }
+
+    // public Command pathFindToPose(Pose2d pose, double rotationGoal){
+    //     PathConstraints pathConstraints = new PathConstraints(
+    //         MetersPerSecond.of(5), MetersPerSecondPerSecond.of(4), RadiansPerSecond.of(720), RadiansPerSecondPerSecond.of(720));
+    //     return AutoBuilder.pathfindToPose(pose, pathConstraints);
+    // }
 }

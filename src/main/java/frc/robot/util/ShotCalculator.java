@@ -10,13 +10,13 @@ import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
@@ -31,10 +31,14 @@ public class ShotCalculator extends SubsystemBase {
 
   private Translation2d targetLocation;
 
+  private InterpolatingDoubleTreeMap shooterMap = new InterpolatingDoubleTreeMap();
+
   public ShotCalculator(Turret turret, Shooter shooter, CommandSwerveDrivetrain drivetrain) {
     this.turret = turret;
     this.shooter = shooter;
     this.drivetrain = drivetrain;
+
+    shooterMap.put(2.0, 1500.0);
   }
 
   public Angle getShotAngle(Distance distanceToTarget, LinearVelocity initialVelocity) {
@@ -47,8 +51,6 @@ public class ShotCalculator extends SubsystemBase {
 
     return Degrees.of(angle.in(Degrees));
   }
-
-  
 
   private Translation2d getEffectiveTarget() {
     // Update the target pose based on what FieldZone the Robot currently is in
@@ -125,13 +127,11 @@ public class ShotCalculator extends SubsystemBase {
     return drivetrain.getState().Pose.getRotation().getDegrees();
   }
 
-  
-
-  public Translation2d getRobotToTargetVector(){
+  public Translation2d getRobotToTargetVector() {
     return getEffectiveTarget().minus(drivetrain.getState().Pose.getTranslation());
   }
 
-  public double getDistanceToTarget (){
+  public double getDistanceToTarget() {
     return getRobotToTargetVector().getNorm();
   }
 
@@ -147,7 +147,7 @@ public class ShotCalculator extends SubsystemBase {
     return getRobotToTargetVector().getAngle().getDegrees();
   }
 
-  public double Clamp(double value, double lowerBound, double upperBound){
+  public double Clamp(double value, double lowerBound, double upperBound) {
     return Math.max(lowerBound, Math.min(upperBound, value));
   }
 
@@ -155,18 +155,21 @@ public class ShotCalculator extends SubsystemBase {
     double idealTurretAngle = (getAngleToTarget() - getRobotHeading());
     double wrappedTurretAngle = MathUtil.inputModulus(idealTurretAngle, -180, 180);
 
-    if ((wrappedTurretAngle < -50) || (wrappedTurretAngle > 50)){
-      turret.stop();
-      return Clamp(wrappedTurretAngle, -50, 50);  
+    if ((wrappedTurretAngle < -50) || (wrappedTurretAngle > 50)) {
+      return Clamp(wrappedTurretAngle, -50, 50);
     } else {
       return Clamp(wrappedTurretAngle, -50, 50);
     }
   }
 
+  public double getShooterRpm() {
+    return shooterMap.get(getDistanceToTarget());
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    
+
     SmartDashboard.putNumber("Ideal Turret Angle", getIdealTurretAngle());
     SmartDashboard.putNumber("Distance To Target", getDistanceToTarget());
     // SmartDashboard.putNumber("", getIdealShooterVelocity())

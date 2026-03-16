@@ -48,12 +48,12 @@
     },
     {
       "anchor": {
-        "x": 5.986,
-        "y": 2.02664285714966
+        "x": 5.911960958296362,
+        "y": 0.6991393078970713
       },
       "prevControl": {
-        "x": 5.984155780485673,
-        "y": 2.276636054765881
+        "x": 5.910116738782035,
+        "y": 0.9491325055132924
       },
       "nextControl": null,
       "isLocked": false,
@@ -82,13 +82,13 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.0,
-    "rotation": -90.0
+    "velocity": 1.0,
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "Human Player Run",
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 3.0,
     "rotation": 76.0
   },
   "useDefaultConstraints": true

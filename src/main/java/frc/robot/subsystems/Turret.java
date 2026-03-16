@@ -28,6 +28,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CAN_IDs;
+import frc.robot.RobotContainer;
+import frc.robot.util.ShotCalculator;
 import java.util.function.Supplier;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -41,6 +43,7 @@ import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.remote.TalonFXWrapper;
 
 public class Turret extends SubsystemBase {
+  public static final ShotCalculator shotCalculator = RobotContainer.shotCalculator;
   // private final SparkMax turretMotor =
   // new SparkMax(CAN_IDs.TURRET_MOTOR, SparkMax.MotorType.kBrushless);
 
@@ -52,7 +55,11 @@ public class Turret extends SubsystemBase {
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
           .withClosedLoopController(
-              35, 0, .75, DegreesPerSecond.of(1080), DegreesPerSecondPerSecond.of(2160)) //Vel = 1080, Accel = 2160
+              35,
+              0,
+              .75,
+              DegreesPerSecond.of(1080),
+              DegreesPerSecondPerSecond.of(2160)) // Vel = 1080, Accel = 2160
           // .withLinearClosedLoopController(false)
           .withFeedforward(new SimpleMotorFeedforward(.3, 0, 0.0))
           // .withClosedLoopTolerance(Degrees.of(0.5)) //doesn't work with TalonFX
@@ -175,6 +182,9 @@ public class Turret extends SubsystemBase {
     turretMotor.set(speed);
   }
 
+  public Command aimAtTarget() {
+    return setAngle(() -> Degrees.of(shotCalculator.getIdealTurretAngle()));
+  }
 
   @Override
   public void periodic() {
