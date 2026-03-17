@@ -34,7 +34,7 @@ import frc.robot.util.ShotCalculator;
 public class RobotContainer {
   // Drive speeds
   private static double MaxSpeed =
-      .2 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+      TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   private static double MaxAngularRate =
       .4
           * RotationsPerSecond.of(0.75)
@@ -108,15 +108,16 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
         drivetrain.applyRequest(
+            
             () ->
                 drive
                     .withVelocityX(
-                        -Pilot.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                        -Pilot.getLeftY() * (Pilot.leftBumper().getAsBoolean() ? MaxSpeed * .3 : MaxSpeed)) // Drive forward with negative Y (forward)
                     .withVelocityY(
-                        -Pilot.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                        -Pilot.getLeftX() * (Pilot.leftBumper().getAsBoolean() ? MaxSpeed * .3 : MaxSpeed)) // Drive left with negative X (left)
                     .withRotationalRate(
                         -Pilot.getRightX()
-                            * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                            * (Pilot.leftBumper().getAsBoolean() ? MaxAngularRate * .3 : MaxAngularRate)) // Drive counterclockwise with negative X (left)
             ));
 
     // Idle while the robot is disabled. This ensures the configured
@@ -128,7 +129,7 @@ public class RobotContainer {
     Pilot.a().whileTrue(drivetrain.applyRequest(() -> XForm));
 
     // Pilot.b().whileTrue(drivetrain.pathFindToPose(testPose));
-    // Pilot.b().whileTrue(drivetrain.rotateThenPathfind(0, testPose));
+    Pilot.b().whileTrue(drivetrain.rotateThenPathfind(0, testPose));
 
     // Pilot.b().whileTrue(drivetrain.applyRequest(() ->
     //     point.withModuleDirection(new Rotation2d(-Pilot.getLeftY(), -Pilot.getLeftX()))
@@ -154,7 +155,7 @@ public class RobotContainer {
 
     Copilot.a().whileTrue(new alignAndShoot());
 
-    Copilot.b().whileTrue(shooter.setAngularVelocity(() -> RPM.of(300)));
+    Copilot.b().whileTrue(shooter.setAngularVelocity(() -> RPM.of(1000)));
     Copilot.y().whileTrue(shooter.setAngularVelocity(() -> RPM.of(2000)));
     Copilot.x().whileTrue(shooter.setAngularVelocity(() -> RPM.of(3000)));
     // Copilot.a().whileTrue(turret.setAngle(() ->

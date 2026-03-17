@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -15,6 +16,9 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.RotationTarget;
+import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -349,30 +353,27 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return super.samplePoseAt(Utils.fpgaToCurrentTime(timestampSeconds));
     }
 
-    // public Command pathFindToPose(Pose2d pose){
-    //     PathConstraints pathConstraints = new PathConstraints(
-    //         MetersPerSecond.of(5), MetersPerSecondPerSecond.of(4), RadiansPerSecond.of(720), RadiansPerSecondPerSecond.of(720));
-    //     return AutoBuilder.pathfindToPose(pose, pathConstraints);
-    // }
+    public Command pathFindToPose(Pose2d pose){
+        PathConstraints pathConstraints = new PathConstraints(
+            MetersPerSecond.of(5), MetersPerSecondPerSecond.of(4), RadiansPerSecond.of(720), RadiansPerSecondPerSecond.of(720));
+        return AutoBuilder.pathfindToPose(pose, pathConstraints);
+    }
 
-    // public SequentialCommandGroup rotateThenPathfind(double rotationTarget, Pose2d pose){
-    //     PathConstraints pathConstraints = new PathConstraints(
-    //         MetersPerSecond.of(5), MetersPerSecondPerSecond.of(4), RadiansPerSecond.of(720), RadiansPerSecondPerSecond.of(720));
-    //     Pose2d currentPose = new Pose2d(
-    //         getState().Pose.getX(),
-    //         getState().Pose.getY(),
-    //         Rotation2d.fromDegrees(rotationTarget)
-    //     );
+    public SequentialCommandGroup rotateThenPathfind(double rotationTarget, Pose2d pose){
+        PathConstraints pathConstraints = new PathConstraints(
+            MetersPerSecond.of(5), MetersPerSecondPerSecond.of(4), RadiansPerSecond.of(720), RadiansPerSecondPerSecond.of(720));
+        
+        return AutoBuilder.pathfindToPose(
+                new Pose2d(5.77, .639, Rotation2d.fromDegrees(rotationTarget)), 
+                pathConstraints, 1).andThen(AutoBuilder.pathfindToPose(pose, pathConstraints));
+    }
 
-    //     return new SequentialCommandGroup(
-    //         AutoBuilder.pathfindToPose(currentPose, pathConstraints),
-    //         AutoBuilder.pathfindToPose(pose, pathConstraints)
-    //     );
-    // }
-
-    // public Command pathFindToPose(Pose2d pose, double rotationGoal){
-    //     PathConstraints pathConstraints = new PathConstraints(
-    //         MetersPerSecond.of(5), MetersPerSecondPerSecond.of(4), RadiansPerSecond.of(720), RadiansPerSecondPerSecond.of(720));
-    //     return AutoBuilder.pathfindToPose(pose, pathConstraints);
-    // }
+    public Command pathFindToPose(Pose2d pose, double rotationGoal){
+        PathConstraints pathConstraints = new PathConstraints(
+            MetersPerSecond.of(5), MetersPerSecondPerSecond.of(4), RadiansPerSecond.of(720), RadiansPerSecondPerSecond.of(720));
+        
+        return AutoBuilder.pathfindToPose(
+                new Pose2d(4, 4, Rotation2d.fromDegrees(rotationGoal)), 
+                pathConstraints)/* .andThen(AutoBuilder.pathfindToPose(pose, pathConstraints)*/;
+    }
 }

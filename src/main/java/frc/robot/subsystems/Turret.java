@@ -97,7 +97,9 @@ public class Turret extends SubsystemBase {
   private final Pivot turret = new Pivot(turretConfig);
 
   /** Creates a new Turret. */
-  public Turret() {}
+  public Turret() {
+    SmartDashboard.putBoolean("Use Turret", true);
+  }
 
   public Command setAngle(Angle targetAngle) {
     return turret.setAngle(targetAngle);
@@ -198,6 +200,10 @@ public class Turret extends SubsystemBase {
     // telemetry refresh removed from periodic to avoid blocking NT/remote calls
     turret.updateTelemetry();
     SmartDashboard.putNumber("Turret Position", getAngle().in(Degrees));
+
+    if (!SmartDashboard.getBoolean("Use Turret", true)){
+      stop();
+    }
     // SmartDashboard.putNumber("Turret Shot Angle", ShotCalculator.getIdealTurretAngle());
     // This method will be called once per scheduler run
 
