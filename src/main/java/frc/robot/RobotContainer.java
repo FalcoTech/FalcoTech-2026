@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PathPlanningConstants;
-import frc.robot.commands.shootingCommands.alignAndShoot;
+// import frc.robot.commands.shootingCommands.alignAndShoot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
@@ -153,7 +153,7 @@ public class RobotContainer {
 
     Copilot.start().whileTrue(shooter.sysId());
 
-    Copilot.a().whileTrue(new alignAndShoot());
+    // Copilot.a().whileTrue(new alignAndShoot());
 
     Copilot.b().whileTrue(shooter.setAngularVelocity(() -> RPM.of(1000)));
     Copilot.y().whileTrue(shooter.setAngularVelocity(() -> RPM.of(2000)));

@@ -1,69 +1,105 @@
-// // Copyright (c) FIRST and other WPILib contributors.
-// // Open Source Software; you can modify and/or share it under the terms of
-// // the WPILib BSD license file in the root directory of this project.
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 
-// package frc.robot.subsystems;
+package frc.robot.subsystems;
 
-// import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.InchesPerSecond;
+import static edu.wpi.first.units.Units.InchesPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.Seconds;
 
-// public class Elevator extends SubsystemBase {
+import javax.print.attribute.standard.RequestingUserName;
 
-//   /** Creates a new Elevator. */
-//   public Elevator() {}
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CAN_IDs;
+import yams.gearing.GearBox;
+import yams.gearing.MechanismGearing;
+import yams.mechanisms.config.ElevatorConfig;
+import yams.mechanisms.positional.Elevator;
+import yams.motorcontrollers.SmartMotorController;
+import yams.motorcontrollers.SmartMotorControllerConfig;
+import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
+import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
+import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
+import yams.motorcontrollers.local.SparkWrapper;
 
-//   @Override
-//   public void periodic() {
-//     // This method will be called once per scheduler run
-//   }
+public class IntakeSlide extends SubsystemBase {
 
-// private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
-//   .withControlMode(ControlMode.CLOSED_LOOP)
-//   // Mechanism Circumference is the distance traveled by each mechanism rotation converting
-// rotations to meters.
-//   .withMechanismCircumference(Meters.of(Inches.of(0.25).in(Meters) * 22))
-//   // Feedback Constants (PID Constants)
-//   .withClosedLoopController(4, 0, 0, MetersPerSecond.of(0.5), MetersPerSecondPerSecond.of(0.5))
-//   .withSimClosedLoopController(4, 0, 0, MetersPerSecond.of(0.5),
-// MetersPerSecondPerSecond.of(0.5))
-//   // Feedforward Constants
-//   .withFeedforward(new ElevatorFeedforward(0, 0, 0))
-//   .withSimFeedforward(new ElevatorFeedforward(0, 0, 0))
-//   // Telemetry name and verbosity level
-//   .withTelemetry("ElevatorMotor", TelemetryVerbosity.HIGH)
-//   // Gearing from the motor rotor to final shaft.
-//   // In this example gearbox(3,4) is the same as gearbox("3:1","4:1") which corresponds to the
-// gearbox attached to your motor.
-//   .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
-//   // Motor properties to prevent over currenting.
-//   .withMotorInverted(false)
-//   .withIdleMode(MotorMode.BRAKE)
-//   .withStatorCurrentLimit(Amps.of(40))
-//   .withClosedLoopRampRate(Seconds.of(0.25))
-//   .withOpenLoopRampRate(Seconds.of(0.25))
+  /** Creates a new IntakeSlide. */
+  public IntakeSlide() {}
 
-// // Vendor motor controller object
-// SparkMax spark = new SparkMax(4, MotorType.kBrushless);
+  private SmartMotorControllerConfig smcConfig =
+      new SmartMotorControllerConfig(this)
+          .withControlMode(ControlMode.CLOSED_LOOP)
+          // Mechanism Circumference is the distance traveled by each mechanism rotation converting
+          // rotations to Inches.
+          .withMechanismCircumference(Inches.of(Inches.of(0.25).in(Inches) * 22))
+          // Feedback Constants (PID Constants)
+          .withClosedLoopController(
+              4, 0, 0, InchesPerSecond.of(0.5), InchesPerSecondPerSecond.of(0.5))
+          .withSimClosedLoopController(
+              4, 0, 0, InchesPerSecond.of(0.5), InchesPerSecondPerSecond.of(0.5))
+          // Feedforward Constants
+          .withFeedforward(new ElevatorFeedforward(0, 0, 0))
+          .withSimFeedforward(new ElevatorFeedforward(0, 0, 0))
+          // Telemetry name and verbosity level
+          .withTelemetry("ElevatorMotor", TelemetryVerbosity.HIGH)
+          // Gearing from the motor rotor to final shaft.
+          // In this example gearbox(3,4) is the same as gearbox("3:1","4:1") which corresponds to
+          // the
+          // gearbox attached to your motor.
+          .withGearing(new MechanismGearing(GearBox.fromReductionStages(100)))
+          // Motor properties to prevent over currenting.
+          .withMotorInverted(false)
+          .withIdleMode(MotorMode.BRAKE)
+          .withStatorCurrentLimit(Amps.of(40));
 
-// // Create our SmartMotorController from our Spark and config with the NEO.
-// private SmartMotorController sparkSmartMotorController = new SparkWrapper(spark,
-// DCMotor.getNEO(1), smcConfig)
-//      ElevatorConfig elevconfig = new ElevatorConfig(sparkSmartMotorController)
-//       .withStartingHeight(Meters.of(0.5)) // Starting height of the Elevator
-//       .withHardLimits(Meters.of(0), Meters.of(3)) // Hard limits defined
-//       .withTelemetry("Elevator", TelemetryVerbosity.HIGH) // Telemetry Name
-//       .withMass(Pounds.of(16)); // Mass of the carraige
+  // Vendor motor controller object
+  SparkMax spark = new SparkMax(CAN_IDs.INTAKESLIDE_MOTOR, MotorType.kBrushless);
 
-//     private ElevatorConfig elevconfig = new ElevatorConfig(sparkSmartMotorController)
-//       .withStartingHeight(Meters.of(0.5)); // Starting height of the Elevator
+  // Create our SmartMotorController from our Spark and config with the NEO.
+  private SmartMotorController sparkSmartMotorController =
+      new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
 
-//     private ElevatorConfig elevconfig = new ElevatorConfig(sparkSmartMotorController)
-//       .withMass(Pounds.of(16)); // Weight of the carriage.
+  ElevatorConfig elevconfig =
+      new ElevatorConfig(sparkSmartMotorController)
+          .withStartingHeight(Inches.of(0.5)) // Starting height of the IntakeSlide
+          .withTelemetry("IntakeSlide", TelemetryVerbosity.HIGH) // Telemetry Name
+          .withMass(Pounds.of(12)) // Mass of the carraige
+          .withStartingHeight(Inches.of(0.5)) // Starting height of the IntakeSlide
+          .withMass(Pounds.of(16)) // Weight of the carriage.
+          .withAngle(Degrees.of(0)) // Parallel to the ground, linear slide.
+          .withHardLimits(Inches.of(0), Inches.of(12)) // Hard limits defined
+          .withSoftLimits(Inches.of(0.25), Inches.of(10)); // Limits imposed on the PID controller.
 
-//     private ElevatorConfig elevconfig = new ElevatorConfig(sparkSmartMotorController)
-//       .withAngle(Degrees.of(0)); // Parallel to the ground, linear slide.
+   
 
-//     private ElevatorConfig elevconfig = new ElevatorConfig(sparkSmartMotorController)
-//       .withHardLimits(Meters.of(0), Meters.of(3)) // Hard limits defined
-//       .withSoftLimits(Meters.of(0), Meters.of(2.5)); // Limits imposed on the PID controller.
+          private Elevator intakeSlide = new Elevator(elevconfig);
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+  intakeSlide.updateTelemetry();
+}
 
-// }
+public void simulationPeriodic()  {
+    intakeSlide.simIterate();
+}
+
+public Command setHeight(Distance Height) {
+    return intakeSlide.run(Height); 
+}
+public Command setHeightAndStop(Distance height, Distance tolerance) {
+    return intakeSlide.runTo(height, tolerance);
+}
+}
