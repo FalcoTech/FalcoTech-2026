@@ -46,7 +46,7 @@ public final class Constants {
     public static final int FLYWHEEL_MOTOR_RIGHT = 22;
 
     // Intake & Feeder Motors
-    public static final int INTAKEROLLER_MOTOR = 80;
+    public static final int INTAKEROLLER_MOTOR = 41;
     public static final int FEEDER_MOTOR = 30;
     public static final int HOPPERPUSH_MOTOR = 31;
 
@@ -54,7 +54,7 @@ public final class Constants {
     public static final int CLIMB_ELEVATOR_MOTOR = 98;
     public static final int CLIMB_PIVOT_MOTOR = 99;
     public static final int CLIMB_Arm_MOTOR = 99;
-    public static final int INTAKESLIDE_MOTOR = 100;
+    public static final int INTAKESLIDE_MOTOR = 40;
 
     // Sensors and other devices could also be added here
   }

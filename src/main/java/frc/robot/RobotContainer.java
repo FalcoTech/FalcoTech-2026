@@ -26,6 +26,8 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.HopperPush;
+import frc.robot.subsystems.IntakeRoller;
+import frc.robot.subsystems.IntakeSlide;
 import frc.robot.subsystems.LEDS;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
@@ -75,7 +77,8 @@ public class RobotContainer {
 
   // Subsystems
   public static final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-  //   public static final IntakeRoller intakeRoller = new IntakeRoller();
+    public static final IntakeRoller intakeRoller = new IntakeRoller();
+  public static final IntakeSlide intakeSlide = new IntakeSlide();
   public static final Feeder feeder = new Feeder();
   public static final HopperPush hopperPush = new HopperPush();
   public static final LEDS leds = new LEDS();
@@ -162,12 +165,21 @@ public class RobotContainer {
     // Degrees.of(shotCalculator.getIdealTurretAngle())));
     // Copilot.a().whileTrue(shooter.set(.65));
 
-    feeder.setDefaultCommand(
-        feeder.runFeeder(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()));
 
-    hopperPush.setDefaultCommand(
-        hopperPush.runHopperPush(
-            () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5));
+    intakeSlide.setDefaultCommand(intakeSlide.runDutyCycle(() -> 0.4 * (Copilot.getLeftX())));
+
+    intakeRoller.setDefaultCommand(intakeRoller.runIntakeRollers(() -> Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()));
+
+    Copilot.rightBumper().whileTrue(intakeSlide.setHeight(Inches.of(10)));
+    Copilot.leftBumper().whileTrue(intakeSlide.setHeight(Inches.of(1)));
+
+
+    // feeder.setDefaultCommand(
+        // feeder.runFeeder(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()));
+
+    // hopperPush.setDefaultCommand(
+        // hopperPush.runHopperPush(
+            // () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5));
 
     // feeder.setDefaultCommand(new runFeeder((Copilot.getRightTriggerAxis() -
     // Copilot.getLeftTriggerAxis())));
