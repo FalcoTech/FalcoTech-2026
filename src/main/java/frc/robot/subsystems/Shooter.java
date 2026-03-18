@@ -26,6 +26,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CAN_IDs;
+
+import java.util.Optional;
 import java.util.function.Supplier;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -141,6 +143,10 @@ public class Shooter extends SubsystemBase {
 
   public Trigger isNearVelocity(AngularVelocity target, AngularVelocity tolerance) {
     return flywheel.isNear(target, tolerance);
+  }
+
+  public Optional<AngularVelocity> getAngularVelocitySetpoint(){
+    return flywheel.getMechanismSetpointVelocity();
   }
 
   public Command sysId() {

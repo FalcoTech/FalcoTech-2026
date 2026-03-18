@@ -88,6 +88,11 @@ public class ShotCalculator extends SubsystemBase {
     return targetLocation;
   }
 
+  private double getRobotHeading() {
+    // Get the current heading of the robot from -180 to 180
+    return drivetrain.getState().Pose.getRotation().getDegrees();
+  }
+
   private Translation2d getCurrentPos() {
     return drivetrain.getState().Pose.getTranslation();
   }
@@ -104,26 +109,23 @@ public class ShotCalculator extends SubsystemBase {
   private Translation2d getFuturePos() {
     return getCurrentPos().plus(getRobotVelocityAsTrans().times(LATENCY_COMP));
   }
+  
 
   // ── Shot calculation ──────────────────────────────────────────────────────────
 
-  public Translation2d getRobotToTargetVector() {
+  private Translation2d getRobotToTargetVector() {
     return getEffectiveTarget().minus(getFuturePos());
   }
 
-  public double getDistanceToTarget() {
+  private double getDistanceToTarget() {
     return getRobotToTargetVector().getNorm();
   }
 
-  private double getBaselineVelocity() {
-    double distance = getDistanceToTarget();
-    ShooterParams staticParams = SHOOTER_MAP.get(distance);
-    double baselineVelocity = distance / staticParams.tof;
-    return baselineVelocity;
-  }
-
   private Translation2d getTargetVelocityVec() {
-    return getRobotToTargetVector().times(getBaselineVelocity());
+    Translation2d toTarget = getRobotToTargetVector();
+    double distance = toTarget.getNorm();
+    double baselineVelocity = distance / SHOOTER_MAP.get(distance).tof;
+    return toTarget.div(distance).times(baselineVelocity);
   }
 
   private Translation2d getShotVelocity() {
@@ -143,11 +145,6 @@ public class ShotCalculator extends SubsystemBase {
   public double getAngleToTarget() {
     // return getRobotToTargetVector().getAngle().getDegrees();
     return getShotVelocity().getAngle().getDegrees();
-  }
-
-  public double getRobotHeading() {
-    // Get the current heading of the robot from -180 to 180
-    return drivetrain.getState().Pose.getRotation().getDegrees();
   }
 
   /**
@@ -181,10 +178,6 @@ public class ShotCalculator extends SubsystemBase {
     // It should return a value between 0 and 1, where 1 represents a highly viable shot and 0
     // represents an unviable shot
     return 0.0; // Placeholder for actual shot viability scale calculation
-  }
-
-  public double Clamp(double value, double lowerBound, double upperBound) {
-    return Math.max(lowerBound, Math.min(upperBound, value));
   }
 
   // TODO: MOVE Shot Checking to better location

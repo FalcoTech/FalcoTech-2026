@@ -30,6 +30,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CAN_IDs;
 import frc.robot.RobotContainer;
 import frc.robot.util.ShotCalculator;
+
+import java.util.Optional;
 import java.util.function.Supplier;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -119,6 +121,10 @@ public class Turret extends SubsystemBase {
 
   public Trigger isNearAngle(Angle target, Angle tolerance) {
     return turret.isNear(target, tolerance);
+  }
+
+  public Optional<Angle> getAngleSetpoint(){
+    return turret.getMechanismSetpoint();
   }
 
   public Command sysId() {
