@@ -30,7 +30,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CAN_IDs;
 import frc.robot.RobotContainer;
 import frc.robot.util.ShotCalculator;
-
 import java.util.Optional;
 import java.util.function.Supplier;
 import yams.gearing.GearBox;
@@ -123,7 +122,7 @@ public class Turret extends SubsystemBase {
     return turret.isNear(target, tolerance);
   }
 
-  public Optional<Angle> getAngleSetpoint(){
+  public Optional<Angle> getAngleSetpoint() {
     return turret.getMechanismSetpoint();
   }
 
@@ -184,7 +183,6 @@ public class Turret extends SubsystemBase {
   public Command stop() {
     return turret.set(0);
   }
-  ;
 
   public void setDirectDutyCycle(double speed) {
     turretMotor.set(speed);
@@ -196,14 +194,6 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // NOTE: previously this called `turret.updateTelemetry()` which triggers
-    // YAMS/remote motor controller config refreshes. Those refreshes are
-    // blocking and must not be invoked from the main scheduler loop.
-    // Commenting it out prevents the "Do not apply or refresh configs
-    // periodically, as configs are blocking" error observed on the Driver
-    // Station. If you need telemetry, call updateTelemetry() once at init
-    // or from a dedicated off-main-thread task.
-    // telemetry refresh removed from periodic to avoid blocking NT/remote calls
     turret.updateTelemetry();
     SmartDashboard.putNumber("Turret Position", getAngle().in(Degrees));
 

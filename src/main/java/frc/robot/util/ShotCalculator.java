@@ -109,7 +109,6 @@ public class ShotCalculator extends SubsystemBase {
   private Translation2d getFuturePos() {
     return getCurrentPos().plus(getRobotVelocityAsTrans().times(LATENCY_COMP));
   }
-  
 
   // ── Shot calculation ──────────────────────────────────────────────────────────
 

@@ -39,12 +39,16 @@ public class feedWhenReady extends Command {
     boolean turretReady =
         turret
             .getAngleSetpoint()
-            .map(setpoint -> turret.isNearAngle(setpoint, Degrees.of(ANGLE_TOLERANCE_DEG)).getAsBoolean())
+            .map(
+                setpoint ->
+                    turret.isNearAngle(setpoint, Degrees.of(ANGLE_TOLERANCE_DEG)).getAsBoolean())
             .orElse(false);
     boolean shooterReady =
         shooter
             .getAngularVelocitySetpoint()
-            .map(setpoint -> shooter.isNearVelocity(setpoint, RPM.of(VELOCITY_TOLERANCE_RPM)).getAsBoolean())
+            .map(
+                setpoint ->
+                    shooter.isNearVelocity(setpoint, RPM.of(VELOCITY_TOLERANCE_RPM)).getAsBoolean())
             .orElse(false);
 
     feeder.runFeederVoid(turretReady && shooterReady ? FEEDER_SPEED : 0.0);
