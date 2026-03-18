@@ -59,6 +59,7 @@ public class Robot extends TimedRobot {
             llMeasurement_rear.pose, llMeasurement_rear.timestampSeconds);
       }
     }
+    SmartDashboard.putNumber("Manual RPM Setpoint", RobotContainer.manualRPM);
     useMegaTag2 = SmartDashboard.getBoolean("Enable MegaTag2", useMegaTag2);
     // SmartDashboard.getBoolean("Enable MegaTag2", enableMegaTag2);
 

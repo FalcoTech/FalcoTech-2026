@@ -85,7 +85,7 @@ public class Shooter extends SubsystemBase {
           // Mass of the flywheel.
           .withMass(Pounds.of(2.5))
           // Maximum speed of the shooter.
-          .withUpperSoftLimit(RPM.of(2000))
+          .withUpperSoftLimit(RPM.of(4000))
           .withLowerSoftLimit(RPM.of(0))
 
           // Telemetry name and verbosity for the shooter.
