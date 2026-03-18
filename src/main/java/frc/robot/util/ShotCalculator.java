@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.TurretConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +25,15 @@ import java.util.List;
 public class ShotCalculator extends SubsystemBase {
 
   public record ShooterParams(double rpm, double tof) {}
+
+  // ── Viability tuning ──────────────────────────────────────────────────────────
+
+  // Degrees before the hard limit where the turret angle score begins to drop.
+  private static final double TURRET_APPROACH_MARGIN_DEG = 10.0;
+  // Distance margin (m) outside the SHOOTER_MAP bounds where score ramps to 0.
+  private static final double DISTANCE_MARGIN_M = 0.5;
+  // Lateral speed (m/s) at which the lateral-speed score reaches 0.
+  private static final double LATERAL_SPEED_THRESHOLD_MPS = 1.5;
 
   // TUNE THIS
   private static final double LATENCY_COMP = 0.15;
@@ -41,6 +51,9 @@ public class ShotCalculator extends SubsystemBase {
 
   private final InterpolatingDoubleTreeMap VELOCITY_DISTANCE_MAP = new InterpolatingDoubleTreeMap();
 
+  private double shooterMapMinDistance = Double.MAX_VALUE;
+  private double shooterMapMaxDistance = Double.MIN_VALUE;
+
   // distance (m) → RPM, time-of-flight (s)
   {
     put(2.0, new ShooterParams(3000, 0.3));
@@ -51,14 +64,14 @@ public class ShotCalculator extends SubsystemBase {
   private void put(double distance, ShooterParams params) {
     SHOOTER_MAP.put(distance, params);
     VELOCITY_DISTANCE_MAP.put(distance / params.tof, distance);
+    if (distance < shooterMapMinDistance) shooterMapMinDistance = distance;
+    if (distance > shooterMapMaxDistance) shooterMapMaxDistance = distance;
   }
 
   // ── Constructor ───────────────────────────────────────────────────────────────
 
   public ShotCalculator(CommandSwerveDrivetrain drivetrain) {
     this.drivetrain = drivetrain;
-
-    // SHOOTER_MAP.put(2.0, new ShooterParams(2800.0, 0.42));
   }
 
   // ── Position helpers ──────────────────────────────────────────────────────────
@@ -152,15 +165,6 @@ public class ShotCalculator extends SubsystemBase {
   public Angle getIdealTurretAngle() {
     double idealTurretAngle = (getAngleToTarget() - getRobotHeading());
     double wrappedTurretAngle = MathUtil.inputModulus(idealTurretAngle, -180, 180);
-
-    // TODO: HIGH PRIORITY - Move this to the actual named command that will handling turret
-    // alignment
-    // if ((wrappedTurretAngle < -50) || (wrappedTurretAngle > 50)) {
-    //   turret.stop();
-    //   return Clamp(wrappedTurretAngle, -50, 50);
-    // } else {
-    //   return Clamp(wrappedTurretAngle, -50, 50);
-    // }
     return Degrees.of(wrappedTurretAngle);
   }
 
@@ -171,38 +175,56 @@ public class ShotCalculator extends SubsystemBase {
     // return idealAngularVelocity;
   }
 
+  /**
+   * Returns a 0→1 scale representing how viable the current shot is. All three factors must be
+   * favorable — any single disqualifier collapses the score toward zero.
+   *
+   * <ul>
+   *   <li>Turret angle: score drops from 1→0 across the approach margin before the hard limit.
+   *   <li>Distance: score is 1 inside the SHOOTER_MAP range, ramps to 0 outside the margin.
+   *   <li>Lateral speed: score is 1 at rest, drops to 0 at {@link #LATERAL_SPEED_THRESHOLD_MPS}.
+   * </ul>
+   */
   public double getShotViabilityScale() {
-    // This function should calculate a scale from 0 to 1 representing how viable the shot is based
-    // on the current robot pose, target pose, and calculated shot angle
-    // It should return a value between 0 and 1, where 1 represents a highly viable shot and 0
-    // represents an unviable shot
-    return 0.0; // Placeholder for actual shot viability scale calculation
+    return getTurretAngleScore() * getDistanceScore() * getLateralSpeedScore();
   }
 
-  // TODO: MOVE Shot Checking to better location
-  // public boolean shotGating() {
-  //   // Report if the turret is near the ideal angle and also check shooter speed
-  //   double angleTolerance = 2; // Degrees
-  //   Boolean angleGood =
-  //       turret
-  //           .isNearAngle(Degrees.of(getIdealTurretAngle()), Degrees.of(angleTolerance))
-  //           .getAsBoolean();
-  //   double velocityTolerance = 100; // RPMs
-  //   Boolean velocityGood =
-  //       shooter
-  //           .isNearVelocity(RPM.of(getIdealShooterVelocity()), RPM.of(velocityTolerance))
-  //           .getAsBoolean();
+  private double getTurretAngleScore() {
+    double absAngle = Math.abs(getIdealTurretAngle().in(Degrees));
+    double hardLimit = TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT.in(Degrees);
+    return MathUtil.clamp((hardLimit - absAngle) / TURRET_APPROACH_MARGIN_DEG, 0.0, 1.0);
+  }
 
-  //   return angleGood && velocityGood;
-  // }
+  private double getDistanceScore() {
+    double distance = getDistanceToTarget();
+    if (distance >= shooterMapMinDistance && distance <= shooterMapMaxDistance) return 1.0;
+    if (distance < shooterMapMinDistance)
+      return MathUtil.clamp(
+          (distance - (shooterMapMinDistance - DISTANCE_MARGIN_M)) / DISTANCE_MARGIN_M, 0.0, 1.0);
+    return MathUtil.clamp(
+        ((shooterMapMaxDistance + DISTANCE_MARGIN_M) - distance) / DISTANCE_MARGIN_M, 0.0, 1.0);
+  }
+
+  private double getLateralSpeedScore() {
+    Translation2d toTarget = getRobotToTargetVector();
+    double norm = toTarget.getNorm();
+    if (norm < 0.01) return 1.0;
+    Translation2d unitToTarget = toTarget.div(norm);
+    Translation2d robotVel = getRobotVelocityAsTrans();
+    double radial =
+        robotVel.getX() * unitToTarget.getX() + robotVel.getY() * unitToTarget.getY();
+    double velNormSq = robotVel.getX() * robotVel.getX() + robotVel.getY() * robotVel.getY();
+    double lateral = Math.sqrt(Math.max(0.0, velNormSq - radial * radial));
+    return MathUtil.clamp(1.0 - lateral / LATERAL_SPEED_THRESHOLD_MPS, 0.0, 1.0);
+  }
+
 
   // ── Periodic ─────────────────────────────────────────────────────────────────
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
     SmartDashboard.putNumber("Ideal Turret Angle", getIdealTurretAngle().in(Degrees));
     SmartDashboard.putNumber("Distance To Target", getDistanceToTarget());
-    // SmartDashboard.putNumber("", getIdealShooterVelocity())
+    SmartDashboard.putNumber("Shot Viability", getShotViabilityScale());
   }
 }
