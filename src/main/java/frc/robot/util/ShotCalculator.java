@@ -1,7 +1,6 @@
 package frc.robot.util;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RPM;
 
 import com.pathplanner.lib.util.FlippingUtil;
@@ -9,9 +8,11 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+import edu.wpi.first.math.interpolation.InverseInterpolator;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -22,15 +23,36 @@ import java.util.List;
 
 public class ShotCalculator extends SubsystemBase {
 
+  public record ShooterParams(double rpm, double tof) {}
+
+  private static final double latencyComp = 0.15; // TUNE THIS!!!!!
+
   private final CommandSwerveDrivetrain drivetrain;
 
   private Translation2d targetLocation;
 
-  private InterpolatingDoubleTreeMap shooterMap = new InterpolatingDoubleTreeMap();
+  private final InterpolatingTreeMap<Double, ShooterParams> SHOOTER_MAP =
+      new InterpolatingTreeMap<>(
+          InverseInterpolator.forDouble(),
+          (a, b, t) -> new ShooterParams(a.rpm + (b.rpm - a.rpm) * t, a.tof + (b.tof - a.tof) * t));
+
+  private final InterpolatingDoubleTreeMap VELOCITY_DISTANCE_MAP = new InterpolatingDoubleTreeMap();
+
+  {
+    put(2.0, new ShooterParams(3000, 0.3));
+    put(3.0, new ShooterParams(3500, 0.4));
+    put(4.0, new ShooterParams(4000, 0.5));
+  }
+
+  private void put(double distance, ShooterParams params) {
+    SHOOTER_MAP.put(distance, params);
+    VELOCITY_DISTANCE_MAP.put(distance / params.tof, distance);
+  }
+
   public ShotCalculator(CommandSwerveDrivetrain drivetrain) {
     this.drivetrain = drivetrain;
 
-    shooterMap.put(2.0, 1500.0);
+    // SHOOTER_MAP.put(2.0, new ShooterParams(2800.0, 0.42));
   }
 
   private Translation2d getEffectiveTarget() {
@@ -75,26 +97,28 @@ public class ShotCalculator extends SubsystemBase {
   //   return angleGood && velocityGood;
   // }
 
-  private AngularVelocity getIdealShooterVelocity() {
-    // TODO Add actual math using LUT
-    AngularVelocity idealAngularVelocity = RPM.of(3000);
-    return idealAngularVelocity;
+  public AngularVelocity getIdealShooterVelocity() {
+    double rpm = SHOOTER_MAP.get(getEffectiveDistance()).rpm;
+    return RPM.of(rpm);
+    // AngularVelocity idealAngularVelocity = RPM.of(3000);
+    // return idealAngularVelocity;
   }
 
-  public Angle getCompensatedShotAngle() {
-    // This function should calculate a compensated shot angle based on the current robot pose,
-    // target pose, and calculated shot angle
-    // It should account for any necessary adjustments to the shot angle based on the robot's
-    // position and orientation
-    return Degrees.of(0); // Placeholder for actual compensated shot angle calculation
+  private Translation2d getCurrentPos() {
+    return drivetrain.getState().Pose.getTranslation();
   }
 
-  public LinearVelocity getCompensatedShotVelocity() {
-    // This function should calculate a compensated shot velocity based on the current robot pose,
-    // target pose, and calculated shot angle
-    // It should account for any necessary adjustments to the shot velocity based on the robot's
-    // position and orientation
-    return MetersPerSecond.of(0); // Placeholder for actual compensated shot velocity calculation
+  private ChassisSpeeds getChassisSpeeds() {
+    return drivetrain.getState().Speeds;
+  }
+
+  private Translation2d getRobotVelocityAsTrans() {
+    ChassisSpeeds robotSpeed = getChassisSpeeds();
+    return new Translation2d(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond);
+  }
+
+  private Translation2d getFuturePos() {
+    return getCurrentPos().plus(getRobotVelocityAsTrans().times(latencyComp));
   }
 
   public double getShotViabilityScale() {
@@ -111,23 +135,39 @@ public class ShotCalculator extends SubsystemBase {
   }
 
   public Translation2d getRobotToTargetVector() {
-    return getEffectiveTarget().minus(drivetrain.getState().Pose.getTranslation());
+    return getEffectiveTarget().minus(getFuturePos());
   }
 
   public double getDistanceToTarget() {
     return getRobotToTargetVector().getNorm();
   }
 
+  private double getBaselineVeloctiy() {
+    double distance = getDistanceToTarget();
+    ShooterParams staticParams = SHOOTER_MAP.get(distance);
+    double baselineVelocity = distance / staticParams.tof;
+    return baselineVelocity;
+  }
+
+  private Translation2d getTargetVelocityVec() {
+    return getRobotToTargetVector().times(getBaselineVeloctiy());
+  }
+
+  private Translation2d getShotVelocity() {
+    return getTargetVelocityVec().minus(getRobotVelocityAsTrans());
+  }
+
+  private double getRequiredVelocity() {
+    return getShotVelocity().getNorm();
+  }
+
+  private double getEffectiveDistance() {
+    return VELOCITY_DISTANCE_MAP.get(getRequiredVelocity());
+  }
+
   public double getAngleToTarget() {
-    // double getX = drivetrain.getState().Pose.getX();
-    // double getY = drivetrain.getState().Pose.getY();
-
-    // Translation2d robotToHubVector =
-    //     new Translation2d(
-    //         4.59 - getX, // What are these magic numbers? Center of Hub?
-    //         4.03 - getY);
-
-    return getRobotToTargetVector().getAngle().getDegrees();
+    // return getRobotToTargetVector().getAngle().getDegrees();
+    return getShotVelocity().getAngle().getDegrees();
   }
 
   public double Clamp(double value, double lowerBound, double upperBound) {
@@ -150,10 +190,6 @@ public class ShotCalculator extends SubsystemBase {
     //   return Clamp(wrappedTurretAngle, -50, 50);
     // }
     return Degrees.of(wrappedTurretAngle);
-  }
-
-  public double getShooterRpm() {
-    return shooterMap.get(getDistanceToTarget());
   }
 
   @Override
