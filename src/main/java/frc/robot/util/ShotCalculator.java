@@ -56,9 +56,9 @@ public class ShotCalculator extends SubsystemBase {
 
   // distance (m) → RPM, time-of-flight (s)
   {
-    put(2.0, new ShooterParams(3000, 0.3));
-    put(3.0, new ShooterParams(3500, 0.4));
-    put(4.0, new ShooterParams(4000, 0.5));
+    put(1.8, new ShooterParams(3000, 1));
+    put(3.0, new ShooterParams(3500, 1.3));
+    put(4.0, new ShooterParams(4700, 1.6));
   }
 
   private void put(double distance, ShooterParams params) {
@@ -141,7 +141,7 @@ public class ShotCalculator extends SubsystemBase {
   }
 
   private Translation2d getShotVelocity() {
-    return getTargetVelocityVec().minus(getRobotVelocityAsTrans());
+    return getTargetVelocityVec().plus(getRobotVelocityAsTrans());
   }
 
   private double getRequiredVelocity() {
