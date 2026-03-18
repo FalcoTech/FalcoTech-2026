@@ -108,6 +108,8 @@ public class RobotContainer {
   private void configureBindings() {
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
+
+    //DRIVETRAIN BUTTONS
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
         drivetrain.applyRequest(
@@ -115,12 +117,12 @@ public class RobotContainer {
             () ->
                 drive
                     .withVelocityX(
-                        -Pilot.getLeftY() * (Pilot.leftBumper().getAsBoolean() ? MaxSpeed * .3 : MaxSpeed)) // Drive forward with negative Y (forward)
+                        -Pilot.getLeftY() * (Pilot.leftBumper().getAsBoolean() ? (MaxSpeed * .2) : MaxSpeed)) // Drive forward with negative Y (forward)
                     .withVelocityY(
-                        -Pilot.getLeftX() * (Pilot.leftBumper().getAsBoolean() ? MaxSpeed * .3 : MaxSpeed)) // Drive left with negative X (left)
+                        -Pilot.getLeftX() * (Pilot.leftBumper().getAsBoolean() ? (MaxSpeed * .2) : MaxSpeed)) // Drive left with negative X (left)
                     .withRotationalRate(
                         -Pilot.getRightX()
-                            * (Pilot.leftBumper().getAsBoolean() ? MaxAngularRate * .3 : MaxAngularRate)) // Drive counterclockwise with negative X (left)
+                            * (Pilot.leftBumper().getAsBoolean() ? MaxAngularRate * .85 : MaxAngularRate)) // Drive counterclockwise with negative X (left)
             ));
 
     // Idle while the robot is disabled. This ensures the configured
@@ -150,36 +152,43 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    turret.setDefaultCommand(turret.stop());
 
+    //TURRET AND SHOOTER BUTTONS
+    turret.setDefaultCommand(turret.stop());
     shooter.setDefaultCommand(shooter.stop());
 
-    Copilot.start().whileTrue(shooter.sysId());
+    // Copilot.start().whileTrue(shooter.sysId());
 
-    // Copilot.a().whileTrue(new alignAndShoot());
+    // Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.set(.65)));
+    Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.setAngularVelocity(() -> RPM.of(ShotCalculator.getIdealShooterSpeed())))); //WORKS WELL
 
-    Copilot.b().whileTrue(shooter.setAngularVelocity(() -> RPM.of(1000)));
-    Copilot.y().whileTrue(shooter.setAngularVelocity(() -> RPM.of(2000)));
-    Copilot.x().whileTrue(shooter.setAngularVelocity(() -> RPM.of(3000)));
+    // Copilot.a().whileTrue(turret.aimAtTarget());
+    // Copilot.a().whileTrue(shooter.set(.4));
+
+    // Copilot.b().whileTrue(shooter.setAngularVelocity(() -> RPM.of(1000)));
+    // Copilot.y().whileTrue(shooter.setAngularVelocity(() -> RPM.of(2000)));
+    // Copilot.x().whileTrue(shooter.setAngularVelocity(() -> RPM.of(3000)));
+
     // Copilot.a().whileTrue(turret.setAngle(() ->
     // Degrees.of(shotCalculator.getIdealTurretAngle())));
     // Copilot.a().whileTrue(shooter.set(.65));
 
+    //INTAKE, HOPPER, FEEDER
 
     intakeSlide.setDefaultCommand(intakeSlide.runDutyCycle(() -> 0.4 * (Copilot.getLeftX())));
 
-    intakeRoller.setDefaultCommand(intakeRoller.runIntakeRollers(() -> Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()));
+    intakeRoller.setDefaultCommand(intakeRoller.runIntakeRollers(() -> .5 * (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis())));
 
-    Copilot.rightBumper().whileTrue(intakeSlide.setHeight(Inches.of(10)));
-    Copilot.leftBumper().whileTrue(intakeSlide.setHeight(Inches.of(1)));
+    Copilot.rightBumper().whileTrue(intakeSlide.setHeight(Inches.of(10))); //Does not work currently
+    Copilot.leftBumper().whileTrue(intakeSlide.setHeight(Inches.of(1))); //Does not work currently
 
 
-    // feeder.setDefaultCommand(
-        // feeder.runFeeder(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()));
+    feeder.setDefaultCommand(
+        feeder.runFeeder(() -> 0.5 * (Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()))); //Works
 
-    // hopperPush.setDefaultCommand(
-        // hopperPush.runHopperPush(
-            // () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5));
+    hopperPush.setDefaultCommand(
+        hopperPush.runHopperPush(
+            () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5)); //Works
 
     // feeder.setDefaultCommand(new runFeeder((Copilot.getRightTriggerAxis() -
     // Copilot.getLeftTriggerAxis())));

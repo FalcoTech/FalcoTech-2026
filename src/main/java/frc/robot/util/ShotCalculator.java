@@ -17,6 +17,7 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
@@ -25,23 +26,24 @@ import java.util.Collection;
 import java.util.List;
 
 public class ShotCalculator extends SubsystemBase {
-  private final Turret turret;
-  private final Shooter shooter;
-  private final CommandSwerveDrivetrain drivetrain;
+  private static final Turret turret = RobotContainer.turret;
+  private static final Shooter shooter = RobotContainer.shooter;
+  private static final CommandSwerveDrivetrain drivetrain = RobotContainer.drivetrain;
 
-  private Translation2d targetLocation;
+  private static Translation2d targetLocation;
 
-  private InterpolatingDoubleTreeMap shooterMap = new InterpolatingDoubleTreeMap();
+  private static InterpolatingDoubleTreeMap shooterMap = new InterpolatingDoubleTreeMap();
 
   public ShotCalculator(Turret turret, Shooter shooter, CommandSwerveDrivetrain drivetrain) {
-    this.turret = turret;
-    this.shooter = shooter;
-    this.drivetrain = drivetrain;
+    
 
-    shooterMap.put(2.0, 1500.0);
+        
+    shooterMap.put(1.795, 3000.0);
+    shooterMap.put(3.02, 4000.0);
+    shooterMap.put(4.08, 5000.0);
   }
 
-  public Angle getShotAngle(Distance distanceToTarget, LinearVelocity initialVelocity) {
+  public static Angle getShotAngle(Distance distanceToTarget, LinearVelocity initialVelocity) {
     double v = initialVelocity.in(MetersPerSecond);
     double d = distanceToTarget.in(Meters);
 
@@ -52,7 +54,7 @@ public class ShotCalculator extends SubsystemBase {
     return Degrees.of(angle.in(Degrees));
   }
 
-  private Translation2d getEffectiveTarget() {
+  private static Translation2d getEffectiveTarget() {
     // Update the target pose based on what FieldZone the Robot currently is in
     Pose2d robotPose = drivetrain.getState().Pose;
     // Convert robot Pose to blue coords when on red alliance so blue defined math is correct
@@ -77,7 +79,7 @@ public class ShotCalculator extends SubsystemBase {
     return targetLocation;
   }
 
-  public boolean shotGating() {
+  public static boolean shotGating() {
     // Report if the turret is near the ideal angle and also check shooter speed
     double angleTolerance = 2; // Degrees
     Boolean angleGood =
@@ -93,12 +95,12 @@ public class ShotCalculator extends SubsystemBase {
     return angleGood && velocityGood;
   }
 
-  private double getIdealShooterVelocity() {
+  private static double getIdealShooterVelocity() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'getIdealShooterVelocity'");
   }
 
-  public Angle getCompensatedShotAngle() {
+  public static Angle getCompensatedShotAngle() {
     // This function should calculate a compensated shot angle based on the current robot pose,
     // target pose, and calculated shot angle
     // It should account for any necessary adjustments to the shot angle based on the robot's
@@ -106,7 +108,7 @@ public class ShotCalculator extends SubsystemBase {
     return Degrees.of(0); // Placeholder for actual compensated shot angle calculation
   }
 
-  public LinearVelocity getCompensatedShotVelocity() {
+  public static LinearVelocity getCompensatedShotVelocity() {
     // This function should calculate a compensated shot velocity based on the current robot pose,
     // target pose, and calculated shot angle
     // It should account for any necessary adjustments to the shot velocity based on the robot's
@@ -114,7 +116,7 @@ public class ShotCalculator extends SubsystemBase {
     return MetersPerSecond.of(0); // Placeholder for actual compensated shot velocity calculation
   }
 
-  public double getShotViabilityScale() {
+  public static double getShotViabilityScale() {
     // This function should calculate a scale from 0 to 1 representing how viable the shot is based
     // on the current robot pose, target pose, and calculated shot angle
     // It should return a value between 0 and 1, where 1 represents a highly viable shot and 0
@@ -122,20 +124,20 @@ public class ShotCalculator extends SubsystemBase {
     return 0.0; // Placeholder for actual shot viability scale calculation
   }
 
-  public double getRobotHeading() {
+  public static double getRobotHeading() {
     // Get the current heading of the robot from -180 to 180
     return drivetrain.getState().Pose.getRotation().getDegrees();
   }
 
-  public Translation2d getRobotToTargetVector() {
+  public static Translation2d getRobotToTargetVector() {
     return getEffectiveTarget().minus(drivetrain.getState().Pose.getTranslation());
   }
 
-  public double getDistanceToTarget() {
+  public static double getDistanceToTarget() {
     return getRobotToTargetVector().getNorm();
   }
 
-  public double getAngleToTarget() {
+  public static double getAngleToTarget() {
     // double getX = drivetrain.getState().Pose.getX();
     // double getY = drivetrain.getState().Pose.getY();
 
@@ -147,11 +149,11 @@ public class ShotCalculator extends SubsystemBase {
     return getRobotToTargetVector().getAngle().getDegrees();
   }
 
-  public double Clamp(double value, double lowerBound, double upperBound) {
+  public static double Clamp(double value, double lowerBound, double upperBound) {
     return Math.max(lowerBound, Math.min(upperBound, value));
   }
 
-  public double getIdealTurretAngle() {
+  public static double getIdealTurretAngle() {
     double idealTurretAngle = (getAngleToTarget() - getRobotHeading());
     double wrappedTurretAngle = MathUtil.inputModulus(idealTurretAngle, -180, 180);
 
@@ -161,8 +163,11 @@ public class ShotCalculator extends SubsystemBase {
       return Clamp(wrappedTurretAngle, -50, 50);
     }
   }
+  public static double getIdealShooterSpeed(){
+    return shooterMap.get(getDistanceToTarget());
+  }
 
-  public double getShooterRpm() {
+  public static double getShooterRpm() {
     return shooterMap.get(getDistanceToTarget());
   }
 

@@ -26,6 +26,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CAN_IDs;
+import frc.robot.util.ShotCalculator;
+
 import java.util.function.Supplier;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -49,9 +51,9 @@ public class Shooter extends SubsystemBase {
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
           //         // Feedback Constants (PID Constants)
-          .withClosedLoopController(0.02, 0, 0, RPM.of(5000), DegreesPerSecondPerSecond.of(10000))
-          .withSimClosedLoopController(.2, 0, 0, RPM.of(5700), DegreesPerSecondPerSecond.of(11000))
-          .withFeedforward(new SimpleMotorFeedforward(0.124, 0, 0))
+          .withClosedLoopController(0.0125, 0, 0, RPM.of(5000), DegreesPerSecondPerSecond.of(30000))
+          .withSimClosedLoopController(.2, 0, 0, RPM.of(5700), DegreesPerSecondPerSecond.of(30000))
+          .withFeedforward(new SimpleMotorFeedforward(0.124, .124, 0))
           .withSimFeedforward(new SimpleMotorFeedforward(0, .124, 0))
           //         // Telemetry name and verbosity level
 
@@ -164,4 +166,8 @@ public class Shooter extends SubsystemBase {
         .andThen(flywheel.run(RPM.of(1000)).withTimeout(STEP_DURATION))
         .andThen(flywheel.run(RPM.of(0)));
   }
+
+  // public Command setShooterToTargetSpeed(){
+    // return setAngularVelocity(RPM.of(ShotCalculator))
+  // }
 }

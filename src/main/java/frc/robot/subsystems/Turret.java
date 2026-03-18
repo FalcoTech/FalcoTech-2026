@@ -185,7 +185,7 @@ public class Turret extends SubsystemBase {
   }
 
   public Command aimAtTarget() {
-    return setAngle(() -> Degrees.of(shotCalculator.getIdealTurretAngle()));
+    return setAngle(() -> Degrees.of(ShotCalculator.getIdealTurretAngle()));
   }
 
   @Override

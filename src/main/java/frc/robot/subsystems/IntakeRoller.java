@@ -26,6 +26,7 @@ public class IntakeRoller extends SubsystemBase {
   // /** Creates a new Feeder. */
   public IntakeRoller() {
     intakerollerMotorconfig.idleMode(IdleMode.kBrake);
+    intakerollerMotorconfig.inverted(true);
 
     intakeRollerMotor.configure(
         intakerollerMotorconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
