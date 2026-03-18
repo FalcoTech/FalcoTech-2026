@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -238,5 +239,15 @@ public class RobotContainer {
     return autoChooser.getSelected();
   }
 
-  private void RegisterNamedCommands() {}
+  private void RegisterNamedCommands() {
+    NamedCommands.registerCommand("Aim Turret", turret.aimAtTarget());
+    NamedCommands.registerCommand("Spin Shooter To Target", shooter.set(.5));
+    NamedCommands.registerCommand("Slide Intake Out", intakeSlide.runDutyCycle(.5));
+    NamedCommands.registerCommand("Slide Intake In", intakeSlide.runDutyCycle(-.5));
+    NamedCommands.registerCommand("Intake", intakeRoller.runIntakeRollers(.5));
+    NamedCommands.registerCommand("Intake Stop", intakeRoller.runIntakeRollers(0));
+    NamedCommands.registerCommand("Hopper Push", hopperPush.runHopperPush(.5));
+    NamedCommands.registerCommand("Feeder Push", feeder.runFeeder(.5));
+    NamedCommands.registerCommand(null, getAutonomousCommand());
+  }
 }
