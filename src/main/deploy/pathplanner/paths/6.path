@@ -3,24 +3,24 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.691,
-        "y": 6.921
+        "x": 8.27,
+        "y": 6.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.685383993676867,
-        "y": 6.6710630870139855
+        "x": 8.264383993676866,
+        "y": 6.250063087013985
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.691,
+        "x": 8.27,
         "y": 4.618
       },
       "prevControl": {
-        "x": 7.662741853651318,
+        "x": 8.241741853651318,
         "y": 4.866397820370745
       },
       "nextControl": null,
@@ -41,14 +41,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -76.0
+    "velocity": 3.0,
+    "rotation": -100.0
   },
   "reversed": false,
   "folder": "Ramp Run",
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": -76.0
+    "velocity": 3.0,
+    "rotation": -100.0
   },
   "useDefaultConstraints": true
 }

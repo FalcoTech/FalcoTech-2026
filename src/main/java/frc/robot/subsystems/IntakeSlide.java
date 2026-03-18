@@ -113,4 +113,7 @@ public Command setHeightAndStop(Distance height, Distance tolerance) {
 public Command runDutyCycle(Supplier<Double> dutyCycle){
     return intakeSlide.set(dutyCycle);
 }
+public Command runDutyCycle(double dutyCycle){
+    return intakeSlide.set(dutyCycle);
+}
 }
