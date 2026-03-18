@@ -25,11 +25,14 @@ public class ShotCalculator extends SubsystemBase {
 
   public record ShooterParams(double rpm, double tof) {}
 
-  private static final double latencyComp = 0.15; // TUNE THIS!!!!!
+  // TUNE THIS
+  private static final double LATENCY_COMP = 0.15;
 
   private final CommandSwerveDrivetrain drivetrain;
 
   private Translation2d targetLocation;
+
+  // ── Interpolation maps ────────────────────────────────────────────────────────
 
   private final InterpolatingTreeMap<Double, ShooterParams> SHOOTER_MAP =
       new InterpolatingTreeMap<>(
@@ -38,6 +41,7 @@ public class ShotCalculator extends SubsystemBase {
 
   private final InterpolatingDoubleTreeMap VELOCITY_DISTANCE_MAP = new InterpolatingDoubleTreeMap();
 
+  // distance (m) → RPM, time-of-flight (s)
   {
     put(2.0, new ShooterParams(3000, 0.3));
     put(3.0, new ShooterParams(3500, 0.4));
@@ -49,11 +53,15 @@ public class ShotCalculator extends SubsystemBase {
     VELOCITY_DISTANCE_MAP.put(distance / params.tof, distance);
   }
 
+  // ── Constructor ───────────────────────────────────────────────────────────────
+
   public ShotCalculator(CommandSwerveDrivetrain drivetrain) {
     this.drivetrain = drivetrain;
 
     // SHOOTER_MAP.put(2.0, new ShooterParams(2800.0, 0.42));
   }
+
+  // ── Position helpers ──────────────────────────────────────────────────────────
 
   private Translation2d getEffectiveTarget() {
     // Update the target pose based on what FieldZone the Robot currently is in
@@ -80,30 +88,6 @@ public class ShotCalculator extends SubsystemBase {
     return targetLocation;
   }
 
-  // TODO: MOVE Shot Checking to better location
-  // public boolean shotGating() {
-  //   // Report if the turret is near the ideal angle and also check shooter speed
-  //   double angleTolerance = 2; // Degrees
-  //   Boolean angleGood =
-  //       turret
-  //           .isNearAngle(Degrees.of(getIdealTurretAngle()), Degrees.of(angleTolerance))
-  //           .getAsBoolean();
-  //   double velocityTolerance = 100; // RPMs
-  //   Boolean velocityGood =
-  //       shooter
-  //           .isNearVelocity(RPM.of(getIdealShooterVelocity()), RPM.of(velocityTolerance))
-  //           .getAsBoolean();
-
-  //   return angleGood && velocityGood;
-  // }
-
-  public AngularVelocity getIdealShooterVelocity() {
-    double rpm = SHOOTER_MAP.get(getEffectiveDistance()).rpm;
-    return RPM.of(rpm);
-    // AngularVelocity idealAngularVelocity = RPM.of(3000);
-    // return idealAngularVelocity;
-  }
-
   private Translation2d getCurrentPos() {
     return drivetrain.getState().Pose.getTranslation();
   }
@@ -118,21 +102,10 @@ public class ShotCalculator extends SubsystemBase {
   }
 
   private Translation2d getFuturePos() {
-    return getCurrentPos().plus(getRobotVelocityAsTrans().times(latencyComp));
+    return getCurrentPos().plus(getRobotVelocityAsTrans().times(LATENCY_COMP));
   }
 
-  public double getShotViabilityScale() {
-    // This function should calculate a scale from 0 to 1 representing how viable the shot is based
-    // on the current robot pose, target pose, and calculated shot angle
-    // It should return a value between 0 and 1, where 1 represents a highly viable shot and 0
-    // represents an unviable shot
-    return 0.0; // Placeholder for actual shot viability scale calculation
-  }
-
-  public double getRobotHeading() {
-    // Get the current heading of the robot from -180 to 180
-    return drivetrain.getState().Pose.getRotation().getDegrees();
-  }
+  // ── Shot calculation ──────────────────────────────────────────────────────────
 
   public Translation2d getRobotToTargetVector() {
     return getEffectiveTarget().minus(getFuturePos());
@@ -142,7 +115,7 @@ public class ShotCalculator extends SubsystemBase {
     return getRobotToTargetVector().getNorm();
   }
 
-  private double getBaselineVeloctiy() {
+  private double getBaselineVelocity() {
     double distance = getDistanceToTarget();
     ShooterParams staticParams = SHOOTER_MAP.get(distance);
     double baselineVelocity = distance / staticParams.tof;
@@ -150,7 +123,7 @@ public class ShotCalculator extends SubsystemBase {
   }
 
   private Translation2d getTargetVelocityVec() {
-    return getRobotToTargetVector().times(getBaselineVeloctiy());
+    return getRobotToTargetVector().times(getBaselineVelocity());
   }
 
   private Translation2d getShotVelocity() {
@@ -165,13 +138,16 @@ public class ShotCalculator extends SubsystemBase {
     return VELOCITY_DISTANCE_MAP.get(getRequiredVelocity());
   }
 
+  // ── Public API ────────────────────────────────────────────────────────────────
+
   public double getAngleToTarget() {
     // return getRobotToTargetVector().getAngle().getDegrees();
     return getShotVelocity().getAngle().getDegrees();
   }
 
-  public double Clamp(double value, double lowerBound, double upperBound) {
-    return Math.max(lowerBound, Math.min(upperBound, value));
+  public double getRobotHeading() {
+    // Get the current heading of the robot from -180 to 180
+    return drivetrain.getState().Pose.getRotation().getDegrees();
   }
 
   /**
@@ -192,10 +168,47 @@ public class ShotCalculator extends SubsystemBase {
     return Degrees.of(wrappedTurretAngle);
   }
 
+  public AngularVelocity getIdealShooterVelocity() {
+    double rpm = SHOOTER_MAP.get(getEffectiveDistance()).rpm;
+    return RPM.of(rpm);
+    // AngularVelocity idealAngularVelocity = RPM.of(3000);
+    // return idealAngularVelocity;
+  }
+
+  public double getShotViabilityScale() {
+    // This function should calculate a scale from 0 to 1 representing how viable the shot is based
+    // on the current robot pose, target pose, and calculated shot angle
+    // It should return a value between 0 and 1, where 1 represents a highly viable shot and 0
+    // represents an unviable shot
+    return 0.0; // Placeholder for actual shot viability scale calculation
+  }
+
+  public double Clamp(double value, double lowerBound, double upperBound) {
+    return Math.max(lowerBound, Math.min(upperBound, value));
+  }
+
+  // TODO: MOVE Shot Checking to better location
+  // public boolean shotGating() {
+  //   // Report if the turret is near the ideal angle and also check shooter speed
+  //   double angleTolerance = 2; // Degrees
+  //   Boolean angleGood =
+  //       turret
+  //           .isNearAngle(Degrees.of(getIdealTurretAngle()), Degrees.of(angleTolerance))
+  //           .getAsBoolean();
+  //   double velocityTolerance = 100; // RPMs
+  //   Boolean velocityGood =
+  //       shooter
+  //           .isNearVelocity(RPM.of(getIdealShooterVelocity()), RPM.of(velocityTolerance))
+  //           .getAsBoolean();
+
+  //   return angleGood && velocityGood;
+  // }
+
+  // ── Periodic ─────────────────────────────────────────────────────────────────
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-
     SmartDashboard.putNumber("Ideal Turret Angle", getIdealTurretAngle().in(Degrees));
     SmartDashboard.putNumber("Distance To Target", getDistanceToTarget());
     // SmartDashboard.putNumber("", getIdealShooterVelocity())
