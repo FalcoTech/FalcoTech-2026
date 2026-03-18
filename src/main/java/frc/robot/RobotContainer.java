@@ -77,7 +77,7 @@ public class RobotContainer {
 
   // Subsystems
   public static final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    public static final IntakeRoller intakeRoller = new IntakeRoller();
+  public static final IntakeRoller intakeRoller = new IntakeRoller();
   public static final IntakeSlide intakeSlide = new IntakeSlide();
   public static final Feeder feeder = new Feeder();
   public static final HopperPush hopperPush = new HopperPush();
@@ -110,16 +110,23 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
         drivetrain.applyRequest(
-            
             () ->
                 drive
                     .withVelocityX(
-                        -Pilot.getLeftY() * (Pilot.leftBumper().getAsBoolean() ? MaxSpeed * .3 : MaxSpeed)) // Drive forward with negative Y (forward)
+                        -Pilot.getLeftY()
+                            * (Pilot.leftBumper().getAsBoolean()
+                                ? MaxSpeed * .3
+                                : MaxSpeed)) // Drive forward with negative Y (forward)
                     .withVelocityY(
-                        -Pilot.getLeftX() * (Pilot.leftBumper().getAsBoolean() ? MaxSpeed * .3 : MaxSpeed)) // Drive left with negative X (left)
+                        -Pilot.getLeftX()
+                            * (Pilot.leftBumper().getAsBoolean()
+                                ? MaxSpeed * .3
+                                : MaxSpeed)) // Drive left with negative X (left)
                     .withRotationalRate(
                         -Pilot.getRightX()
-                            * (Pilot.leftBumper().getAsBoolean() ? MaxAngularRate * .3 : MaxAngularRate)) // Drive counterclockwise with negative X (left)
+                            * (Pilot.leftBumper().getAsBoolean()
+                                ? MaxAngularRate * .3
+                                : MaxAngularRate)) // Drive counterclockwise with negative X (left)
             ));
 
     // Idle while the robot is disabled. This ensures the configured
@@ -164,25 +171,25 @@ public class RobotContainer {
     // Degrees.of(shotCalculator.getIdealTurretAngle())));
     // Copilot.a().whileTrue(shooter.set(.65));
 
-
     Copilot.a().whileTrue(turret.setAngle(() -> shotCalculator.getIdealTurretAngle()));
     Copilot.x().whileTrue(shooter.set(.6));
     // Copilot.x().whileTrue(turret.setDutyCycle(.1));
     // Copilot.b().whileTrue(turret.setDutyCycle(-.1));
     intakeSlide.setDefaultCommand(intakeSlide.runDutyCycle(() -> 0.4 * (Copilot.getLeftX())));
 
-    intakeRoller.setDefaultCommand(intakeRoller.runIntakeRollers(() -> Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()));
+    intakeRoller.setDefaultCommand(
+        intakeRoller.runIntakeRollers(
+            () -> Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()));
 
-    Copilot.rightBumper().whileTrue(intakeSlide.setHeight(Inches.of(10)));
-    Copilot.leftBumper().whileTrue(intakeSlide.setHeight(Inches.of(1)));
-
+    Copilot.rightBumper().whileTrue(intakeSlide.setExtend(Inches.of(10)));
+    Copilot.leftBumper().whileTrue(intakeSlide.setExtend(Inches.of(1)));
 
     // feeder.setDefaultCommand(
-        // feeder.runFeeder(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()));
+    // feeder.runFeeder(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()));
 
     // hopperPush.setDefaultCommand(
-        // hopperPush.runHopperPush(
-            // () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5));
+    // hopperPush.runHopperPush(
+    // () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5));
 
     // feeder.setDefaultCommand(new runFeeder((Copilot.getRightTriggerAxis() -
     // Copilot.getLeftTriggerAxis())));

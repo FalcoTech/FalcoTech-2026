@@ -4,8 +4,6 @@
 
 package frc.robot.commands.shootingCommands;
 
-import static edu.wpi.first.units.Units.Degrees;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Shooter;
@@ -35,7 +33,7 @@ public class alignAndShoot extends Command {
     // shooter.setAngularVelocity(() -> RPM.of(shotCalculator.getShooterRpm()));
     shooter.set(.2);
 
-    turret.setAngle(Degrees.of(shotCalculator.getIdealTurretAngle()));
+    // turret.setAngle(Degrees.of(shotCalculator.getIdealTurretAngle()));
   }
 
   // Called once the command ends or is interrupted.

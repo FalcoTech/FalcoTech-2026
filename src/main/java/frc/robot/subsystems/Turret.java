@@ -185,7 +185,7 @@ public class Turret extends SubsystemBase {
   }
 
   public Command aimAtTarget() {
-    return setAngle(() -> Degrees.of(shotCalculator.getIdealTurretAngle()));
+    return setAngle(() -> (shotCalculator.getIdealTurretAngle()));
   }
 
   @Override
@@ -201,7 +201,7 @@ public class Turret extends SubsystemBase {
     turret.updateTelemetry();
     SmartDashboard.putNumber("Turret Position", getAngle().in(Degrees));
 
-    if (!SmartDashboard.getBoolean("Use Turret", true)){
+    if (!SmartDashboard.getBoolean("Use Turret", true)) {
       stop();
     }
     // SmartDashboard.putNumber("Turret Shot Angle", ShotCalculator.getIdealTurretAngle());
