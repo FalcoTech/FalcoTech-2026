@@ -236,7 +236,15 @@ public class RobotContainer {
     //         .withTimeout(5.0),
     //     // Finally idle for the rest of auton
     //     drivetrain.applyRequest(() -> idle));
+    
     return autoChooser.getSelected();
+
+    //IF IT BREAKS TRY THIS:
+    // try {
+    //     return autoChooser.getSelected();
+    // } catch (Exception e){
+    //     return null;
+    // }
   }
 
   private void RegisterNamedCommands() {
@@ -248,6 +256,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake Stop", intakeRoller.runIntakeRollers(0));
     NamedCommands.registerCommand("Hopper Push", hopperPush.runHopperPush(.5));
     NamedCommands.registerCommand("Feeder Push", feeder.runFeeder(.5));
-    NamedCommands.registerCommand(null, getAutonomousCommand());
+    // NamedCommands.registerCommand(null, getAutonomousCommand());
   }
 }
