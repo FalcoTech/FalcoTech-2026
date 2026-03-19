@@ -25,6 +25,7 @@ public class Feeder extends SubsystemBase {
   public Feeder() {
     feederMotorconfig.idleMode(IdleMode.kBrake);
     feederMotorconfig.voltageCompensation(11);
+    feederMotorconfig.smartCurrentLimit(40);
 
     feederMotor.configure(
         feederMotorconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
