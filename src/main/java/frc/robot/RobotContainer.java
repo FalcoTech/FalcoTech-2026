@@ -116,19 +116,27 @@ public class RobotContainer {
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
 
-    //DRIVETRAIN BUTTONS
+    // DRIVETRAIN BUTTONS
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
         drivetrain.applyRequest(
             () ->
                 drive
                     .withVelocityX(
-                        -Pilot.getLeftY() * (Pilot.leftBumper().getAsBoolean() ? (MaxSpeed * .2) : MaxSpeed)) // Drive forward with negative Y (forward)
+                        -Pilot.getLeftY()
+                            * (Pilot.leftBumper().getAsBoolean()
+                                ? (MaxSpeed * .2)
+                                : MaxSpeed)) // Drive forward with negative Y (forward)
                     .withVelocityY(
-                        -Pilot.getLeftX() * (Pilot.leftBumper().getAsBoolean() ? (MaxSpeed * .2) : MaxSpeed)) // Drive left with negative X (left)
+                        -Pilot.getLeftX()
+                            * (Pilot.leftBumper().getAsBoolean()
+                                ? (MaxSpeed * .2)
+                                : MaxSpeed)) // Drive left with negative X (left)
                     .withRotationalRate(
                         -Pilot.getRightX()
-                            * (Pilot.leftBumper().getAsBoolean() ? MaxAngularRate * .85 : MaxAngularRate)) // Drive counterclockwise with negative X (left)
+                            * (Pilot.leftBumper().getAsBoolean()
+                                ? MaxAngularRate * .85
+                                : MaxAngularRate)) // Drive counterclockwise with negative X (left)
             ));
 
     // Idle while the robot is disabled. This ensures the configured
@@ -158,8 +166,7 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-
-    //TURRET AND SHOOTER BUTTONS
+    // TURRET AND SHOOTER BUTTONS
     turret.setDefaultCommand(turret.stop());
     shooter.setDefaultCommand(shooter.stop());
 
@@ -179,18 +186,19 @@ public class RobotContainer {
     // Copilot.b().whileTrue(turret.setDutyCycle(-.1));
     intakeSlide.setDefaultCommand(intakeSlide.runDutyCycle(() -> 0.4 * (Copilot.getLeftX())));
 
-    intakeRoller.setDefaultCommand(intakeRoller.runIntakeRollers(() -> .5 * (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis())));
+    intakeRoller.setDefaultCommand(
+        intakeRoller.runIntakeRollers(
+            () -> .5 * (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis())));
 
-    Copilot.rightBumper().whileTrue(intakeSlide.setHeight(Inches.of(10)));
-    Copilot.leftBumper().whileTrue(intakeSlide.setHeight(Inches.of(1)));
-
+    Copilot.rightBumper().whileTrue(intakeSlide.setExtend(Inches.of(10)));
+    Copilot.leftBumper().whileTrue(intakeSlide.setExtend(Inches.of(1)));
 
     // feeder.setDefaultCommand(
-        // feeder.runFeeder(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()));
+    // feeder.runFeeder(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()));
 
     hopperPush.setDefaultCommand(
         hopperPush.runHopperPush(
-            () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5)); //Works
+            () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5)); // Works
 
     // feeder.setDefaultCommand(new runFeeder((Copilot.getRightTriggerAxis() -
     // Copilot.getLeftTriggerAxis())));
@@ -237,10 +245,10 @@ public class RobotContainer {
     //         .withTimeout(5.0),
     //     // Finally idle for the rest of auton
     //     drivetrain.applyRequest(() -> idle));
-    
+
     return autoChooser.getSelected();
 
-    //IF IT BREAKS TRY THIS:
+    // IF IT BREAKS TRY THIS:
     // try {
     //     return autoChooser.getSelected();
     // } catch (Exception e){

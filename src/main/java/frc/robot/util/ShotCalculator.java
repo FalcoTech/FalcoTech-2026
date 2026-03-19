@@ -16,7 +16,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -175,9 +174,6 @@ public class ShotCalculator extends SubsystemBase {
     // AngularVelocity idealAngularVelocity = RPM.of(3000);
     // return idealAngularVelocity;
   }
-  public static double getIdealShooterSpeed(){
-    return shooterMap.get(getDistanceToTarget());
-  }
 
   /**
    * Returns a 0→1 scale representing how viable the current shot is. All three factors must be
@@ -215,13 +211,11 @@ public class ShotCalculator extends SubsystemBase {
     if (norm < 0.01) return 1.0;
     Translation2d unitToTarget = toTarget.div(norm);
     Translation2d robotVel = getRobotVelocityAsTrans();
-    double radial =
-        robotVel.getX() * unitToTarget.getX() + robotVel.getY() * unitToTarget.getY();
+    double radial = robotVel.getX() * unitToTarget.getX() + robotVel.getY() * unitToTarget.getY();
     double velNormSq = robotVel.getX() * robotVel.getX() + robotVel.getY() * robotVel.getY();
     double lateral = Math.sqrt(Math.max(0.0, velNormSq - radial * radial));
     return MathUtil.clamp(1.0 - lateral / LATERAL_SPEED_THRESHOLD_MPS, 0.0, 1.0);
   }
-
 
   // ── Periodic ─────────────────────────────────────────────────────────────────
 

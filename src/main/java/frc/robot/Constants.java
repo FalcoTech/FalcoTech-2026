@@ -54,7 +54,6 @@ public final class Constants {
     // Climb Motors
     public static final int CLIMB_ELEVATOR_MOTOR = 98;
     public static final int CLIMB_PIVOT_MOTOR = 99;
-  
 
     // Sensors and other devices could also be added here
   }
