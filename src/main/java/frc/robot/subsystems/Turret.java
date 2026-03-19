@@ -28,8 +28,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CAN_IDs;
+import frc.robot.Constants.TurretConstants;
 import frc.robot.RobotContainer;
 import frc.robot.util.ShotCalculator;
+import java.util.Optional;
 import java.util.function.Supplier;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -85,12 +87,10 @@ public class Turret extends SubsystemBase {
           .withStartingPosition(Degrees.of(0))
           // Update to have 0 be forwards to reduce math overheard
           // .withStartingPosition(HARD_CLOCKWISE_LIMIT))?
-          // .withHardLimit(TurretConstants.HARD_CLOCKWISE_LIMIT,
-          // TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT)
-          // .withSoftLimits(TurretConstants.HARD_CLOCKWISE_LIMIT.plus(Degrees.of(5),
-          // TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT.minus(Degrees.of(5))
-          .withHardLimit(Degrees.of(-110), Degrees.of(110))
-          .withSoftLimits(Degrees.of(-100), Degrees.of(100))
+          .withHardLimit(TurretConstants.HARD_CLOCKWISE_LIMIT, TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT)
+          .withSoftLimits(TurretConstants.HARD_CLOCKWISE_LIMIT.plus(Degrees.of(10)), TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT.minus(Degrees.of(10)))
+          // .withHardLimit(Degrees.of(-110), Degrees.of(110))
+          // .withSoftLimits(Degrees.of(-100), Degrees.of(100))
           .withTelemetry("TurretMech", TelemetryVerbosity.HIGH)
           .withMOI(Meters.of(0.25), Pounds.of(4));
 
@@ -119,6 +119,10 @@ public class Turret extends SubsystemBase {
 
   public Trigger isNearAngle(Angle target, Angle tolerance) {
     return turret.isNear(target, tolerance);
+  }
+
+  public Optional<Angle> getAngleSetpoint() {
+    return turret.getMechanismSetpoint();
   }
 
   public Command sysId() {
@@ -178,30 +182,21 @@ public class Turret extends SubsystemBase {
   public Command stop() {
     return turret.set(0);
   }
-  ;
 
   public void setDirectDutyCycle(double speed) {
     turretMotor.set(speed);
   }
 
   public Command aimAtTarget() {
-    return setAngle(() -> Degrees.of(ShotCalculator.getIdealTurretAngle()));
+    return setAngle(() -> (shotCalculator.getIdealTurretAngle()));
   }
 
   @Override
   public void periodic() {
-    // NOTE: previously this called `turret.updateTelemetry()` which triggers
-    // YAMS/remote motor controller config refreshes. Those refreshes are
-    // blocking and must not be invoked from the main scheduler loop.
-    // Commenting it out prevents the "Do not apply or refresh configs
-    // periodically, as configs are blocking" error observed on the Driver
-    // Station. If you need telemetry, call updateTelemetry() once at init
-    // or from a dedicated off-main-thread task.
-    // telemetry refresh removed from periodic to avoid blocking NT/remote calls
     turret.updateTelemetry();
     SmartDashboard.putNumber("Turret Position", getAngle().in(Degrees));
 
-    if (!SmartDashboard.getBoolean("Use Turret", true)){
+    if (!SmartDashboard.getBoolean("Use Turret", true)) {
       stop();
     }
     // SmartDashboard.putNumber("Turret Shot Angle", ShotCalculator.getIdealTurretAngle());

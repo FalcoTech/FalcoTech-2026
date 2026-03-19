@@ -26,6 +26,8 @@ public class IntakeRoller extends SubsystemBase {
   // /** Creates a new Feeder. */
   public IntakeRoller() {
     intakerollerMotorconfig.idleMode(IdleMode.kBrake);
+    intakerollerMotorconfig.smartCurrentLimit(40);
+    intakerollerMotorconfig.voltageCompensation(12);
     intakerollerMotorconfig.inverted(true);
 
     intakeRollerMotor.configure(

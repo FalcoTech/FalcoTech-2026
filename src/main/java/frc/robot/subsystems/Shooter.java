@@ -15,7 +15,9 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -26,8 +28,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CAN_IDs;
-import frc.robot.util.ShotCalculator;
-
+import java.util.Optional;
 import java.util.function.Supplier;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -65,7 +66,14 @@ public class Shooter extends SubsystemBase {
           .withStatorCurrentLimit(Amps.of(40))
           .withTelemetry("FlyWheelMotors", TelemetryVerbosity.HIGH)
           .withVoltageCompensation(Volts.of(12))
-          .withFollowers(Pair.of(sparkRight, true));
+          .withFollowers(Pair.of(sparkRight, true))
+          .withVendorConfig(
+              new SparkMaxConfig()
+                  .apply(
+                      new EncoderConfig()
+                          .uvwMeasurementPeriod(8)
+                          .quadratureAverageDepth(2)
+                          .quadratureMeasurementPeriod(8)));
 
   private final SmartMotorController motor =
       new SparkWrapper(sparkLeft, DCMotor.getNEO(2), smcConfig);
@@ -77,7 +85,7 @@ public class Shooter extends SubsystemBase {
           // Mass of the flywheel.
           .withMass(Pounds.of(2.5))
           // Maximum speed of the shooter.
-          .withUpperSoftLimit(RPM.of(2000))
+          .withUpperSoftLimit(RPM.of(4000))
           .withLowerSoftLimit(RPM.of(0))
 
           // Telemetry name and verbosity for the shooter.
@@ -143,6 +151,10 @@ public class Shooter extends SubsystemBase {
 
   public Trigger isNearVelocity(AngularVelocity target, AngularVelocity tolerance) {
     return flywheel.isNear(target, tolerance);
+  }
+
+  public Optional<AngularVelocity> getAngularVelocitySetpoint() {
+    return flywheel.getMechanismSetpointVelocity();
   }
 
   public Command sysId() {

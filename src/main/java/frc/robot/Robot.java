@@ -4,14 +4,8 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
-
-import java.util.List;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.HootAutoReplay;
-import com.ctre.phoenix6.StatusSignal;
-
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -65,6 +59,7 @@ public class Robot extends TimedRobot {
             llMeasurement_rear.pose, llMeasurement_rear.timestampSeconds);
       }
     }
+    SmartDashboard.putNumber("Manual RPM Setpoint", RobotContainer.manualRPM);
     useMegaTag2 = SmartDashboard.getBoolean("Enable MegaTag2", useMegaTag2);
     // SmartDashboard.getBoolean("Enable MegaTag2", enableMegaTag2);
 
@@ -79,9 +74,21 @@ public class Robot extends TimedRobot {
       double omegaRps = Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
 
       LimelightHelpers.SetRobotOrientation(
-          VisionConstants.LIMELIGHT_MAIN, headingDeg, 0, pitchDeg.getValueAsDouble(), 0, rollDeg.getValueAsDouble(), 0);
+          VisionConstants.LIMELIGHT_MAIN,
+          headingDeg,
+          0,
+          pitchDeg.getValueAsDouble(),
+          0,
+          rollDeg.getValueAsDouble(),
+          0);
       LimelightHelpers.SetRobotOrientation(
-          VisionConstants.LIMELIGHT_REAR, headingDeg, 0, pitchDeg.getValueAsDouble(), 0, rollDeg.getValueAsDouble(), 0);
+          VisionConstants.LIMELIGHT_REAR,
+          headingDeg,
+          0,
+          pitchDeg.getValueAsDouble(),
+          0,
+          rollDeg.getValueAsDouble(),
+          0);
       var llMeasurement_main =
           LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.LIMELIGHT_MAIN);
       if (llMeasurement_main != null

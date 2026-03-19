@@ -17,12 +17,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PathPlanningConstants;
-// import frc.robot.commands.shootingCommands.alignAndShoot;
+import frc.robot.commands.shootingCommands.alignAndShoot;
+import frc.robot.commands.shootingCommands.feedWhenReady;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
@@ -78,7 +80,7 @@ public class RobotContainer {
 
   // Subsystems
   public static final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    public static final IntakeRoller intakeRoller = new IntakeRoller();
+  public static final IntakeRoller intakeRoller = new IntakeRoller();
   public static final IntakeSlide intakeSlide = new IntakeSlide();
   public static final Feeder feeder = new Feeder();
   public static final HopperPush hopperPush = new HopperPush();
@@ -86,8 +88,12 @@ public class RobotContainer {
   public static final Turret turret = new Turret();
   public static final Shooter shooter = new Shooter();
   //   public static final ClimberElevator climbElevator = new ClimberElevator();
-  public static final ShotCalculator shotCalculator =
-      new ShotCalculator(turret, shooter, drivetrain);
+  public static final ShotCalculator shotCalculator = new ShotCalculator(drivetrain);
+
+  private final Command alignAndShootCmd = new alignAndShoot();
+
+  // Manual RPM setpoint for shooter tuning — D-pad up/down increments, Y runs it.
+  public static double manualRPM = 1000.0;
 
   public Pose2d testPose = new Pose2d(2, 2, Rotation2d.fromDegrees(0));
 
@@ -114,7 +120,6 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
         drivetrain.applyRequest(
-            
             () ->
                 drive
                     .withVelocityX(
@@ -160,32 +165,28 @@ public class RobotContainer {
 
     // Copilot.start().whileTrue(shooter.sysId());
 
-    // Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.set(.65)));
-    Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.setAngularVelocity(() -> RPM.of(ShotCalculator.getIdealShooterSpeed())))); //WORKS WELL
-
-    // Copilot.a().whileTrue(turret.aimAtTarget());
-    // Copilot.a().whileTrue(shooter.set(.4));
-
-    // Copilot.b().whileTrue(shooter.setAngularVelocity(() -> RPM.of(1000)));
-    // Copilot.y().whileTrue(shooter.setAngularVelocity(() -> RPM.of(2000)));
-    // Copilot.x().whileTrue(shooter.setAngularVelocity(() -> RPM.of(3000)));
-
-    // Copilot.a().whileTrue(turret.setAngle(() ->
-    // Degrees.of(shotCalculator.getIdealTurretAngle())));
-    // Copilot.a().whileTrue(shooter.set(.65));
-
-    //INTAKE, HOPPER, FEEDER
-
+    // A toggles align+shoot (turret tracks target, flywheel spins to map speed).
+    // B cancels back to manual (default commands take over).
+    // X feeds — gated by feedWhenReady on turret+shooter tolerance.
+    Copilot.a().toggleOnTrue(alignAndShootCmd);
+    Copilot.b().onTrue(Commands.runOnce(alignAndShootCmd::cancel));
+    Copilot.x().whileTrue(new feedWhenReady());
+    // D-pad up/down increments manual RPM setpoint; Y runs shooter at that setpoint.
+    Copilot.povUp().onTrue(Commands.runOnce(() -> manualRPM = Math.min(manualRPM + 100, 4000)));
+    Copilot.povDown().onTrue(Commands.runOnce(() -> manualRPM = Math.max(manualRPM - 100, 0)));
+    Copilot.y().whileTrue(shooter.setAngularVelocity(() -> RPM.of(manualRPM)));
+    // Copilot.x().whileTrue(turret.setDutyCycle(.1));
+    // Copilot.b().whileTrue(turret.setDutyCycle(-.1));
     intakeSlide.setDefaultCommand(intakeSlide.runDutyCycle(() -> 0.4 * (Copilot.getLeftX())));
 
     intakeRoller.setDefaultCommand(intakeRoller.runIntakeRollers(() -> .5 * (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis())));
 
-    Copilot.rightBumper().whileTrue(intakeSlide.setHeight(Inches.of(10))); //Does not work currently
-    Copilot.leftBumper().whileTrue(intakeSlide.setHeight(Inches.of(1))); //Does not work currently
+    Copilot.rightBumper().whileTrue(intakeSlide.setHeight(Inches.of(10)));
+    Copilot.leftBumper().whileTrue(intakeSlide.setHeight(Inches.of(1)));
 
 
-    feeder.setDefaultCommand(
-        feeder.runFeeder(() -> 0.5 * (Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()))); //Works
+    // feeder.setDefaultCommand(
+        // feeder.runFeeder(() -> Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()));
 
     hopperPush.setDefaultCommand(
         hopperPush.runHopperPush(
