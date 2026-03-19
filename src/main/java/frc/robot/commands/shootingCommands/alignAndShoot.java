@@ -6,48 +6,32 @@ package frc.robot.commands.shootingCommands;
 
 import static edu.wpi.first.units.Units.Degrees;
 
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import frc.robot.Constants.TurretConstants;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Turret;
 import frc.robot.util.ShotCalculator;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class alignAndShoot extends Command {
-  public static final Shooter shooter = RobotContainer.shooter;
-  public static final Turret turret = RobotContainer.turret;
+public class alignAndShoot extends ParallelCommandGroup {
 
-  public static final ShotCalculator shotCalculator = RobotContainer.shotCalculator;
+  // Clamp setpoint inside soft limits so the PID never demands a position YAMS will refuse,
+  // which causes the turret to thrash against the soft stop.
+  private static final double SOFT_LIMIT_DEG =
+      TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT.in(Degrees) - 10.0;
 
-  /** Creates a new alignAndShoot. */
   public alignAndShoot() {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(shooter, turret);
-  }
+    ShotCalculator shotCalculator = RobotContainer.shotCalculator;
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
+    addCommands(
+        RobotContainer.turret.setAngle(
+            () ->
+                Degrees.of(
+                    MathUtil.clamp(
+                        shotCalculator.getIdealTurretAngle().in(Degrees),
+                        -SOFT_LIMIT_DEG,
+                        SOFT_LIMIT_DEG))),
+        RobotContainer.shooter.setAngularVelocity(shotCalculator::getIdealShooterVelocity));
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    // shooter.setAngularVelocity(() -> RPM.of(shotCalculator.getShooterRpm()));
-    shooter.set(.2);
-
-    turret.setAngle(Degrees.of(shotCalculator.getIdealTurretAngle()));
-  }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    shooter.stop();
-    turret.stop();
-  }
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
+    addRequirements(shotCalculator);
   }
 }

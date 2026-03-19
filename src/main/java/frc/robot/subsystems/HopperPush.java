@@ -25,6 +25,7 @@ public class HopperPush extends SubsystemBase {
   public HopperPush() {
     HopperPushmotorconfig.idleMode(IdleMode.kCoast);
     HopperPushmotorconfig.voltageCompensation(11);
+    HopperPushmotorconfig.smartCurrentLimit(30);
 
     HopperPushmotor.configure(
         HopperPushmotorconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
