@@ -51,7 +51,7 @@ public class Robot extends TimedRobot {
       var llMeasurement_main =
           LimelightHelpers.getBotPoseEstimate_wpiBlue(VisionConstants.LIMELIGHT_MAIN);
       if (llMeasurement_main != null
-          && llMeasurement_main.tagCount > 0
+          && llMeasurement_main.tagCount > 1
           && Math.abs(omegaRps) < 2.0) {
         RobotContainer.drivetrain.addVisionMeasurement(
             llMeasurement_main.pose, llMeasurement_main.timestampSeconds);
@@ -59,7 +59,7 @@ public class Robot extends TimedRobot {
       var llMeasurement_rear =
           LimelightHelpers.getBotPoseEstimate_wpiBlue(VisionConstants.LIMELIGHT_REAR);
       if (llMeasurement_rear != null
-          && llMeasurement_rear.tagCount > 0
+          && llMeasurement_rear.tagCount > 1
           && Math.abs(omegaRps) < 2.0) {
         RobotContainer.drivetrain.addVisionMeasurement(
             llMeasurement_rear.pose, llMeasurement_rear.timestampSeconds);

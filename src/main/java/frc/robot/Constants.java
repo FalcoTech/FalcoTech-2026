@@ -90,6 +90,9 @@ public final class Constants {
     // CCW is positive in WPILib (think Unit Circle)
     public static final Angle HARD_COUNTER_CLOCKWISE_LIMIT = Degrees.of(140);
     public static final Angle HARD_CLOCKWISE_LIMIT = Degrees.of(-140);
+
+    public static final double SOFT_LOWER_LIMIT = -100;
+    public static final double SOFT_UPPER_LIMIT = 100;
   }
 
   public static final class ClimbConstants {

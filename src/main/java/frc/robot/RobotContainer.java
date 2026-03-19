@@ -163,6 +163,10 @@ public class RobotContainer {
     // Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.set(.65)));
     Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.setAngularVelocity(() -> RPM.of(ShotCalculator.getIdealShooterSpeed())))); //WORKS WELL
 
+
+    // Copilot.b().whileTrue(shooter.setAngularVelocity(() -> RPM.of(3500)));
+    // Copilot.y().whileTrue(shooter.setAngularVelocity(() -> RPM.of(4000)));
+    // Copilot.x().whileTrue(shooter.setAngularVelocity(() -> RPM.of(4500)));
     // Copilot.a().whileTrue(turret.aimAtTarget());
     // Copilot.a().whileTrue(shooter.set(.4));
 

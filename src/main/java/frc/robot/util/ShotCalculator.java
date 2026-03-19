@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.TurretConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
@@ -38,9 +40,9 @@ public class ShotCalculator extends SubsystemBase {
     
 
         
-    shooterMap.put(1.795, 3000.0);
-    shooterMap.put(3.02, 4000.0);
-    shooterMap.put(4.08, 5000.0);
+    shooterMap.put(1.77, 3000.0);
+    shooterMap.put(2.18, 3500.0);
+    shooterMap.put(3.01, 4000.0);
   }
 
   public static Angle getShotAngle(Distance distanceToTarget, LinearVelocity initialVelocity) {
@@ -157,10 +159,10 @@ public class ShotCalculator extends SubsystemBase {
     double idealTurretAngle = (getAngleToTarget() - getRobotHeading());
     double wrappedTurretAngle = MathUtil.inputModulus(idealTurretAngle, -180, 180);
 
-    if ((wrappedTurretAngle < -50) || (wrappedTurretAngle > 50)) {
-      return Clamp(wrappedTurretAngle, -50, 50);
+    if ((wrappedTurretAngle < TurretConstants.SOFT_LOWER_LIMIT) || (wrappedTurretAngle > TurretConstants.SOFT_UPPER_LIMIT)) {
+      return Clamp(wrappedTurretAngle, TurretConstants.SOFT_LOWER_LIMIT, TurretConstants.SOFT_UPPER_LIMIT);
     } else {
-      return Clamp(wrappedTurretAngle, -50, 50);
+      return Clamp(wrappedTurretAngle, TurretConstants.SOFT_LOWER_LIMIT, TurretConstants.SOFT_UPPER_LIMIT);
     }
   }
   public static double getIdealShooterSpeed(){
