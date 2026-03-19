@@ -74,8 +74,8 @@ public final class Constants {
   }
 
   public static final class VisionConstants {
-    public static final String LIMELIGHT_MAIN = "limelight-main"; // Front facing Limelight 3
-    public static final String LIMELIGHT_REAR = "limelight-rear"; // Rear facing Limelight 2+
+    public static final String LIMELIGHT_MAIN = "limelight-main"; // Front facing Limelight 2+
+    public static final String LIMELIGHT_REAR = "limelight-rear"; // Rear facing Limelight 3+
     public static final boolean USE_LIMELIGHT = true;
     // Don't use vision measurements when rotating faster than this
     public static final double VISION_OMEGA_CUTOFF_RPS = 2.0;

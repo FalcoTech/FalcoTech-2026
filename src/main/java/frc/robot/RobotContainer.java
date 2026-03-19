@@ -180,7 +180,7 @@ public class RobotContainer {
 
     //INTAKE, HOPPER, FEEDER
 
-    intakeSlide.setDefaultCommand(intakeSlide.runDutyCycle(() -> 0.4 * (Copilot.getLeftX())));
+    intakeSlide.setDefaultCommand(intakeSlide.runDutyCycle(() -> 0.6 * (Copilot.getLeftX())));
 
     intakeRoller.setDefaultCommand(intakeRoller.runIntakeRollers(() -> .5 * (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis())));
 
