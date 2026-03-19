@@ -135,7 +135,7 @@ public class RobotContainer {
     Pilot.a().whileTrue(drivetrain.applyRequest(() -> XForm));
 
     // Pilot.b().whileTrue(drivetrain.pathFindToPose(testPose));
-    Pilot.b().whileTrue(drivetrain.rotateThenPathfind(0, testPose));
+    // Pilot.b().whileTrue(drivetrain.rotateThenPathfind(0, testPose));
 
     // Pilot.b().whileTrue(drivetrain.applyRequest(() ->
     //     point.withModuleDirection(new Rotation2d(-Pilot.getLeftY(), -Pilot.getLeftX()))
@@ -162,7 +162,8 @@ public class RobotContainer {
 
     // Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.set(.65)));
     Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.setAngularVelocity(() -> RPM.of(ShotCalculator.getIdealShooterSpeed())))); //WORKS WELL
-
+    Copilot.x().whileTrue(feeder.runFeeder(() -> 0.5).alongWith(hopperPush.runHopperPush(() -> -0.5))); //RUNS THROUGH ROBOT
+    Copilot.y().whileTrue(turret.aimAtTarget().alongWith(shooter.setAngularVelocity(() -> RPM.of(4000))));
 
     // Copilot.b().whileTrue(shooter.setAngularVelocity(() -> RPM.of(3500)));
     // Copilot.y().whileTrue(shooter.setAngularVelocity(() -> RPM.of(4000)));
@@ -182,18 +183,20 @@ public class RobotContainer {
 
     intakeSlide.setDefaultCommand(intakeSlide.runDutyCycle(() -> 0.6 * (Copilot.getLeftX())));
 
-    intakeRoller.setDefaultCommand(intakeRoller.runIntakeRollers(() -> .5 * (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis())));
+    intakeRoller.setDefaultCommand(intakeRoller.runIntakeRollers(() -> .65 * (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis())));
 
-    Copilot.rightBumper().whileTrue(intakeSlide.setHeight(Inches.of(10))); //Does not work currently
-    Copilot.leftBumper().whileTrue(intakeSlide.setHeight(Inches.of(1))); //Does not work currently
+    // Copilot.rightBumper().whileTrue(intakeSlide.setHeight(Inches.of(10))); //Does not work currently
+    // Copilot.leftBumper().whileTrue(intakeSlide.setHeight(Inches.of(1))); //Does not work currently
 
 
-    feeder.setDefaultCommand(
-        feeder.runFeeder(() -> 0.5 * (Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()))); //Works
+    // feeder.setDefaultCommand(
+        // feeder.runFeeder(() -> 0.5 * (Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()))); //Works
+    feeder.setDefaultCommand(feeder.stopFeeder());
 
-    hopperPush.setDefaultCommand(
-        hopperPush.runHopperPush(
-            () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5)); //Works
+    // hopperPush.setDefaultCommand(
+        // hopperPush.runHopperPush(
+            // () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5)); //Works
+    hopperPush.setDefaultCommand(hopperPush.stopHopperPush());
 
     // feeder.setDefaultCommand(new runFeeder((Copilot.getRightTriggerAxis() -
     // Copilot.getLeftTriggerAxis())));
@@ -253,10 +256,15 @@ public class RobotContainer {
 
   private void RegisterNamedCommands() {
     NamedCommands.registerCommand("Aim Turret", turret.aimAtTarget());
-    NamedCommands.registerCommand("Spin Shooter To Target", shooter.set(.5));
-    NamedCommands.registerCommand("Slide Intake Out", intakeSlide.runDutyCycle(.5));
-    NamedCommands.registerCommand("Slide Intake In", intakeSlide.runDutyCycle(-.5));
-    NamedCommands.registerCommand("Intake", intakeRoller.runIntakeRollers(.5));
+    NamedCommands.registerCommand("Spin Shooter To Target", shooter.setAngularVelocity(() -> RPM.of(ShotCalculator.getIdealShooterSpeed())));
+    NamedCommands.registerCommand("Stop Shooter", shooter.stop());
+    NamedCommands.registerCommand("Stop Turret", turret.stop());
+    NamedCommands.registerCommand("Stop Hopper Push", hopperPush.stopHopperPush());
+    NamedCommands.registerCommand("Stop Feeder Push", feeder.stopFeeder());
+    NamedCommands.registerCommand("Stop Intake Slide", intakeSlide.stop());
+    NamedCommands.registerCommand("Slide Intake Out", intakeSlide.runDutyCycle(.6));
+    NamedCommands.registerCommand("Slide Intake In", intakeSlide.runDutyCycle(-.6));
+    NamedCommands.registerCommand("Intake", intakeRoller.runIntakeRollers(.35));
     NamedCommands.registerCommand("Intake Stop", intakeRoller.runIntakeRollers(0));
     NamedCommands.registerCommand("Hopper Push", hopperPush.runHopperPush(.5));
     NamedCommands.registerCommand("Feeder Push", feeder.runFeeder(.5));

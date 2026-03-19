@@ -17,7 +17,68 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 3.0
+                  "waitTime": 1.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Aim Turret"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Spin Shooter To Target"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Feeder Push"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Hopper Push"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stop Hopper Push"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stop Feeder Push"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stop Shooter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stop Turret"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.1
                 }
               }
             ]
@@ -48,9 +109,40 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Intake Stop"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Aim Turret"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Feeder Push"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Spin Shooter To Target"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Hopper Push"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
           }
         }
       ]
