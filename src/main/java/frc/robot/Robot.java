@@ -34,6 +34,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     m_timeAndJoystickReplay.update();
     CommandScheduler.getInstance().run();
+    SmartDashboard.putNumber("Manual RPM Setpoint", RobotContainer.manualRPM);
 
     // MegaTag2 with dual Limelights
     if (VisionConstants.USE_LIMELIGHT && !useMegaTag2) {
@@ -59,7 +60,6 @@ public class Robot extends TimedRobot {
             llMeasurement_rear.pose, llMeasurement_rear.timestampSeconds);
       }
     }
-    SmartDashboard.putNumber("Manual RPM Setpoint", RobotContainer.manualRPM);
     useMegaTag2 = SmartDashboard.getBoolean("Enable MegaTag2", useMegaTag2);
     // SmartDashboard.getBoolean("Enable MegaTag2", enableMegaTag2);
 

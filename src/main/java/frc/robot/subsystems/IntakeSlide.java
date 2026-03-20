@@ -107,9 +107,8 @@ public class IntakeSlide extends SubsystemBase {
   public Command runDutyCycle(double dutyCycle) {
     return intakeSlide.set(dutyCycle);
   }
-  
+
   public Command stop() {
     return intakeSlide.set(0);
   }
-
 }
