@@ -228,10 +228,10 @@ public class RobotContainer {
     // Copilot.getLeftTriggerAxis()))); //Works
     feeder.setDefaultCommand(feeder.stopFeeder());
 
-    // hopperPush.setDefaultCommand(
-    // hopperPush.runHopperPush(
-    // () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5)); //Works
-    hopperPush.setDefaultCommand(hopperPush.stopHopperPush());
+    hopperPush.setDefaultCommand(
+    hopperPush.runHopperPush(
+    () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5)); //Works
+    // hopperPush.setDefaultCommand(hopperPush.stopHopperPush());
 
     // feeder.setDefaultCommand(new runFeeder((Copilot.getRightTriggerAxis() -
     // Copilot.getLeftTriggerAxis())));
