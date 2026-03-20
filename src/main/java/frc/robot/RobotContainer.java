@@ -183,7 +183,7 @@ public class RobotContainer {
 
     intakeSlide.setDefaultCommand(intakeSlide.runDutyCycle(() -> 0.6 * (Copilot.getLeftX())));
 
-    intakeRoller.setDefaultCommand(intakeRoller.runIntakeRollers(() -> .65 * (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis())));
+    intakeRoller.setDefaultCommand(intakeRoller.runIntakeRollers(() -> .65 * (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()))); //NEGATIVE RUNS THRU
 
     // Copilot.rightBumper().whileTrue(intakeSlide.setHeight(Inches.of(10))); //Does not work currently
     // Copilot.leftBumper().whileTrue(intakeSlide.setHeight(Inches.of(1))); //Does not work currently
@@ -259,14 +259,17 @@ public class RobotContainer {
     NamedCommands.registerCommand("Spin Shooter To Target", shooter.setAngularVelocity(() -> RPM.of(ShotCalculator.getIdealShooterSpeed())));
     NamedCommands.registerCommand("Stop Shooter", shooter.stop());
     NamedCommands.registerCommand("Stop Turret", turret.stop());
+
     NamedCommands.registerCommand("Stop Hopper Push", hopperPush.stopHopperPush());
     NamedCommands.registerCommand("Stop Feeder Push", feeder.stopFeeder());
     NamedCommands.registerCommand("Stop Intake Slide", intakeSlide.stop());
+
     NamedCommands.registerCommand("Slide Intake Out", intakeSlide.runDutyCycle(.6));
+    NamedCommands.registerCommand("Slow Slide Intake Out", intakeSlide.runDutyCycle(.3));
     NamedCommands.registerCommand("Slide Intake In", intakeSlide.runDutyCycle(-.6));
-    NamedCommands.registerCommand("Intake", intakeRoller.runIntakeRollers(.35));
+    NamedCommands.registerCommand("Intake", intakeRoller.runIntakeRollers(-.65));
     NamedCommands.registerCommand("Intake Stop", intakeRoller.runIntakeRollers(0));
-    NamedCommands.registerCommand("Hopper Push", hopperPush.runHopperPush(.5));
+    NamedCommands.registerCommand("Hopper Push", hopperPush.runHopperPush(-.5));
     NamedCommands.registerCommand("Feeder Push", feeder.runFeeder(.5));
     // NamedCommands.registerCommand(null, getAutonomousCommand());
   }

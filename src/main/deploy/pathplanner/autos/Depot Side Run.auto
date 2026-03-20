@@ -140,7 +140,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "1"
+                  "pathName": "5"
                 }
               },
               {
@@ -159,7 +159,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "2"
+                  "pathName": "6"
                 }
               },
               {
@@ -178,7 +178,26 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "4"
+                  "pathName": "7"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "8"
                 }
               },
               {
