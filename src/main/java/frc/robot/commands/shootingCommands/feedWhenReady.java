@@ -52,6 +52,11 @@ public class feedWhenReady extends Command {
                     shooter.isNearVelocity(setpoint, RPM.of(VELOCITY_TOLERANCE_RPM)).getAsBoolean())
             .orElse(false);
 
+    boolean isTargetingHub = RobotContainer.shotCalculator.isTargetingHub();
+    // Gate on readiness only when targeting the hub; feed freely passing
+    boolean shouldFeed = !isTargetingHub || (turretReady && shooterReady);
+
+    SmartDashboard.putBoolean("FeedWhenReady/isTargetingHub", isTargetingHub);
     SmartDashboard.putBoolean("FeedWhenReady/turretReady", turretReady);
     SmartDashboard.putBoolean("FeedWhenReady/shooterReady", shooterReady);
     SmartDashboard.putBoolean("FeedWhenReady/turretSetpointPresent",
@@ -59,7 +64,7 @@ public class feedWhenReady extends Command {
     SmartDashboard.putBoolean("FeedWhenReady/shooterSetpointPresent",
         shooter.getAngularVelocitySetpoint().isPresent());
 
-    feeder.runFeederVoid(turretReady && shooterReady ? FEEDER_SPEED : 0.0);
+    feeder.runFeederVoid(shouldFeed ? FEEDER_SPEED : 0.0);
   }
 
   @Override
