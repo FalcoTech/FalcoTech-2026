@@ -17,10 +17,9 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.TurretConstants;
-import frc.robot.Constants.VisionConstants;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
@@ -37,14 +36,11 @@ public class ShotCalculator extends SubsystemBase {
   private static InterpolatingDoubleTreeMap shooterMap = new InterpolatingDoubleTreeMap();
 
   public ShotCalculator(Turret turret, Shooter shooter, CommandSwerveDrivetrain drivetrain) {
-    
 
-        
     shooterMap.put(1.77, 3000.0);
     shooterMap.put(2.18, 3500.0);
     shooterMap.put(3.01, 4000.0);
     shooterMap.put(4.0, 5000.0);
-
   }
 
   public static Angle getShotAngle(Distance distanceToTarget, LinearVelocity initialVelocity) {
@@ -161,13 +157,17 @@ public class ShotCalculator extends SubsystemBase {
     double idealTurretAngle = (getAngleToTarget() - getRobotHeading());
     double wrappedTurretAngle = MathUtil.inputModulus(idealTurretAngle, -180, 180);
 
-    if ((wrappedTurretAngle < TurretConstants.SOFT_LOWER_LIMIT) || (wrappedTurretAngle > TurretConstants.SOFT_UPPER_LIMIT)) {
-      return Clamp(wrappedTurretAngle, TurretConstants.SOFT_LOWER_LIMIT, TurretConstants.SOFT_UPPER_LIMIT);
+    if ((wrappedTurretAngle < TurretConstants.SOFT_LOWER_LIMIT)
+        || (wrappedTurretAngle > TurretConstants.SOFT_UPPER_LIMIT)) {
+      return Clamp(
+          wrappedTurretAngle, TurretConstants.SOFT_LOWER_LIMIT, TurretConstants.SOFT_UPPER_LIMIT);
     } else {
-      return Clamp(wrappedTurretAngle, TurretConstants.SOFT_LOWER_LIMIT, TurretConstants.SOFT_UPPER_LIMIT);
+      return Clamp(
+          wrappedTurretAngle, TurretConstants.SOFT_LOWER_LIMIT, TurretConstants.SOFT_UPPER_LIMIT);
     }
   }
-  public static double getIdealShooterSpeed(){
+
+  public static double getIdealShooterSpeed() {
     return shooterMap.get(getDistanceToTarget());
   }
 

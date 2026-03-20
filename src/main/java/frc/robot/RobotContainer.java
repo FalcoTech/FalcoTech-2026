@@ -78,7 +78,7 @@ public class RobotContainer {
 
   // Subsystems
   public static final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    public static final IntakeRoller intakeRoller = new IntakeRoller();
+  public static final IntakeRoller intakeRoller = new IntakeRoller();
   public static final IntakeSlide intakeSlide = new IntakeSlide();
   public static final Feeder feeder = new Feeder();
   public static final HopperPush hopperPush = new HopperPush();
@@ -110,20 +110,27 @@ public class RobotContainer {
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
 
-    //DRIVETRAIN BUTTONS
+    // DRIVETRAIN BUTTONS
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
         drivetrain.applyRequest(
-            
             () ->
                 drive
                     .withVelocityX(
-                        -Pilot.getLeftY() * (Pilot.leftBumper().getAsBoolean() ? (MaxSpeed * .2) : MaxSpeed)) // Drive forward with negative Y (forward)
+                        -Pilot.getLeftY()
+                            * (Pilot.leftBumper().getAsBoolean()
+                                ? (MaxSpeed * .2)
+                                : MaxSpeed)) // Drive forward with negative Y (forward)
                     .withVelocityY(
-                        -Pilot.getLeftX() * (Pilot.leftBumper().getAsBoolean() ? (MaxSpeed * .2) : MaxSpeed)) // Drive left with negative X (left)
+                        -Pilot.getLeftX()
+                            * (Pilot.leftBumper().getAsBoolean()
+                                ? (MaxSpeed * .2)
+                                : MaxSpeed)) // Drive left with negative X (left)
                     .withRotationalRate(
                         -Pilot.getRightX()
-                            * (Pilot.leftBumper().getAsBoolean() ? MaxAngularRate * .85 : MaxAngularRate)) // Drive counterclockwise with negative X (left)
+                            * (Pilot.leftBumper().getAsBoolean()
+                                ? MaxAngularRate * .85
+                                : MaxAngularRate)) // Drive counterclockwise with negative X (left)
             ));
 
     // Idle while the robot is disabled. This ensures the configured
@@ -153,17 +160,27 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-
-    //TURRET AND SHOOTER BUTTONS
+    // TURRET AND SHOOTER BUTTONS
     turret.setDefaultCommand(turret.stop());
     shooter.setDefaultCommand(shooter.stop());
 
     // Copilot.start().whileTrue(shooter.sysId());
 
     // Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.set(.65)));
-    Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.setAngularVelocity(() -> RPM.of(ShotCalculator.getIdealShooterSpeed())))); //WORKS WELL
-    Copilot.x().whileTrue(feeder.runFeeder(() -> 0.5).alongWith(hopperPush.runHopperPush(() -> -0.5))); //RUNS THROUGH ROBOT
-    Copilot.y().whileTrue(turret.aimAtTarget().alongWith(shooter.setAngularVelocity(() -> RPM.of(4000))));
+    Copilot.a()
+        .whileTrue(
+            turret
+                .aimAtTarget()
+                .alongWith(
+                    shooter.setAngularVelocity(
+                        () -> RPM.of(ShotCalculator.getIdealShooterSpeed())))); // WORKS WELL
+    Copilot.x()
+        .whileTrue(
+            feeder
+                .runFeeder(() -> 0.5)
+                .alongWith(hopperPush.runHopperPush(() -> -0.5))); // RUNS THROUGH ROBOT
+    Copilot.y()
+        .whileTrue(turret.aimAtTarget().alongWith(shooter.setAngularVelocity(() -> RPM.of(4000))));
 
     // Copilot.b().whileTrue(shooter.setAngularVelocity(() -> RPM.of(3500)));
     // Copilot.y().whileTrue(shooter.setAngularVelocity(() -> RPM.of(4000)));
@@ -179,23 +196,30 @@ public class RobotContainer {
     // Degrees.of(shotCalculator.getIdealTurretAngle())));
     // Copilot.a().whileTrue(shooter.set(.65));
 
-    //INTAKE, HOPPER, FEEDER
+    // INTAKE, HOPPER, FEEDER
 
     intakeSlide.setDefaultCommand(intakeSlide.runDutyCycle(() -> 0.6 * (Copilot.getLeftX())));
 
-    intakeRoller.setDefaultCommand(intakeRoller.runIntakeRollers(() -> .65 * (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()))); //NEGATIVE RUNS THRU
+    intakeRoller.setDefaultCommand(
+        intakeRoller.runIntakeRollers(
+            () ->
+                .65
+                    * (Copilot.getLeftTriggerAxis()
+                        - Copilot.getRightTriggerAxis()))); // NEGATIVE RUNS THRU
 
-    // Copilot.rightBumper().whileTrue(intakeSlide.setHeight(Inches.of(10))); //Does not work currently
-    // Copilot.leftBumper().whileTrue(intakeSlide.setHeight(Inches.of(1))); //Does not work currently
-
+    // Copilot.rightBumper().whileTrue(intakeSlide.setHeight(Inches.of(10))); //Does not work
+    // currently
+    // Copilot.leftBumper().whileTrue(intakeSlide.setHeight(Inches.of(1))); //Does not work
+    // currently
 
     // feeder.setDefaultCommand(
-        // feeder.runFeeder(() -> 0.5 * (Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis()))); //Works
+    // feeder.runFeeder(() -> 0.5 * (Copilot.getRightTriggerAxis() -
+    // Copilot.getLeftTriggerAxis()))); //Works
     feeder.setDefaultCommand(feeder.stopFeeder());
 
     // hopperPush.setDefaultCommand(
-        // hopperPush.runHopperPush(
-            // () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5)); //Works
+    // hopperPush.runHopperPush(
+    // () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5)); //Works
     hopperPush.setDefaultCommand(hopperPush.stopHopperPush());
 
     // feeder.setDefaultCommand(new runFeeder((Copilot.getRightTriggerAxis() -
@@ -243,10 +267,10 @@ public class RobotContainer {
     //         .withTimeout(5.0),
     //     // Finally idle for the rest of auton
     //     drivetrain.applyRequest(() -> idle));
-    
+
     return autoChooser.getSelected();
 
-    //IF IT BREAKS TRY THIS:
+    // IF IT BREAKS TRY THIS:
     // try {
     //     return autoChooser.getSelected();
     // } catch (Exception e){
@@ -256,7 +280,9 @@ public class RobotContainer {
 
   private void RegisterNamedCommands() {
     NamedCommands.registerCommand("Aim Turret", turret.aimAtTarget());
-    NamedCommands.registerCommand("Spin Shooter To Target", shooter.setAngularVelocity(() -> RPM.of(ShotCalculator.getIdealShooterSpeed())));
+    NamedCommands.registerCommand(
+        "Spin Shooter To Target",
+        shooter.setAngularVelocity(() -> RPM.of(ShotCalculator.getIdealShooterSpeed())));
     NamedCommands.registerCommand("Stop Shooter", shooter.stop());
     NamedCommands.registerCommand("Stop Turret", turret.stop());
 

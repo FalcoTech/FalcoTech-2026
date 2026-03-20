@@ -69,7 +69,7 @@ public class Turret extends SubsystemBase {
           .withIdleMode(MotorMode.BRAKE)
           .withMotorInverted(true)
           //         // Setup Telemetry
-          .withTelemetry("TurretMotor", TelemetryVerbosity.HIGH)
+          .withTelemetry("TurretMotor", TelemetryVerbosity.LOW)
           //         // Power Optimization
           .withStatorCurrentLimit(Amps.of(30));
   // .withClosedLoopRampRate(Seconds.of(0.25))
@@ -91,7 +91,7 @@ public class Turret extends SubsystemBase {
           // TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT.minus(Degrees.of(5))
           .withHardLimit(Degrees.of(-110), Degrees.of(110))
           .withSoftLimits(Degrees.of(-100), Degrees.of(100))
-          .withTelemetry("TurretMech", TelemetryVerbosity.HIGH)
+          .withTelemetry("TurretMech", TelemetryVerbosity.LOW)
           .withMOI(Meters.of(0.25), Pounds.of(4));
 
   private final Pivot turret = new Pivot(turretConfig);
@@ -201,7 +201,7 @@ public class Turret extends SubsystemBase {
     turret.updateTelemetry();
     SmartDashboard.putNumber("Turret Position", getAngle().in(Degrees));
 
-    if (!SmartDashboard.getBoolean("Use Turret", true)){
+    if (!SmartDashboard.getBoolean("Use Turret", true)) {
       stop();
     }
     // SmartDashboard.putNumber("Turret Shot Angle", ShotCalculator.getIdealTurretAngle());

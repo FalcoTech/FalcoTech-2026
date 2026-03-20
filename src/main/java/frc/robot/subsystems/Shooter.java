@@ -26,8 +26,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CAN_IDs;
-import frc.robot.util.ShotCalculator;
-
 import java.util.function.Supplier;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -63,7 +61,7 @@ public class Shooter extends SubsystemBase {
           .withMotorInverted(true)
           .withIdleMode(MotorMode.COAST)
           .withStatorCurrentLimit(Amps.of(40))
-          .withTelemetry("FlyWheelMotors", TelemetryVerbosity.HIGH)
+          .withTelemetry("FlyWheelMotors", TelemetryVerbosity.LOW)
           .withVoltageCompensation(Volts.of(12))
           .withFollowers(Pair.of(sparkRight, true));
 
@@ -81,7 +79,7 @@ public class Shooter extends SubsystemBase {
           .withLowerSoftLimit(RPM.of(0))
 
           // Telemetry name and verbosity for the shooter.
-          .withTelemetry("FlyWheelMech", TelemetryVerbosity.HIGH);
+          .withTelemetry("FlyWheelMech", TelemetryVerbosity.LOW);
 
   private final FlyWheel flywheel = new FlyWheel(flywheelConfig);
 
@@ -168,6 +166,6 @@ public class Shooter extends SubsystemBase {
   }
 
   // public Command setShooterToTargetSpeed(){
-    // return setAngularVelocity(RPM.of(ShotCalculator))
+  // return setAngularVelocity(RPM.of(ShotCalculator))
   // }
 }
