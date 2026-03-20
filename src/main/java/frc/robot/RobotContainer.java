@@ -24,6 +24,7 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PathPlanningConstants;
 import frc.robot.commands.shootingCommands.aimTurretAtTarget;
 import frc.robot.commands.shootingCommands.alignAndShoot;
+import frc.robot.commands.shootingCommands.feedWhenReady;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
@@ -178,6 +179,11 @@ public class RobotContainer {
                 .alongWith(
                     shooter.setAngularVelocity(
                         () -> shotCalculator.getIdealShooterVelocity()))); // untested new version
+    Copilot.b()
+        .whileTrue(
+            new aimTurretAtTarget()
+                .alongWith(shooter.setAngularVelocity(() -> shotCalculator.getIdealShooterVelocity()))
+                .alongWith(new feedWhenReady())); // aim + auto-feed when stopped and ready
     Copilot.x()
         .whileTrue(
             feeder

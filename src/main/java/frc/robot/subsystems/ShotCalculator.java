@@ -173,6 +173,12 @@ public class ShotCalculator extends SubsystemBase {
     return RPM.of(SHOOTER_MAP.get(getEffectiveDistance()).rpm);
   }
 
+  /** Returns true when the robot is in the alliance zone and targeting the main hub. */
+  public boolean isTargetingHub() {
+    getEffectiveTarget(); // ensures targetLocation is current
+    return targetLocation == FieldConstants.HUB_TARGET;
+  }
+
   /**
    * Returns a 0→1 scale representing how viable the current shot is. All three factors must be
    * favorable — any single disqualifier collapses the score toward zero.
@@ -222,5 +228,6 @@ public class ShotCalculator extends SubsystemBase {
     SmartDashboard.putNumber("Ideal Turret Angle", getIdealTurretAngle().in(Degrees));
     SmartDashboard.putNumber("Distance To Target", getDistanceToTarget());
     SmartDashboard.putNumber("Shot Viability", getShotViabilityScale());
+    SmartDashboard.putBoolean("ShotCalc/isTargetingHub", isTargetingHub());
   }
 }
