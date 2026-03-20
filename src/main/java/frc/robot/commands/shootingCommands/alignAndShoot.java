@@ -10,7 +10,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.RobotContainer;
-import frc.robot.util.ShotCalculator;
+import frc.robot.subsystems.ShotCalculator;
 
 public class alignAndShoot extends ParallelCommandGroup {
 

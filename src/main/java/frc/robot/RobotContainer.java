@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PathPlanningConstants;
+import frc.robot.commands.shootingCommands.aimTurretAtTarget;
 import frc.robot.commands.shootingCommands.alignAndShoot;
 import frc.robot.commands.shootingCommands.feedWhenReady;
 import frc.robot.generated.TunerConstants;
@@ -34,7 +35,7 @@ import frc.robot.subsystems.IntakeSlide;
 import frc.robot.subsystems.LEDS;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
-import frc.robot.util.ShotCalculator;
+import frc.robot.subsystems.ShotCalculator;
 
 public class RobotContainer {
   // Drive speeds
@@ -173,9 +174,9 @@ public class RobotContainer {
     // Copilot.start().whileTrue(shooter.sysId());
 
     // Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.set(.65)));
-    Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.setAngularVelocity(() -> RPM.of(ShotCalculator.getIdealShooterSpeed())))); //WORKS WELL
+    Copilot.a().whileTrue(new aimTurretAtTarget().alongWith(shooter.setAngularVelocity(() -> RPM.of(ShotCalculator.getIdealShooterSpeed())))); //WORKS WELL
     Copilot.x().whileTrue(feeder.runFeeder(() -> 0.5).alongWith(hopperPush.runHopperPush(() -> -0.5))); //RUNS THROUGH ROBOT
-    Copilot.y().whileTrue(turret.aimAtTarget().alongWith(shooter.setAngularVelocity(() -> RPM.of(4000))));
+    Copilot.y().whileTrue(new aimTurretAtTarget().alongWith(shooter.setAngularVelocity(() -> RPM.of(4000))));
 
     // Copilot.b().whileTrue(shooter.setAngularVelocity(() -> RPM.of(3500)));
     // Copilot.y().whileTrue(shooter.setAngularVelocity(() -> RPM.of(4000)));
@@ -269,7 +270,7 @@ public class RobotContainer {
   }
 
   private void RegisterNamedCommands() {
-    NamedCommands.registerCommand("Aim Turret", turret.aimAtTarget());
+    NamedCommands.registerCommand("Aim Turret", new aimTurretAtTarget());
     NamedCommands.registerCommand("Spin Shooter To Target", shooter.setAngularVelocity(() -> RPM.of(ShotCalculator.getIdealShooterSpeed())));
     NamedCommands.registerCommand("Stop Shooter", shooter.stop());
     NamedCommands.registerCommand("Stop Turret", turret.stop());

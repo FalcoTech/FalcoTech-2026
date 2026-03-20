@@ -30,7 +30,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CAN_IDs;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.RobotContainer;
-import frc.robot.util.ShotCalculator;
 import java.util.Optional;
 import java.util.function.Supplier;
 import yams.gearing.GearBox;
@@ -45,7 +44,6 @@ import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.remote.TalonFXWrapper;
 
 public class Turret extends SubsystemBase {
-  public static final ShotCalculator shotCalculator = RobotContainer.shotCalculator;
   // private final SparkMax turretMotor =
   // new SparkMax(CAN_IDs.TURRET_MOTOR, SparkMax.MotorType.kBrushless);
 
@@ -109,7 +107,7 @@ public class Turret extends SubsystemBase {
   }
 
   public void setAngleDirect(Angle targetAngle) {
-    // turretSMC.setPosition(targetAngle);
+    turretSMC.setPosition(targetAngle);
   }
 
   public Command setAngle(Supplier<Angle> angleSupplier) {
@@ -188,10 +186,6 @@ public class Turret extends SubsystemBase {
 
   public void setDirectDutyCycle(double speed) {
     turretMotor.set(speed);
-  }
-
-  public Command aimAtTarget() {
-    return setAngle(() -> (shotCalculator.getIdealTurretAngle()));
   }
 
   @Override

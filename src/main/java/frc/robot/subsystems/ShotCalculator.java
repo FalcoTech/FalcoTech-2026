@@ -1,4 +1,4 @@
-package frc.robot.util;
+package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RPM;
@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.TurretConstants;
-import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import java.util.Collection;
 import java.util.List;
@@ -41,7 +40,7 @@ public class ShotCalculator extends SubsystemBase {
 
   private final CommandSwerveDrivetrain drivetrain;
 
-  private static Translation2d targetLocation;
+  private Translation2d targetLocation;
 
   // ── Interpolation maps ────────────────────────────────────────────────────────
 
@@ -50,12 +49,17 @@ public class ShotCalculator extends SubsystemBase {
           InverseInterpolator.forDouble(),
           (a, b, t) -> new ShooterParams(a.rpm + (b.rpm - a.rpm) * t, a.tof + (b.tof - a.tof) * t));
 
-        
-    shooterMap.put(1.77, 3000.0);
-    shooterMap.put(2.18, 3500.0);
-    shooterMap.put(3.01, 4000.0);
-    shooterMap.put(4.0, 5000.0);
+  private final InterpolatingDoubleTreeMap VELOCITY_DISTANCE_MAP = new InterpolatingDoubleTreeMap();
 
+  private double shooterMapMinDistance = Double.MAX_VALUE;
+  private double shooterMapMaxDistance = Double.MIN_VALUE;
+
+  // distance (m) → RPM, time-of-flight (s) — TUNE tof values
+  {
+    put(1.77, new ShooterParams(3000, 0.26));
+    put(2.18, new ShooterParams(3500, 0.32));
+    put(3.01, new ShooterParams(4000, 0.43));
+    put(4.00, new ShooterParams(5000, 0.50));
   }
 
   private void put(double distance, ShooterParams params) {
@@ -138,7 +142,7 @@ public class ShotCalculator extends SubsystemBase {
   }
 
   private Translation2d getShotVelocity() {
-    return getTargetVelocityVec().plus(getRobotVelocityAsTrans());
+    return getTargetVelocityVec().minus(getRobotVelocityAsTrans());
   }
 
   private double getRequiredVelocity() {
@@ -165,11 +169,9 @@ public class ShotCalculator extends SubsystemBase {
     return Degrees.of(wrappedTurretAngle);
   }
 
-    if ((wrappedTurretAngle < TurretConstants.SOFT_LOWER_LIMIT) || (wrappedTurretAngle > TurretConstants.SOFT_UPPER_LIMIT)) {
-      return Clamp(wrappedTurretAngle, TurretConstants.SOFT_LOWER_LIMIT, TurretConstants.SOFT_UPPER_LIMIT);
-    } else {
-      return Clamp(wrappedTurretAngle, TurretConstants.SOFT_LOWER_LIMIT, TurretConstants.SOFT_UPPER_LIMIT);
-    }
+  /** Ideal shooter wheel speed for the current effective distance. */
+  public AngularVelocity getIdealShooterVelocity() {
+    return RPM.of(SHOOTER_MAP.get(getEffectiveDistance()).rpm);
   }
 
   /**
