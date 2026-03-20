@@ -173,22 +173,17 @@ public class RobotContainer {
     // Copilot.start().whileTrue(shooter.sysId());
 
     // Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.set(.65)));
+    
     Copilot.a()
-        .whileTrue(
-            new aimTurretAtTarget()
-                .alongWith(
-                    shooter.setAngularVelocity(
-                        () -> shotCalculator.getIdealShooterVelocity()))); // untested new version
-    Copilot.b()
         .whileTrue(
             new aimTurretAtTarget()
                 .alongWith(shooter.setAngularVelocity(() -> shotCalculator.getIdealShooterVelocity()))
                 .alongWith(new feedWhenReady())); // aim + auto-feed when stopped and ready
-    Copilot.x()
-        .whileTrue(
-            feeder
-                .runFeeder(() -> 0.5)
-                .alongWith(hopperPush.runHopperPush(() -> -0.5))); // RUNS THROUGH ROBOT
+    // Copilot.x()
+        // .whileTrue(
+            // feeder
+                // .runFeeder(() -> 0.5)
+                // .alongWith(hopperPush.runHopperPush(() -> -0.5))); // RUNS THROUGH ROBOT
     Copilot.y()
         .whileTrue(
             new aimTurretAtTarget().alongWith(shooter.setAngularVelocity(() -> RPM.of(4000))));
