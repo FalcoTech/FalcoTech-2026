@@ -70,7 +70,7 @@ public class Turret extends SubsystemBase {
           //         // Setup Telemetry
           .withTelemetry("TurretMotor", TelemetryVerbosity.HIGH)
           //         // Power Optimization
-          .withStatorCurrentLimit(Amps.of(30));
+          .withStatorCurrentLimit(Amps.of(20));
   // .withClosedLoopRampRate(Seconds.of(0.25))
   // // .withOpenLoopRampRate(Seconds.of(0.25))
   // // .withVoltageCompensation(Volts.of(12)) // also doesn't work with TalonFX
