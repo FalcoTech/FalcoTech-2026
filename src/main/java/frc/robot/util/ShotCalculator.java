@@ -40,7 +40,10 @@ public class ShotCalculator extends SubsystemBase {
     shooterMap.put(1.77, 3000.0);
     shooterMap.put(2.18, 3500.0);
     shooterMap.put(3.01, 4000.0);
-    shooterMap.put(4.0, 5000.0);
+    shooterMap.put(3.82, 4500.0);
+    shooterMap.put(4.19, 5000.0);
+
+
   }
 
   public static Angle getShotAngle(Distance distanceToTarget, LinearVelocity initialVelocity) {

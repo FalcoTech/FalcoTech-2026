@@ -179,8 +179,14 @@ public class RobotContainer {
             feeder
                 .runFeeder(() -> 0.5)
                 .alongWith(hopperPush.runHopperPush(() -> -0.5))); // RUNS THROUGH ROBOT
+    Copilot.b()
+        .whileTrue(
+            feeder
+                .runFeeder(() -> -0.5)
+                .alongWith(hopperPush.runHopperPush(() -> 0.5))); // 
+    
     Copilot.y()
-        .whileTrue(turret.aimAtTarget().alongWith(shooter.setAngularVelocity(() -> RPM.of(4000))));
+        .whileTrue(turret.aimAtTarget().alongWith(shooter.setAngularVelocity(() -> RPM.of(5000))));
 
     // Copilot.b().whileTrue(shooter.setAngularVelocity(() -> RPM.of(3500)));
     // Copilot.y().whileTrue(shooter.setAngularVelocity(() -> RPM.of(4000)));
