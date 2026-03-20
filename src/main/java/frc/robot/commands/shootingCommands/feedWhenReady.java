@@ -7,6 +7,7 @@ package frc.robot.commands.shootingCommands;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RPM;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Feeder;
@@ -50,6 +51,13 @@ public class feedWhenReady extends Command {
                 setpoint ->
                     shooter.isNearVelocity(setpoint, RPM.of(VELOCITY_TOLERANCE_RPM)).getAsBoolean())
             .orElse(false);
+
+    SmartDashboard.putBoolean("FeedWhenReady/turretReady", turretReady);
+    SmartDashboard.putBoolean("FeedWhenReady/shooterReady", shooterReady);
+    SmartDashboard.putBoolean("FeedWhenReady/turretSetpointPresent",
+        turret.getAngleSetpoint().isPresent());
+    SmartDashboard.putBoolean("FeedWhenReady/shooterSetpointPresent",
+        shooter.getAngularVelocitySetpoint().isPresent());
 
     feeder.runFeederVoid(turretReady && shooterReady ? FEEDER_SPEED : 0.0);
   }
