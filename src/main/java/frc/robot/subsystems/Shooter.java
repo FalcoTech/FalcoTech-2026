@@ -52,8 +52,8 @@ public class Shooter extends SubsystemBase {
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
           //         // Feedback Constants (PID Constants)
-          .withClosedLoopController(0.0125, 0, 0, RPM.of(5000), DegreesPerSecondPerSecond.of(10000))
-          .withSimClosedLoopController(.2, 0, 0, RPM.of(5700), DegreesPerSecondPerSecond.of(10000))
+          .withClosedLoopController(0.0125, 0, 0, RPM.of(5000), DegreesPerSecondPerSecond.of(20000))
+          .withSimClosedLoopController(.2, 0, 0, RPM.of(5700), DegreesPerSecondPerSecond.of(20000))
           .withFeedforward(new SimpleMotorFeedforward(0.124, .124, 0))
           .withSimFeedforward(new SimpleMotorFeedforward(0, .124, 0))
           //         // Telemetry name and verbosity level
@@ -64,7 +64,7 @@ public class Shooter extends SubsystemBase {
           .withMotorInverted(true)
           .withIdleMode(MotorMode.COAST)
           .withStatorCurrentLimit(Amps.of(40))
-          .withTelemetry("FlyWheelMotors", TelemetryVerbosity.HIGH)
+          .withTelemetry("FlyWheelMotors", TelemetryVerbosity.LOW)
           .withVoltageCompensation(Volts.of(12))
           .withFollowers(Pair.of(sparkRight, true))
           .withVendorConfig(
@@ -89,7 +89,7 @@ public class Shooter extends SubsystemBase {
           .withLowerSoftLimit(RPM.of(0))
 
           // Telemetry name and verbosity for the shooter.
-          .withTelemetry("FlyWheelMech", TelemetryVerbosity.HIGH);
+          .withTelemetry("FlyWheelMech", TelemetryVerbosity.LOW);
 
   private final FlyWheel flywheel = new FlyWheel(flywheelConfig);
 

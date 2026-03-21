@@ -48,7 +48,7 @@ public class IntakeSlide extends SubsystemBase {
           .withFeedforward(new ElevatorFeedforward(.1, 0, 0))
           .withSimFeedforward(new ElevatorFeedforward(.1, 0, 0))
           // Telemetry name and verbosity level
-          .withTelemetry("IntakeSlideMotor", TelemetryVerbosity.HIGH)
+          .withTelemetry("ElevatorMotor", TelemetryVerbosity.LOW)
           // Gearing from the motor rotor to final shaft.
           // In this example gearbox(3,4) is the same as gearbox("3:1","4:1") which corresponds to
           // the
@@ -69,7 +69,7 @@ public class IntakeSlide extends SubsystemBase {
   ElevatorConfig elevconfig =
       new ElevatorConfig(sparkSmartMotorController)
           .withStartingHeight(Inches.of(0.5)) // Starting height of the IntakeSlide
-          .withTelemetry("IntakeSlide", TelemetryVerbosity.HIGH) // Telemetry Name
+          .withTelemetry("IntakeSlide", TelemetryVerbosity.LOW) // Telemetry Name
           .withMass(Pounds.of(1)) // Mass of the carraige
           .withStartingHeight(Inches.of(0.5)) // Starting height of the IntakeSlide
           .withAngle(Degrees.of(0)) // Parallel to the ground, linear slide.
@@ -92,13 +92,14 @@ public class IntakeSlide extends SubsystemBase {
     intakeSlide.simIterate();
   }
 
-  public Command setExtend(Distance extension) {
-    return intakeSlide.run(extension);
+  public Command setHeight(Distance Height) {
+    return intakeSlide.run(Height);
   }
 
-  public Command setExtendAndStop(Distance extension, Distance tolerance) {
-    return intakeSlide.runTo(extension, tolerance);
+  public Command setHeightAndStop(Distance height, Distance tolerance) {
+    return intakeSlide.runTo(height, tolerance);
   }
+
 
   public Command runDutyCycle(Supplier<Double> dutyCycle) {
     return intakeSlide.set(dutyCycle);
