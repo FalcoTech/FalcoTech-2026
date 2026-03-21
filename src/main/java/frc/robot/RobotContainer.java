@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PathPlanningConstants;
 import frc.robot.commands.shootingCommands.aimTurretAtTarget;
-import frc.robot.commands.shootingCommands.alignAndShoot;
 import frc.robot.commands.shootingCommands.feedWhenReady;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -32,7 +31,7 @@ import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.HopperPush;
 import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.IntakeSlide;
-import frc.robot.subsystems.LEDS;
+// import frc.robot.subsystems.LEDS;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShotCalculator;
 import frc.robot.subsystems.Turret;
@@ -85,13 +84,11 @@ public class RobotContainer {
   public static final IntakeSlide intakeSlide = new IntakeSlide();
   public static final Feeder feeder = new Feeder();
   public static final HopperPush hopperPush = new HopperPush();
-  public static final LEDS leds = new LEDS();
+  //   public static final LEDS leds = new LEDS();
   public static final Turret turret = new Turret();
   public static final Shooter shooter = new Shooter();
   //   public static final ClimberElevator climbElevator = new ClimberElevator();
   public static final ShotCalculator shotCalculator = new ShotCalculator(drivetrain);
-
-  private final Command alignAndShootCmd = new alignAndShoot();
 
   // Manual RPM setpoint for shooter tuning — D-pad up/down increments, Y runs it.
   public static double manualRPM = 4000.0;
@@ -181,16 +178,15 @@ public class RobotContainer {
                     shooter.setAngularVelocity(() -> shotCalculator.getIdealShooterVelocity()))
                 .alongWith(new feedWhenReady())); // aim + auto-feed when ready
     // Copilot.x()
-        // .whileTrue(
-            // feeder
-                // .runFeeder(() -> 0.5)
-                // .alongWith(hopperPush.runHopperPush(() -> -0.5))); // RUNS THROUGH ROBOT
+    // .whileTrue(
+    // feeder
+    // .runFeeder(() -> 0.5)
+    // .alongWith(hopperPush.runHopperPush(() -> -0.5))); // RUNS THROUGH ROBOT
     Copilot.y()
         .whileTrue(
             new aimTurretAtTarget()
-            .alongWith(shooter.setAngularVelocity(() -> RPM.of(manualRPM)))
-            .alongWith(new feedWhenReady()));
-
+                .alongWith(shooter.setAngularVelocity(() -> RPM.of(manualRPM)))
+                .alongWith(new feedWhenReady()));
 
     // INTAKE, HOPPER, FEEDER
 
@@ -198,7 +194,10 @@ public class RobotContainer {
 
     intakeRoller.setDefaultCommand(
         intakeRoller.runIntakeRollers(
-            () -> .65 * (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()))); // NEGATIVE RUNS THRU
+            () ->
+                .65
+                    * (Copilot.getLeftTriggerAxis()
+                        - Copilot.getRightTriggerAxis()))); // NEGATIVE RUNS THRU
 
     // Copilot.rightBumper().whileTrue(intakeSlide.setHeight(Inches.of(10))); //Does not work
     // currently
@@ -211,8 +210,8 @@ public class RobotContainer {
     feeder.setDefaultCommand(feeder.stopFeeder());
 
     hopperPush.setDefaultCommand(
-    hopperPush.runHopperPush(
-    () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5)); //Works
+        hopperPush.runHopperPush(
+            () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5)); // Works
     // hopperPush.setDefaultCommand(hopperPush.stopHopperPush());
 
     // feeder.setDefaultCommand(new runFeeder((Copilot.getRightTriggerAxis() -

@@ -21,8 +21,25 @@ import frc.robot.Constants.TurretConstants;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Calculates optimal turret angle and shooter RPM based on the robot's field pose, velocity, and an
+ * interpolation table of distance-to-shot-parameters.
+ *
+ * <p>Target selection is automatic: when the robot is inside the alliance zone it aims at the hub;
+ * otherwise it picks the nearest non-hub target (outpost or depot). All target coordinates are
+ * defined in blue-alliance space and flipped at runtime for red.
+ *
+ * <p>Robot velocity is compensated for both latency ({@code LATENCY_COMP}) and ballistic lead, so
+ * the turret and shooter adjust as the robot moves.
+ */
 public class ShotCalculator extends SubsystemBase {
 
+  /**
+   * Holds the interpolated shot parameters for a given distance.
+   *
+   * @param rpm flywheel speed in revolutions per minute
+   * @param tof estimated time-of-flight in seconds
+   */
   public record ShooterParams(double rpm, double tof) {}
 
   // ── Viability tuning ──────────────────────────────────────────────────────────
@@ -155,6 +172,9 @@ public class ShotCalculator extends SubsystemBase {
 
   // ── Public API ────────────────────────────────────────────────────────────────
 
+  /**
+   * @return the field-relative angle (degrees) from the robot to the target, with velocity lead.
+   */
   public double getAngleToTarget() {
     // return getRobotToTargetVector().getAngle().getDegrees();
     return getShotVelocity().getAngle().getDegrees();

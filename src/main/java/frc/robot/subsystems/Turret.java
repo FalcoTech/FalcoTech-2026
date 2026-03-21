@@ -41,6 +41,14 @@ import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.remote.TalonFXWrapper;
 
+/**
+ * Rotational turret subsystem driven by a TalonFX with closed-loop position control via YAMS {@link
+ * yams.mechanisms.positional.Pivot}. Hard limits are +/-110 degrees; soft limits +/-100 degrees.
+ * Zero degrees is defined as straight ahead on the robot.
+ *
+ * <p>A "Use Turret" SmartDashboard toggle allows the turret to be disabled on the fly for debugging
+ * without redeploying.
+ */
 public class Turret extends SubsystemBase {
   // private final SparkMax turretMotor =
   // new SparkMax(CAN_IDs.TURRET_MOTOR, SparkMax.MotorType.kBrushless);
@@ -95,30 +103,59 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putBoolean("Use Turret", true);
   }
 
+  /**
+   * Commands the turret to a fixed angle via YAMS closed-loop control. Does not finish — the turret
+   * holds the position until the command is interrupted.
+   *
+   * @param targetAngle desired angle (0 = forward, positive = counter-clockwise)
+   */
   public Command setAngle(Angle targetAngle) {
     return turret.setAngle(targetAngle);
   }
 
+  /**
+   * Immediately sets the turret motor position setpoint without creating a command. Used by {@link
+   * frc.robot.commands.shootingCommands.aimTurretAtTarget} for direct per-cycle updates.
+   *
+   * @param targetAngle desired angle
+   */
   public void setAngleDirect(Angle targetAngle) {
     turretSMC.setPosition(targetAngle);
   }
 
+  /**
+   * Commands the turret to a continuously-evaluated angle. The supplier is polled every cycle,
+   * allowing the turret to track a moving target.
+   *
+   * @param angleSupplier provides the desired angle each cycle
+   */
   public Command setAngle(Supplier<Angle> angleSupplier) {
     return turret.setAngle(angleSupplier);
   }
 
+  /**
+   * @return the current measured turret angle.
+   */
   public Angle getAngle() {
     return turret.getAngle();
   }
 
+  /**
+   * Returns a {@link Trigger} that is true when the turret is within {@code tolerance} of {@code
+   * target}. Used by {@link frc.robot.commands.shootingCommands.feedWhenReady} to gate the feeder.
+   */
   public Trigger isNearAngle(Angle target, Angle tolerance) {
     return turret.isNear(target, tolerance);
   }
 
+  /**
+   * @return the current closed-loop angle setpoint, or empty if running open-loop.
+   */
   public Optional<Angle> getAngleSetpoint() {
     return turret.getMechanismSetpoint();
   }
 
+  /** Runs a SysId characterization routine (12 V max, 0.5 V/s ramp, 10 s duration). */
   public Command sysId() {
     return turret.sysId(
         Volts.of(12), // Max voltage to apply during the test
@@ -173,10 +210,15 @@ public class Turret extends SubsystemBase {
             });
   }
 
+  /** Stops the turret (duty cycle 0). */
   public Command stop() {
     return turret.set(0);
   }
 
+  /**
+   * Bypasses YAMS and sets the TalonFX output directly. Use sparingly — no soft-limit protection is
+   * applied.
+   */
   public void setDirectDutyCycle(double speed) {
     turretMotor.set(speed);
   }

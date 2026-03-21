@@ -13,6 +13,11 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.ShotCalculator;
 import frc.robot.subsystems.Turret;
 
+/**
+ * Continuously aims the turret at the calculated target position using {@link ShotCalculator}. The
+ * commanded angle is clamped 10 degrees inside the hard limits to avoid thrashing against the YAMS
+ * soft stop. This command never finishes on its own — bind it with {@code whileTrue}.
+ */
 public class aimTurretAtTarget extends Command {
 
   private static final double SOFT_LIMIT_DEG =

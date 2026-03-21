@@ -15,6 +15,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN_IDs;
 import java.util.function.Supplier;
 
+/**
+ * Subsystem controlling the intake roller wheels via a SparkFlex brushless motor. Runs in brake
+ * mode with inverted direction — negative duty cycle pulls game pieces into the robot.
+ */
 public class IntakeRoller extends SubsystemBase {
   // private final SparkMax intakeRollerMotor = new SparkMax(CAN_IDs.INTAKEROLLER_MOTOR,
   // MotorType.kBrushless);

@@ -15,6 +15,18 @@ import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 
+/**
+ * Feeds game pieces into the shooter when readiness conditions are met. Only requires the {@link
+ * Feeder} subsystem — turret and shooter are read-only.
+ *
+ * <p>Gating behavior depends on the current target:
+ *
+ * <ul>
+ *   <li><b>Hub shots:</b> all three gates must pass — turret within 3 degrees of setpoint, shooter
+ *       within 150 RPM of setpoint, and robot speed below 0.15 m/s.
+ *   <li><b>Non-hub shots (outpost/depot):</b> all gates are bypassed and the feeder runs freely.
+ * </ul>
+ */
 public class feedWhenReady extends Command {
 
   // Tolerances — tune to match acceptable shot windows

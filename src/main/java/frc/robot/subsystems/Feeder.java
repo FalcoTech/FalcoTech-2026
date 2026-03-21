@@ -15,6 +15,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN_IDs;
 import java.util.function.Supplier;
 
+/**
+ * Single-motor subsystem that feeds game pieces from the hopper into the shooter. Runs a brushless
+ * NEO via SparkMax in brake mode with a 40 A current limit.
+ */
 public class Feeder extends SubsystemBase {
   private final SparkMax feederMotor = new SparkMax(CAN_IDs.FEEDER_MOTOR, MotorType.kBrushless);
 

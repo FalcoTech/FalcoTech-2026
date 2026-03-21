@@ -15,6 +15,20 @@ import edu.wpi.first.wpilibj.Timer;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+/**
+ * Tracks the Reefscape hub-shift game periods (active vs. inactive scoring windows) during teleop.
+ * Adapted from Littleton Robotics (6328).
+ *
+ * <p>Two views of the timeline are available:
+ *
+ * <ul>
+ *   <li>{@link #getOfficialShiftInfo()} — exact FMS boundaries.
+ *   <li>{@link #getShiftedShiftInfo()} — boundaries shifted by time-of-flight and fuel-count delay
+ *       so the robot stops shooting before the window actually closes.
+ * </ul>
+ *
+ * <p>Call {@link #initialize()} at the start of teleop to begin the internal timer.
+ */
 public class HubShiftUtil {
   public enum ShiftEnum {
     TRANSITION,

@@ -31,6 +31,11 @@ import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
+/**
+ * Linear slide subsystem that extends and retracts the intake assembly. Uses a NEO motor with YAMS
+ * {@link yams.mechanisms.positional.Elevator} for closed-loop position control, though teleop
+ * typically drives it via duty cycle from the copilot's left stick.
+ */
 public class IntakeSlide extends SubsystemBase {
 
   /** Creates a new IntakeSlide. */

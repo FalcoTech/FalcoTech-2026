@@ -12,6 +12,11 @@ import frc.robot.Constants.TurretConstants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.ShotCalculator;
 
+/**
+ * Parallel command group that simultaneously aims the turret and spins the shooter flywheel to
+ * match the values calculated by {@link ShotCalculator}. The turret setpoint is clamped 10 degrees
+ * inside hard limits to prevent YAMS soft-stop thrashing.
+ */
 public class alignAndShoot extends ParallelCommandGroup {
 
   // Clamp setpoint inside soft limits so the PID never demands a position YAMS will refuse,

@@ -15,13 +15,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN_IDs;
 import java.util.function.Supplier;
 
+/**
+ * Single-motor subsystem that pushes game pieces through the hopper toward the feeder. Runs a
+ * brushless motor via SparkMax in coast mode with a 30 A current limit.
+ */
 public class HopperPush extends SubsystemBase {
   private final SparkMax HopperPushmotor =
       new SparkMax(CAN_IDs.HOPPERPUSH_MOTOR, MotorType.kBrushless);
 
   private SparkMaxConfig HopperPushmotorconfig = new SparkMaxConfig();
 
-  /** Creates a new Feeder. */
+  /** Creates a new HopperPush. */
   public HopperPush() {
     HopperPushmotorconfig.idleMode(IdleMode.kCoast);
     HopperPushmotorconfig.voltageCompensation(11);

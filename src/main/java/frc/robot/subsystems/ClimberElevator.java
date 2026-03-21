@@ -28,6 +28,11 @@ import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
+/**
+ * Vertical elevator subsystem for the climbing mechanism. Uses a single NEO motor with YAMS {@link
+ * yams.mechanisms.positional.Elevator} for closed-loop position control via a chain-and-sprocket
+ * drive (25-tooth, 0.25" pitch).
+ */
 public class ClimberElevator extends SubsystemBase {
   private Distance pitch = Inches.of(0.25);
   private int teeth = 25;
