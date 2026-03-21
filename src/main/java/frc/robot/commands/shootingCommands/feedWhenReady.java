@@ -7,7 +7,6 @@ package frc.robot.commands.shootingCommands;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RPM;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
@@ -55,25 +54,19 @@ public class feedWhenReady extends Command {
                     shooter.isNearVelocity(setpoint, RPM.of(VELOCITY_TOLERANCE_RPM)).getAsBoolean())
             .orElse(false);
 
-    // Speed gate — robot must be stopped to fire
-    ChassisSpeeds speeds = RobotContainer.drivetrain.getState().Speeds;
-    boolean robotStopped =
-        Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond) < STOPPED_THRESHOLD_MPS;
-
-    // Hub shots require full readiness gate; close-range targets (outpost/depot) feed freely
     boolean isTargetingHub = RobotContainer.shotCalculator.isTargetingHub();
-    boolean mechanismsReady = !isTargetingHub || (turretReady && shooterReady);
+    // Gate on readiness only when targeting the hub; feed freely passing
+    boolean shouldFeed = !isTargetingHub || (turretReady && shooterReady);
 
+    SmartDashboard.putBoolean("FeedWhenReady/isTargetingHub", isTargetingHub);
     SmartDashboard.putBoolean("FeedWhenReady/turretReady", turretReady);
     SmartDashboard.putBoolean("FeedWhenReady/shooterReady", shooterReady);
-    SmartDashboard.putBoolean("FeedWhenReady/isTargetingHub", isTargetingHub);
-    SmartDashboard.putBoolean("FeedWhenReady/robotStopped", robotStopped);
     SmartDashboard.putBoolean("FeedWhenReady/turretSetpointPresent",
         turret.getAngleSetpoint().isPresent());
     SmartDashboard.putBoolean("FeedWhenReady/shooterSetpointPresent",
         shooter.getAngularVelocitySetpoint().isPresent());
 
-    feeder.runFeederVoid(mechanismsReady && robotStopped ? FEEDER_SPEED : 0.0);
+    feeder.runFeederVoid(shouldFeed ? FEEDER_SPEED : 0.0);
   }
 
   @Override

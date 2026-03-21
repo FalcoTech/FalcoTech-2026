@@ -100,7 +100,6 @@ public class IntakeSlide extends SubsystemBase {
     return intakeSlide.runTo(height, tolerance);
   }
 
-
   public Command runDutyCycle(Supplier<Double> dutyCycle) {
     return intakeSlide.set(dutyCycle);
   }

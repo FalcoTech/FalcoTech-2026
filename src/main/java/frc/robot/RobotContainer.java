@@ -176,7 +176,8 @@ public class RobotContainer {
     Copilot.a()
         .whileTrue(
             new aimTurretAtTarget()
-                .alongWith(shooter.setAngularVelocity(() -> shotCalculator.getIdealShooterVelocity()))
+                .alongWith(
+                    shooter.setAngularVelocity(() -> shotCalculator.getIdealShooterVelocity()))
                 .alongWith(new feedWhenReady())); // aim + auto-feed when ready
     Copilot.x()
         .whileTrue(
