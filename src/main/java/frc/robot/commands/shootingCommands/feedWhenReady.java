@@ -7,6 +7,7 @@ package frc.robot.commands.shootingCommands;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RPM;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
@@ -55,16 +56,21 @@ public class feedWhenReady extends Command {
             .orElse(false);
 
     boolean isTargetingHub = RobotContainer.shotCalculator.isTargetingHub();
-    // Gate on readiness only when targeting the hub; feed freely passing
-    boolean shouldFeed = !isTargetingHub || (turretReady && shooterReady);
+    ChassisSpeeds speeds = RobotContainer.drivetrain.getState().Speeds;
+    boolean robotStopped =
+        Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond) < STOPPED_THRESHOLD_MPS;
+    // Non-hub shots : bypass all gates, feed freely
+    // Hub shots: require turret aimed, shooter up to speed, and robot stopped
+    boolean shouldFeed = !isTargetingHub || (turretReady && shooterReady && robotStopped);
 
     SmartDashboard.putBoolean("FeedWhenReady/isTargetingHub", isTargetingHub);
+    SmartDashboard.putBoolean("FeedWhenReady/robotStopped", robotStopped);
     SmartDashboard.putBoolean("FeedWhenReady/turretReady", turretReady);
     SmartDashboard.putBoolean("FeedWhenReady/shooterReady", shooterReady);
-    SmartDashboard.putBoolean("FeedWhenReady/turretSetpointPresent",
-        turret.getAngleSetpoint().isPresent());
-    SmartDashboard.putBoolean("FeedWhenReady/shooterSetpointPresent",
-        shooter.getAngularVelocitySetpoint().isPresent());
+    SmartDashboard.putBoolean(
+        "FeedWhenReady/turretSetpointPresent", turret.getAngleSetpoint().isPresent());
+    SmartDashboard.putBoolean(
+        "FeedWhenReady/shooterSetpointPresent", shooter.getAngularVelocitySetpoint().isPresent());
 
     feeder.runFeederVoid(shouldFeed ? FEEDER_SPEED : 0.0);
   }

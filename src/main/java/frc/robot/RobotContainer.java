@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -93,7 +94,7 @@ public class RobotContainer {
   private final Command alignAndShootCmd = new alignAndShoot();
 
   // Manual RPM setpoint for shooter tuning — D-pad up/down increments, Y runs it.
-  public static double manualRPM = 1000.0;
+  public static double manualRPM = 4000.0;
 
   public Pose2d testPose = new Pose2d(2, 2, Rotation2d.fromDegrees(0));
 
@@ -186,7 +187,7 @@ public class RobotContainer {
                 .alongWith(hopperPush.runHopperPush(() -> -0.5))); // RUNS THROUGH ROBOT
     Copilot.y()
         .whileTrue(
-            new aimTurretAtTarget().alongWith(shooter.setAngularVelocity(() -> RPM.of(4000))));
+            new aimTurretAtTarget().alongWith(shooter.setAngularVelocity(() -> RPM.of(manualRPM))));
 
     // Copilot.b().whileTrue(shooter.setAngularVelocity(() -> RPM.of(3500)));
     // Copilot.y().whileTrue(shooter.setAngularVelocity(() -> RPM.of(4000)));
@@ -238,21 +239,8 @@ public class RobotContainer {
     // Copilot.x().whileTrue(feeder.runFeeder(-1));
     // Copilot.y().whileTrue(feeder.runFeeder(0));
 
-    // Copilot.povUp()
-    //     .whileTrue(
-    //         turret.setAngle(
-    //             () ->
-    //                 turret
-    //                     .getAngle()
-    //                     .plus(
-    //                         Degrees.of(
-    //                             10)))); // Continuously moves the turret up instead of just
-    // moving
-    // // 10 degrees from current position
-    // // without the supplier it just sets it to 10 degrees instead of moving it up by 10 degrees
-    // from
-    // // current position?
-    // Copilot.povDown().whileTrue(turret.setAngle(() -> turret.getAngle().minus(Degrees.of(10))));
+    Copilot.povUp().onTrue(Commands.runOnce(() -> manualRPM += 250));
+    Copilot.povDown().onTrue(Commands.runOnce(() -> manualRPM -= 250));
 
     // Copilot.povDown().whileTrue(climbElevator.setHeight(Inches.of(3)));
     // Copilot.povUp().whileTrue(climbElevator.setHeight(Inches.of(5.5)));
