@@ -187,7 +187,9 @@ public class RobotContainer {
                 .alongWith(hopperPush.runHopperPush(() -> -0.5))); // RUNS THROUGH ROBOT
     Copilot.y()
         .whileTrue(
-            new aimTurretAtTarget().alongWith(shooter.setAngularVelocity(() -> RPM.of(manualRPM))));
+            new aimTurretAtTarget()
+            .alongWith(shooter.setAngularVelocity(() -> RPM.of(manualRPM)))
+            .alongWith(new feedWhenReady()));
 
     // Copilot.b().whileTrue(shooter.setAngularVelocity(() -> RPM.of(3500)));
     // Copilot.y().whileTrue(shooter.setAngularVelocity(() -> RPM.of(4000)));
@@ -222,7 +224,7 @@ public class RobotContainer {
     // feeder.setDefaultCommand(
     // feeder.runFeeder(() -> 0.5 * (Copilot.getRightTriggerAxis() -
     // Copilot.getLeftTriggerAxis()))); //Works
-    feeder.setDefaultCommand(feeder.stopFeeder());
+    // feeder.setDefaultCommand(feeder.stopFeeder());
 
     // hopperPush.setDefaultCommand(
     // hopperPush.runHopperPush(
