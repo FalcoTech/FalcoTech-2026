@@ -36,18 +36,16 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Manual RPM Setpoint", RobotContainer.manualRPM);
 
-    // MegaTag2 with dual Limelights
+    // MegaTag1 with dual Limelights
     if (VisionConstants.USE_LIMELIGHT && !useMegaTag2) {
       var driveState = RobotContainer.drivetrain.getState();
-      double headingDeg = driveState.Pose.getRotation().getDegrees();
       double omegaRps = Units.radiansToRotations(driveState.Speeds.omegaRadiansPerSecond);
 
-      // LimelightHelpers.SetRobotOrientation("", headingDeg, 0, 0, 0, 0, 0);
       var llMeasurement_main =
           LimelightHelpers.getBotPoseEstimate_wpiBlue(VisionConstants.LIMELIGHT_MAIN);
       if (llMeasurement_main != null
           && llMeasurement_main.tagCount > 0
-          && Math.abs(omegaRps) < 2.0) {
+          && Math.abs(omegaRps) < VisionConstants.VISION_OMEGA_CUTOFF_RPS) {
         RobotContainer.drivetrain.addVisionMeasurement(
             llMeasurement_main.pose, llMeasurement_main.timestampSeconds);
       }
@@ -55,13 +53,12 @@ public class Robot extends TimedRobot {
           LimelightHelpers.getBotPoseEstimate_wpiBlue(VisionConstants.LIMELIGHT_REAR);
       if (llMeasurement_rear != null
           && llMeasurement_rear.tagCount > 0
-          && Math.abs(omegaRps) < 2.0) {
+          && Math.abs(omegaRps) < VisionConstants.VISION_OMEGA_CUTOFF_RPS) {
         RobotContainer.drivetrain.addVisionMeasurement(
             llMeasurement_rear.pose, llMeasurement_rear.timestampSeconds);
       }
     }
     useMegaTag2 = SmartDashboard.getBoolean("Enable MegaTag2", useMegaTag2);
-    // SmartDashboard.getBoolean("Enable MegaTag2", enableMegaTag2);
 
     if (useMegaTag2) {
       var driveState = RobotContainer.drivetrain.getState();
@@ -81,6 +78,19 @@ public class Robot extends TimedRobot {
           0,
           rollDeg.getValueAsDouble(),
           0);
+      var llMeasurement_main =
+          LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.LIMELIGHT_MAIN);
+      if (llMeasurement_main != null
+          && llMeasurement_main.tagCount > 0
+          && Math.abs(omegaRps) < VisionConstants.VISION_OMEGA_CUTOFF_RPS) {
+        RobotContainer.drivetrain.addVisionMeasurement(
+            llMeasurement_main.pose,
+            llMeasurement_main.timestampSeconds,
+            VecBuilder.fill(
+                VisionConstants.MEGATAG2_XY_STDDEV,
+                VisionConstants.MEGATAG2_XY_STDDEV,
+                VisionConstants.MEGATAG2_ROTATION_STDDEV));
+      }
       LimelightHelpers.SetRobotOrientation(
           VisionConstants.LIMELIGHT_REAR,
           headingDeg,
@@ -89,29 +99,18 @@ public class Robot extends TimedRobot {
           0,
           rollDeg.getValueAsDouble(),
           0);
-      var llMeasurement_main =
-          LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.LIMELIGHT_MAIN);
-      if (llMeasurement_main != null
-          && llMeasurement_main.tagCount > 0
-          && Math.abs(omegaRps) < 2.0) {
-        RobotContainer.drivetrain.addVisionMeasurement(
-            llMeasurement_main.pose,
-            llMeasurement_main.timestampSeconds,
-            VecBuilder.fill(.5, .5, 9999999));
-        // RobotContainer.drivetrain.addVisionMeasurement(llMeasurement.pose,
-        // llMeasurement.timestampSeconds);
-      }
       var llMeasurement_rear =
           LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.LIMELIGHT_REAR);
       if (llMeasurement_rear != null
           && llMeasurement_rear.tagCount > 0
-          && Math.abs(omegaRps) < 2.0) {
+          && Math.abs(omegaRps) < VisionConstants.VISION_OMEGA_CUTOFF_RPS) {
         RobotContainer.drivetrain.addVisionMeasurement(
             llMeasurement_rear.pose,
             llMeasurement_rear.timestampSeconds,
-            VecBuilder.fill(.5, .5, 9999999));
-        // RobotContainer.drivetrain.addVisionMeasurement(llMeasurement.pose,
-        // llMeasurement.timestampSeconds);
+            VecBuilder.fill(
+                VisionConstants.MEGATAG2_XY_STDDEV,
+                VisionConstants.MEGATAG2_XY_STDDEV,
+                VisionConstants.MEGATAG2_ROTATION_STDDEV));
       }
     }
   }

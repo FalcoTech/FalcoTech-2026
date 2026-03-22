@@ -40,7 +40,7 @@ public class LEDS extends SubsystemBase {
   // Solid colors run in 0.02 increments from ~0.57 (Hot Pink) up through 0.99 (Black).
 
   private static final double COLOR_RED = 0.61;
-  private static final double COLOR_YELLOW = 0.69;
+  // private static final double COLOR_YELLOW = 0.69;
   private static final double COLOR_GREEN = 0.77;
   private static final double COLOR_BLUE = 0.87;
 

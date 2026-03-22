@@ -1,4 +1,7 @@
 {
+"java.diagnostic.filter": [
+  "**/frc/robot/util/LimelightHelpers.java"
+],
   "java.configuration.updateBuildConfiguration": "automatic",
   "java.server.launchMode": "Standard",
   "files.exclude": {

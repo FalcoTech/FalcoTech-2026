@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * Tracks the Reefscape hub-shift game periods (active vs. inactive scoring windows) during teleop.
+ * Tracks the Rebuilt hub-shift game periods (active vs. inactive scoring windows) during teleop.
  * Adapted from Littleton Robotics (6328).
  *
  * <p>Two views of the timeline are available:

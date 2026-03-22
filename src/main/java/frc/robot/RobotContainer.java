@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PathPlanningConstants;
 import frc.robot.commands.shootingCommands.aimTurretAtTarget;
+import frc.robot.commands.shootingCommands.alignAndShoot;
 import frc.robot.commands.shootingCommands.feedWhenReady;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -31,7 +32,7 @@ import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.HopperPush;
 import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.IntakeSlide;
-// import frc.robot.subsystems.LEDS;
+import frc.robot.subsystems.LEDS;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShotCalculator;
 import frc.robot.subsystems.Turret;
@@ -84,11 +85,11 @@ public class RobotContainer {
   public static final IntakeSlide intakeSlide = new IntakeSlide();
   public static final Feeder feeder = new Feeder();
   public static final HopperPush hopperPush = new HopperPush();
-  //   public static final LEDS leds = new LEDS();
+  public static final LEDS leds = new LEDS();
   public static final Turret turret = new Turret();
   public static final Shooter shooter = new Shooter();
-  //   public static final ClimberElevator climbElevator = new ClimberElevator();
   public static final ShotCalculator shotCalculator = new ShotCalculator(drivetrain);
+
 
   // Manual RPM setpoint for shooter tuning — D-pad up/down increments, Y runs it.
   public static double manualRPM = 4000.0;
@@ -100,7 +101,6 @@ public class RobotContainer {
     RegisterNamedCommands();
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Mode", autoChooser);
-    // climbElevator.setDefaultCommand(climbElevator.set(0));
     configureBindings();
 
     SmartDashboard.putBoolean("Enable MegaTag2", false);
@@ -177,11 +177,11 @@ public class RobotContainer {
                 .alongWith(
                     shooter.setAngularVelocity(() -> shotCalculator.getIdealShooterVelocity()))
                 .alongWith(new feedWhenReady())); // aim + auto-feed when ready
-    // Copilot.x()
-    // .whileTrue(
-    // feeder
-    // .runFeeder(() -> 0.5)
-    // .alongWith(hopperPush.runHopperPush(() -> -0.5))); // RUNS THROUGH ROBOT
+    Copilot.x()
+        .whileTrue(
+            feeder
+                .runFeeder(() -> 0.5)
+                .alongWith(hopperPush.runHopperPush(() -> -0.5))); // RUNS THROUGH ROBOT
     Copilot.y()
         .whileTrue(
             new aimTurretAtTarget()
@@ -209,28 +209,15 @@ public class RobotContainer {
     // Copilot.getLeftTriggerAxis()))); //Works
     feeder.setDefaultCommand(feeder.stopFeeder());
 
-    hopperPush.setDefaultCommand(
-        hopperPush.runHopperPush(
-            () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5)); // Works
-    // hopperPush.setDefaultCommand(hopperPush.stopHopperPush());
+    // hopperPush.setDefaultCommand(
+    // hopperPush.runHopperPush(
+    // () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5)); //Works
+    hopperPush.setDefaultCommand(hopperPush.stopHopperPush());
 
-    // feeder.setDefaultCommand(new runFeeder((Copilot.getRightTriggerAxis() -
-    // Copilot.getLeftTriggerAxis())));
-    // feeder.setDefaultCommand(feeder.stopFeeder());
     // hopperPush.setDefaultCommand(hopperPush.runHopperPush(() -> Copilot.getLeftX()));
-    // hopperPush.setDefaultCommand(hopperPush.runHopperPush(0));
-
-    // Copilot.b().whileTrue(feeder.runFeeder(1));
-    // Copilot.x().whileTrue(feeder.runFeeder(-1));
-    // Copilot.y().whileTrue(feeder.runFeeder(0));
 
     Copilot.povUp().onTrue(Commands.runOnce(() -> manualRPM += 250));
     Copilot.povDown().onTrue(Commands.runOnce(() -> manualRPM -= 250));
-
-    // Copilot.povDown().whileTrue(climbElevator.setHeight(Inches.of(3)));
-    // Copilot.povUp().whileTrue(climbElevator.setHeight(Inches.of(5.5)));
-    // Copilot.povLeft().whileTrue(climbElevator.set(0.5));
-    // Copilot.povRight().whileTrue(climbElevator.set(-0.5));
   }
 
   public Command getAutonomousCommand() {
