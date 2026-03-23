@@ -71,6 +71,7 @@ public class Shooter extends SubsystemBase {
           .withMotorInverted(true)
           .withIdleMode(MotorMode.COAST)
           .withStatorCurrentLimit(Amps.of(40))
+          .withSupplyCurrentLimit(Amps.of(30))
           .withTelemetry("FlyWheelMotors", TelemetryVerbosity.LOW)
           .withVoltageCompensation(Volts.of(12))
           .withFollowers(Pair.of(sparkRight, true))
@@ -92,7 +93,7 @@ public class Shooter extends SubsystemBase {
           // Mass of the flywheel.
           .withMass(Pounds.of(2.5))
           // Maximum speed of the shooter.
-          .withUpperSoftLimit(RPM.of(4000))
+          .withUpperSoftLimit(RPM.of(5500))
           .withLowerSoftLimit(RPM.of(0))
 
           // Telemetry name and verbosity for the shooter.

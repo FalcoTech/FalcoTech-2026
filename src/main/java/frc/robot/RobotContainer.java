@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PathPlanningConstants;
 import frc.robot.commands.shootingCommands.aimTurretAtTarget;
-import frc.robot.commands.shootingCommands.alignAndShoot;
 import frc.robot.commands.shootingCommands.feedWhenReady;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -89,7 +88,6 @@ public class RobotContainer {
   public static final Turret turret = new Turret();
   public static final Shooter shooter = new Shooter();
   public static final ShotCalculator shotCalculator = new ShotCalculator(drivetrain);
-
 
   // Manual RPM setpoint for shooter tuning — D-pad up/down increments, Y runs it.
   public static double manualRPM = 4000.0;
