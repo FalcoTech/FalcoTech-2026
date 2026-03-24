@@ -30,7 +30,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.HopperPush;
 import frc.robot.subsystems.IntakeRoller;
-import frc.robot.subsystems.IntakeSlide;
+import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.LEDS;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShotCalculator;
@@ -81,7 +81,7 @@ public class RobotContainer {
   // Subsystems
   public static final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   public static final IntakeRoller intakeRoller = new IntakeRoller();
-  public static final IntakeSlide intakeSlide = new IntakeSlide();
+  public static final IntakePivot intakeSlide = new IntakePivot();
   public static final Feeder feeder = new Feeder();
   public static final HopperPush hopperPush = new HopperPush();
   public static final LEDS leds = new LEDS();

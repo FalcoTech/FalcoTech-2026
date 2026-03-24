@@ -15,6 +15,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,8 +23,8 @@ import frc.robot.Constants.CAN_IDs;
 import java.util.function.Supplier;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
-import yams.mechanisms.config.ElevatorConfig;
-import yams.mechanisms.positional.Elevator;
+import yams.mechanisms.config.ArmConfig;
+import yams.mechanisms.positional.Arm;
 import yams.motorcontrollers.SmartMotorController;
 import yams.motorcontrollers.SmartMotorControllerConfig;
 import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
@@ -31,12 +32,7 @@ import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
-/**
- * Linear slide subsystem that extends and retracts the intake assembly. Uses a NEO motor with YAMS
- * {@link yams.mechanisms.positional.Elevator} for closed-loop position control, though teleop
- * typically drives it via duty cycle from the copilot's left stick.
- */
-public class IntakeSlide extends SubsystemBase {
+public class IntakePivot extends SubsystemBase {
 
   /** Creates a new IntakeSlide. */
   private SmartMotorControllerConfig smcConfig =
@@ -65,55 +61,54 @@ public class IntakeSlide extends SubsystemBase {
           .withStatorCurrentLimit(Amps.of(40));
 
   // Vendor motor controller object
-  SparkMax spark = new SparkMax(CAN_IDs.INTAKESLIDE_MOTOR, MotorType.kBrushless);
+  SparkMax spark = new SparkMax(CAN_IDs.INTAKEPIVOT_MOTOR, MotorType.kBrushless);
 
   // Create our SmartMotorController from our Spark and config with the NEO.
   private SmartMotorController sparkSmartMotorController =
       new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
 
-  ElevatorConfig elevconfig =
-      new ElevatorConfig(sparkSmartMotorController)
-          .withStartingHeight(Inches.of(0.5)) // Starting height of the IntakeSlide
-          .withTelemetry("IntakeSlide", TelemetryVerbosity.LOW) // Telemetry Name
+  ArmConfig armConfig =
+      new ArmConfig(sparkSmartMotorController)
+          // .withStartingHeight(Inches.of(0.5)) // Starting height of the IntakeSlide
+          .withTelemetry("IntakePivot", TelemetryVerbosity.LOW) // Telemetry Name
           .withMass(Pounds.of(1)) // Mass of the carraige
-          .withStartingHeight(Inches.of(0.5)) // Starting height of the IntakeSlide
-          .withAngle(Degrees.of(0)) // Parallel to the ground, linear slide.
-          .withHardLimits(Inches.of(-100), Inches.of(120)) // Hard limits defined
+          //   .Wi(Pounds.of(1)) // Weight of the carriage.
+          .withHardLimit(Degrees.of(0), Degrees.of(90)) // Hard limits defined
           .withSoftLimits(
-              Inches.of(-80.25), Inches.of(100)); // Limits imposed on the PID controller.
+          Degrees.of(0), Degrees.of(90)); // Limits imposed on the PID controller.
 
-  private Elevator intakeSlide = new Elevator(elevconfig);
+  private Arm intakePivot = new Arm(armConfig);
 
-  public IntakeSlide() {}
+  public IntakePivot() {}
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    intakeSlide.updateTelemetry();
+    intakePivot.updateTelemetry();
   }
 
   @Override
   public void simulationPeriodic() {
-    intakeSlide.simIterate();
+    intakePivot.simIterate();
   }
 
-  public Command setHeight(Distance Height) {
-    return intakeSlide.run(Height);
+  public Command setAngle(Angle angle) {
+    return intakePivot.run(angle);
   }
 
-  public Command setHeightAndStop(Distance height, Distance tolerance) {
-    return intakeSlide.runTo(height, tolerance);
+  public Command setAngleAndStop(Angle angle, Angle tolerance) {
+    return intakePivot.runTo(angle, tolerance);
   }
 
   public Command runDutyCycle(Supplier<Double> dutyCycle) {
-    return intakeSlide.set(dutyCycle);
+    return intakePivot.set(dutyCycle);
   }
 
   public Command runDutyCycle(double dutyCycle) {
-    return intakeSlide.set(dutyCycle);
+    return intakePivot.set(dutyCycle);
   }
 
   public Command stop() {
-    return intakeSlide.set(0);
+    return intakePivot.set(0);
   }
 }
