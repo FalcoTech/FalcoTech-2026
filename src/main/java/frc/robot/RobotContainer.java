@@ -29,8 +29,8 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.HopperPush;
-import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.IntakePivot;
+import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.LEDS;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShotCalculator;
@@ -81,7 +81,7 @@ public class RobotContainer {
   // Subsystems
   public static final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   public static final IntakeRoller intakeRoller = new IntakeRoller();
-  public static final IntakePivot intakeSlide = new IntakePivot();
+  public static final IntakePivot intakePivot = new IntakePivot();
   public static final Feeder feeder = new Feeder();
   public static final HopperPush hopperPush = new HopperPush();
   public static final LEDS leds = new LEDS();
@@ -188,7 +188,7 @@ public class RobotContainer {
 
     // INTAKE, HOPPER, FEEDER
 
-    intakeSlide.setDefaultCommand(intakeSlide.runDutyCycle(() -> 0.6 * (Copilot.getLeftX())));
+    intakePivot.setDefaultCommand(intakePivot.runDutyCycle(() -> 0.6 * (Copilot.getLeftX())));
 
     intakeRoller.setDefaultCommand(
         intakeRoller.runIntakeRollers(
@@ -252,11 +252,11 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Stop Hopper Push", hopperPush.stopHopperPush());
     NamedCommands.registerCommand("Stop Feeder Push", feeder.stopFeeder());
-    NamedCommands.registerCommand("Stop Intake Slide", intakeSlide.stop());
+    NamedCommands.registerCommand("Stop Intake Pivot", intakePivot.stop());
 
-    NamedCommands.registerCommand("Slide Intake Out", intakeSlide.runDutyCycle(.6));
-    NamedCommands.registerCommand("Slow Slide Intake Out", intakeSlide.runDutyCycle(.3));
-    NamedCommands.registerCommand("Slide Intake In", intakeSlide.runDutyCycle(-.6));
+    NamedCommands.registerCommand("Pivot Intake Out", intakePivot.runDutyCycle(.6));
+    NamedCommands.registerCommand("Slow Pivot Intake Out", intakePivot.runDutyCycle(.3));
+    NamedCommands.registerCommand("Pivot Intake In", intakePivot.runDutyCycle(-.6));
     NamedCommands.registerCommand("Intake", intakeRoller.runIntakeRollers(-.65));
     NamedCommands.registerCommand("Intake Stop", intakeRoller.runIntakeRollers(0));
     NamedCommands.registerCommand("Hopper Push", hopperPush.runHopperPush(-.5));

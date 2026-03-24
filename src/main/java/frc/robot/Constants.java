@@ -33,9 +33,9 @@ public final class Constants {
 
     // Intake & Feeder Motors
     public static final int INTAKEROLLER_MOTOR = 41;
-    public static final int INTAKESLIDE_MOTOR = 40;
     public static final int FEEDER_MOTOR = 30;
     public static final int HOPPERPUSH_MOTOR = 31;
+    public static final int INTAKEPIVOT_MOTOR = 40;
 
     // Sensors and other devices could also be added here
   }
