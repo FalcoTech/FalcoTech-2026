@@ -36,6 +36,7 @@ public final class Constants {
     public static final int FEEDER_MOTOR = 30;
     public static final int HOPPERPUSH_MOTOR = 31;
     public static final int INTAKEPIVOT_MOTOR = 40;
+    public static final int SPINNERINDEX_MOTOR = 45;
 
     // Sensors and other devices could also be added here
   }
