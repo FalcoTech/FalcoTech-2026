@@ -71,6 +71,8 @@ public class IntakePivot extends SubsystemBase {
           // .withStartingHeight(Inches.of(0.5)) // Starting height of the IntakeSlide
           .withTelemetry("IntakePivot", TelemetryVerbosity.LOW) // Telemetry Name
           .withMass(Pounds.of(1)) // Mass of the carraige
+          .withStartingPosition(Degrees.of(90))
+          .withLength(Inches.of(12))
           //   .Wi(Pounds.of(1)) // Weight of the carriage.
           .withHardLimit(Degrees.of(0), Degrees.of(90)) // Hard limits defined
           .withSoftLimits(Degrees.of(0), Degrees.of(90)); // Limits imposed on the PID controller.

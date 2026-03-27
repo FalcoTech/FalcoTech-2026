@@ -3,17 +3,14 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
+
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.TalonFXConfigurator;
-import com.ctre.phoenix6.controls.Follower;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.CAN_IDs;
 import java.util.function.Supplier;
 
 /**
@@ -21,11 +18,9 @@ import java.util.function.Supplier;
  * brushless motor via TalonFX in coast mode with a 30 A current limit.
  */
 public class SpinnerIndex extends SubsystemBase {
-  private final TalonFX SpinnerIndexmotorright =
-      new TalonFX(45);
+  private final TalonFX SpinnerIndexmotorright = new TalonFX(45);
 
-      private final TalonFX SpinnerIndexmotorleft =
-      new TalonFX(46);
+  private final TalonFX SpinnerIndexmotorleft = new TalonFX(46);
 
   /** Creates a new HopperPush. */
   public SpinnerIndex() {
@@ -33,19 +28,17 @@ public class SpinnerIndex extends SubsystemBase {
     var motorConfigsright = new MotorOutputConfigs();
     motorConfigsright.Inverted = InvertedValue.Clockwise_Positive;
 
-   talonFXConfiguratorright.apply(motorConfigsright);
+    talonFXConfiguratorright.apply(motorConfigsright);
 
-       var talonFXConfiguratorleft = SpinnerIndexmotorright.getConfigurator();
+    var talonFXConfiguratorleft = SpinnerIndexmotorright.getConfigurator();
     var motorConfigsleft = new MotorOutputConfigs();
     motorConfigsleft.Inverted = InvertedValue.Clockwise_Positive;
-    
-   talonFXConfiguratorright.apply(motorConfigsleft);
 
-   SpinnerIndexmotorleft.setControl(new Follower(45, MotorAlignmentValue.Opposed));
+    talonFXConfiguratorright.apply(motorConfigsleft);
 
+    SpinnerIndexmotorleft.setControl(new Follower(45, MotorAlignmentValue.Opposed));
   }
 
-  
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

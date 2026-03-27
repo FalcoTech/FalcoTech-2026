@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CAN_IDs;
+import frc.robot.Constants.TurretConstants;
 import java.util.Optional;
 import java.util.function.Supplier;
 import yams.gearing.GearBox;
@@ -91,8 +92,12 @@ public class Turret extends SubsystemBase {
           .withStartingPosition(Degrees.of(0))
           // Update to have 0 be forwards to reduce math overheard
           // .withStartingPosition(HARD_CLOCKWISE_LIMIT))?
-          .withHardLimit(Degrees.of(-110), Degrees.of(110))
-          .withSoftLimits(Degrees.of(-100), Degrees.of(100))
+          .withHardLimit(
+              TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT,
+              TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT)
+          .withSoftLimits(
+              TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT.minus((TurretConstants.DEADZONE)),
+              TurretConstants.HARD_CLOCKWISE_LIMIT.plus((TurretConstants.DEADZONE)))
           .withTelemetry("TurretMech", TelemetryVerbosity.LOW)
           .withMOI(Meters.of(0.25), Pounds.of(4));
 

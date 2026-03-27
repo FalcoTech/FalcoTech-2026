@@ -34,6 +34,7 @@ import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.LEDS;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShotCalculator;
+import frc.robot.subsystems.SpinnerIndex;
 import frc.robot.subsystems.Turret;
 
 public class RobotContainer {
@@ -87,6 +88,7 @@ public class RobotContainer {
   public static final LEDS leds = new LEDS();
   public static final Turret turret = new Turret();
   public static final Shooter shooter = new Shooter();
+  public static final SpinnerIndex spindexer = new SpinnerIndex();
   public static final ShotCalculator shotCalculator = new ShotCalculator(drivetrain);
 
   // Manual RPM setpoint for shooter tuning — D-pad up/down increments, Y runs it.
@@ -211,6 +213,10 @@ public class RobotContainer {
     // hopperPush.runHopperPush(
     // () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5)); //Works
     hopperPush.setDefaultCommand(hopperPush.stopHopperPush());
+
+    spindexer.setDefaultCommand(spindexer.stopSpinnerIndex());
+    Copilot.povLeft().whileTrue(spindexer.runSpinnerIndex(0.25));
+    Copilot.povRight().whileTrue(spindexer.runSpinnerIndex(-0.25));
 
     // hopperPush.setDefaultCommand(hopperPush.runHopperPush(() -> Copilot.getLeftX()));
 

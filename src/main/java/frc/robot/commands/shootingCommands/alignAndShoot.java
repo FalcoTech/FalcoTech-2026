@@ -33,8 +33,8 @@ public class alignAndShoot extends ParallelCommandGroup {
                 Degrees.of(
                     MathUtil.clamp(
                         shotCalculator.getIdealTurretAngle().in(Degrees),
-                        -SOFT_LIMIT_DEG,
-                        SOFT_LIMIT_DEG))),
+                        TurretConstants.SOFT_LOWER_LIMIT,
+                        TurretConstants.SOFT_UPPER_LIMIT))),
         RobotContainer.shooter.setAngularVelocity(shotCalculator::getIdealShooterVelocity));
 
     addRequirements(shotCalculator);

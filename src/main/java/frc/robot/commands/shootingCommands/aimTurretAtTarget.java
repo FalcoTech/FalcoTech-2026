@@ -20,9 +20,6 @@ import frc.robot.subsystems.Turret;
  */
 public class aimTurretAtTarget extends Command {
 
-  private static final double SOFT_LIMIT_DEG =
-      TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT.in(Degrees) - 10.0;
-
   private final Turret turret;
   private final ShotCalculator shotCalculator;
 
@@ -38,8 +35,8 @@ public class aimTurretAtTarget extends Command {
         Degrees.of(
             MathUtil.clamp(
                 shotCalculator.getIdealTurretAngle().in(Degrees),
-                -SOFT_LIMIT_DEG,
-                SOFT_LIMIT_DEG)));
+                TurretConstants.SOFT_LOWER_LIMIT,
+                TurretConstants.SOFT_UPPER_LIMIT)));
   }
 
   @Override

@@ -70,11 +70,13 @@ public final class Constants {
 
   public static final class TurretConstants {
     // CCW is positive in WPILib (think Unit Circle)
-    public static final Angle HARD_COUNTER_CLOCKWISE_LIMIT = Degrees.of(140);
-    public static final Angle HARD_CLOCKWISE_LIMIT = Degrees.of(-140);
+    public static final Angle HARD_COUNTER_CLOCKWISE_LIMIT = Degrees.of(180);
+    public static final Angle HARD_CLOCKWISE_LIMIT = Degrees.of(-180);
 
-    public static final double SOFT_LOWER_LIMIT = -100;
-    public static final double SOFT_UPPER_LIMIT = 100;
+    public static final Angle DEADZONE = Degrees.of(10);
+    public static final double SOFT_LOWER_LIMIT = HARD_CLOCKWISE_LIMIT.plus(DEADZONE).in(Degrees);
+    public static final double SOFT_UPPER_LIMIT =
+        HARD_COUNTER_CLOCKWISE_LIMIT.minus(DEADZONE).in(Degrees);
   }
 
   public static final class PathPlanningConstants {
