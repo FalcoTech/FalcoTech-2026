@@ -93,11 +93,10 @@ public class Turret extends SubsystemBase {
           // Update to have 0 be forwards to reduce math overheard
           // .withStartingPosition(HARD_CLOCKWISE_LIMIT))?
           .withHardLimit(
-              TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT,
-              TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT)
+              TurretConstants.HARD_CLOCKWISE_LIMIT, TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT)
           .withSoftLimits(
-              TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT.minus((TurretConstants.DEADZONE)),
-              TurretConstants.HARD_CLOCKWISE_LIMIT.plus((TurretConstants.DEADZONE)))
+              TurretConstants.HARD_CLOCKWISE_LIMIT.plus((TurretConstants.DEADZONE)),
+              TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT.minus((TurretConstants.DEADZONE)))
           .withTelemetry("TurretMech", TelemetryVerbosity.LOW)
           .withMOI(Meters.of(0.25), Pounds.of(4));
 

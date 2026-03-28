@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.Supplier;
 
 /**
- * Single-motor subsystem that pushes game pieces through the hopper toward the feeder. Runs a
+ * Dual -motor subsystem that spins game pieces through the hopper toward the feeder. Runs 2
  * brushless motor via TalonFX in coast mode with a 30 A current limit.
  */
 public class SpinnerIndex extends SubsystemBase {
