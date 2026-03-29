@@ -47,7 +47,6 @@ public class feedWhenReady extends Command {
     turret = RobotContainer.turret;
     shooter = RobotContainer.shooter;
     // Only require feeder — turret/shooter are read-only here
-    // and are already required by the concurrent alignAndShoot command
     addRequirements(feeder);
   }
 

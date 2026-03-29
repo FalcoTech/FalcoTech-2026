@@ -30,7 +30,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathPlanningConstants;
-import frc.robot.commands.shootingCommands.aimTurretAtTarget;
 import frc.robot.commands.shootingCommands.feedWhenReady;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -186,9 +185,9 @@ public class RobotContainer {
     // Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.set(.65)));
     Copilot.a()
         .whileTrue(
-            new aimTurretAtTarget()
-                .alongWith(
-                    shooter.setAngularVelocity(() -> shotCalculator.getIdealShooterVelocity()))
+            turret
+                .setAngle(shotCalculator::getIdealTurretAngle)
+                .alongWith(shooter.setAngularVelocity(shotCalculator::getIdealShooterVelocity))
                 .alongWith(new feedWhenReady())); // aim + auto-feed when ready
     // Copilot.x()
     //     .whileTrue(
@@ -198,7 +197,8 @@ public class RobotContainer {
 
     Copilot.y()
         .whileTrue(
-            new aimTurretAtTarget()
+            turret
+                .setAngle(shotCalculator::getIdealTurretAngle)
                 .alongWith(shooter.setAngularVelocity(() -> RPM.of(manualRPM)))
                 .alongWith(new feedWhenReady()));
 
@@ -268,10 +268,11 @@ public class RobotContainer {
   }
 
   private void RegisterNamedCommands() {
-    NamedCommands.registerCommand("Aim Turret", new aimTurretAtTarget());
+    NamedCommands.registerCommand(
+        "Aim Turret", turret.setAngle(shotCalculator::getIdealTurretAngle));
     NamedCommands.registerCommand(
         "Spin Shooter To Target",
-        shooter.setAngularVelocity(() -> shotCalculator.getIdealShooterVelocity()));
+        shooter.setAngularVelocity(shotCalculator::getIdealShooterVelocity));
     NamedCommands.registerCommand("Stop Shooter", shooter.stop());
     NamedCommands.registerCommand("Stop Turret", turret.stop());
     // TODO: Rebuild the Spindexer commands and auto routines; AFTER YAMS implementation
@@ -287,6 +288,16 @@ public class RobotContainer {
     // NamedCommands.registerCommand(null, getAutonomousCommand());
   }
 
+  // TImplements the following pseudocode:
+  // Get current robot position
+  // check if the robot position is within either a box or circle around any trench using
+  // .contains()
+  // Start with the blue alliance trench and then do use the fliputil like in shotcalculator to
+  // get the red alliance trench locations
+  // The trench locations can be found using the april tags locations
+  //
+  // ADD DIMENSIONS TO CONSTANTS
+  // return true if the robot is within the defined area, false otherwise
   public boolean isNearTrench() {
     Pose2d robotPose = drivetrain.getState().Pose;
 
@@ -298,16 +309,6 @@ public class RobotContainer {
         || (FieldConstants.REDHUMAN_ELLIPSE2D.contains(robotPositionBlue))) {
       return true;
     }
-    // TODO: Implement this based on the following pseudocode:
-    // Get current robot position
-    // check if the robot position is within either a box or circle around any trench using
-    // .contains()
-    // Start with the blue alliance trench and then do use the fliputil like in shotcalculator to
-    // get the red alliance trench locations
-    // The trench locations can be found using the april tags locations
-    //
-    // ADD DIMENSIONS TO CONSTANTS
-    // return true if the robot is within the defined area, false otherwise
 
     return false;
   }

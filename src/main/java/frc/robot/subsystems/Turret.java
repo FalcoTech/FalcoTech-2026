@@ -115,8 +115,7 @@ public class Turret extends SubsystemBase {
   }
 
   /**
-   * Immediately sets the turret motor position setpoint without creating a command. Used by {@link
-   * frc.robot.commands.shootingCommands.aimTurretAtTarget} for direct per-cycle updates.
+   * Immediately sets the turret motor position setpoint without creating a command.
    *
    * @param targetAngle desired angle
    */
