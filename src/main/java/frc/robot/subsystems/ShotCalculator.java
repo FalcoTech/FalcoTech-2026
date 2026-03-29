@@ -72,6 +72,7 @@ public class ShotCalculator extends SubsystemBase {
 
   // distance (m) → RPM, time-of-flight (s) — TUNE tof values
   {
+    // TODO: GET NEW DATA
     put(1.77, new ShooterParams(3000, 2.26));
     put(2.18, new ShooterParams(3500, 3.32));
     put(3.01, new ShooterParams(4000, 4.43));

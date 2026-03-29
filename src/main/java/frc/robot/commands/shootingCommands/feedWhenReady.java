@@ -30,6 +30,7 @@ import frc.robot.subsystems.Turret;
 public class feedWhenReady extends Command {
 
   // Tolerances — tune to match acceptable shot windows
+  // TODO: Tune values for Autofeed
   private static final double ANGLE_TOLERANCE_DEG = 3.0;
   private static final double VELOCITY_TOLERANCE_RPM = 150.0;
 

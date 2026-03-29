@@ -21,8 +21,6 @@ public class alignAndShoot extends ParallelCommandGroup {
 
   // Clamp setpoint inside soft limits so the PID never demands a position YAMS will refuse,
   // which causes the turret to thrash against the soft stop.
-  private static final double SOFT_LIMIT_DEG =
-      TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT.in(Degrees) - 10.0;
 
   public alignAndShoot() {
     ShotCalculator shotCalculator = RobotContainer.shotCalculator;
