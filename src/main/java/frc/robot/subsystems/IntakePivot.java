@@ -6,14 +6,14 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.InchesPerSecond;
-import static edu.wpi.first.units.Units.InchesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Pounds;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,29 +33,30 @@ import yams.motorcontrollers.local.SparkWrapper;
 
 public class IntakePivot extends SubsystemBase {
 
-  /** Creates a new IntakeSlide. */
+  /** Creates a new IntakePivot. */
   private SmartMotorControllerConfig smcConfig =
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
           // Mechanism Circumference is the distance traveled by each mechanism rotation converting
           // rotations to Inches.
-          .withMechanismCircumference(Inches.of(Inches.of(0.25).in(Inches) * 22))
+          // .withMechanismCircumference(Inches.of(Inches.of(0.25).in(Inches) * 22))
           // Feedback Constants (PID Constants)
-          .withClosedLoopController(25, 0, 0, InchesPerSecond.of(2), InchesPerSecondPerSecond.of(2))
-          .withSimClosedLoopController(
-              25, 0, 0, InchesPerSecond.of(2), InchesPerSecondPerSecond.of(2))
+          .withClosedLoopController(
+              0.25, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+          // .withSimClosedLoopController(
+          //     25, 0, 0, InchesPerSecond.of(2), InchesPerSecondPerSecond.of(2))
           // Feedforward Constants
-          .withFeedforward(new ElevatorFeedforward(.1, 0, 0))
-          .withSimFeedforward(new ElevatorFeedforward(.1, 0, 0))
+          .withFeedforward(new ArmFeedforward(0, 1.25, 0.35,0.29))
+          // .withSimFeedforward(new ElevatorFeedforward(.1, 0, 0))
           // Telemetry name and verbosity level
-          .withTelemetry("ElevatorMotor", TelemetryVerbosity.LOW)
+          .withTelemetry("PivotMotor", TelemetryVerbosity.HIGH)
           // Gearing from the motor rotor to final shaft.
           // In this example gearbox(3,4) is the same as gearbox("3:1","4:1") which corresponds to
           // the
           // gearbox attached to your motor.
-          .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 100)))
+          .withGearing(new MechanismGearing(GearBox.fromReductionStages(9, 2)))
           // Motor properties to prevent over currenting.
-          .withMotorInverted(true)
+          // .withMotorInverted(true)
           .withIdleMode(MotorMode.BRAKE)
           .withStatorCurrentLimit(Amps.of(40));
 
@@ -69,13 +70,12 @@ public class IntakePivot extends SubsystemBase {
   ArmConfig armConfig =
       new ArmConfig(sparkSmartMotorController)
           // .withStartingHeight(Inches.of(0.5)) // Starting height of the IntakeSlide
-          .withTelemetry("IntakePivot", TelemetryVerbosity.LOW) // Telemetry Name
-          .withMass(Pounds.of(1)) // Mass of the carraige
-          .withStartingPosition(Degrees.of(90))
-          .withLength(Inches.of(12))
-          //   .Wi(Pounds.of(1)) // Weight of the carriage.
-          .withHardLimit(Degrees.of(0), Degrees.of(90)) // Hard limits defined
-          .withSoftLimits(Degrees.of(0), Degrees.of(90)); // Limits imposed on the PID controller.
+          .withTelemetry("IntakePivot", TelemetryVerbosity.HIGH) // Telemetry Name
+          .withMass(Pounds.of(5)) // Mass of the Arm
+          .withStartingPosition(Degrees.of(87))
+          .withLength(Inches.of(14.75))
+          .withHardLimit(Degrees.of(-3), Degrees.of(92)) // Hard limits defined
+          .withSoftLimits(Degrees.of(0), Degrees.of(88)); // Limits imposed on the PID controller.
 
   private Arm intakePivot = new Arm(armConfig);
 
@@ -92,12 +92,30 @@ public class IntakePivot extends SubsystemBase {
     intakePivot.simIterate();
   }
 
+  /**
+   * Set the angle of the arm, does not stop when the arm reaches the setpoint.
+   *
+   * @param angle Angle to go to.
+   * @return A command.
+   */
   public Command setAngle(Angle angle) {
     return intakePivot.run(angle);
   }
 
+  /**
+   * Set the angle of the arm, ends the command but does not stop the arm when the arm reaches the
+   * setpoint.
+   *
+   * @param angle Angle to go to.
+   * @param tolerance Angle tolerance for completion.
+   * @return A Command
+   */
   public Command setAngleAndStop(Angle angle, Angle tolerance) {
     return intakePivot.runTo(angle, tolerance);
+  }
+
+  public void setAngleSetpoint(Angle angle) {
+    intakePivot.setMechanismPositionSetpoint(angle);
   }
 
   public Command runDutyCycle(Supplier<Double> dutyCycle) {
