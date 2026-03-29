@@ -4,37 +4,20 @@
 
 package frc.robot.commands.shootingCommands;
 
-import static edu.wpi.first.units.Units.Degrees;
-
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import frc.robot.Constants.TurretConstants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.ShotCalculator;
 
 /**
  * Parallel command group that simultaneously aims the turret and spins the shooter flywheel to
- * match the values calculated by {@link ShotCalculator}. The turret setpoint is clamped 10 degrees
- * inside hard limits to prevent YAMS soft-stop thrashing.
+ * match the values calculated by {@link ShotCalculator}.
  */
 public class alignAndShoot extends ParallelCommandGroup {
 
-  // Clamp setpoint inside soft limits so the PID never demands a position YAMS will refuse,
-  // which causes the turret to thrash against the soft stop.
-
   public alignAndShoot() {
     ShotCalculator shotCalculator = RobotContainer.shotCalculator;
-
     addCommands(
-        RobotContainer.turret.setAngle(
-            () ->
-                Degrees.of(
-                    MathUtil.clamp(
-                        shotCalculator.getIdealTurretAngle().in(Degrees),
-                        TurretConstants.SOFT_LOWER_LIMIT,
-                        TurretConstants.SOFT_UPPER_LIMIT))),
+        RobotContainer.turret.setAngle(shotCalculator::getIdealTurretAngle),
         RobotContainer.shooter.setAngularVelocity(shotCalculator::getIdealShooterVelocity));
-
-    addRequirements(shotCalculator);
   }
 }
