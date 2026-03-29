@@ -117,6 +117,11 @@ public class IntakePivot extends SubsystemBase {
     return intakePivot.runTo(angle, tolerance);
   }
 
+  /**
+   * Set arm closed loop controller to go to the specified mechanism position.
+   *
+   * @param angle Angle to go to.
+   */
   public void setAngleSetpoint(Angle angle) {
     intakePivot.setMechanismPositionSetpoint(angle);
   }

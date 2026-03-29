@@ -125,6 +125,15 @@ public class Turret extends SubsystemBase {
   }
 
   /**
+   * Set turret closed loop controller to go to the specified mechanism position.
+   *
+   * @param angle Angle to go to.
+   */
+  public void setAngleSetpoint(Angle targetAngle) {
+    turret.setMechanismPositionSetpoint(targetAngle);
+  }
+
+  /**
    * Commands the turret to a continuously-evaluated angle. The supplier is polled every cycle,
    * allowing the turret to track a moving target.
    *
