@@ -12,15 +12,18 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.Supplier;
+import frc.robot.Constants.CAN_IDs;
 
 /**
  * Dual -motor subsystem that spins game pieces through the hopper toward the feeder. Runs 2
  * brushless motor via TalonFX in coast mode with a 30 A current limit.
  */
 public class SpinnerIndex extends SubsystemBase {
-  private final TalonFX SpinnerIndexmotorright = new TalonFX(45);
+  private final TalonFX SpinnerIndexmotorright =
+      new TalonFX(CAN_IDs.SPINNERINDEXRIGHT_MOTOR);
 
-  private final TalonFX SpinnerIndexmotorleft = new TalonFX(46);
+      private final TalonFX SpinnerIndexmotorleft =
+      new TalonFX(CAN_IDs.SPINNERINDEXLEFT_MOTOR);
 
   /** Creates a new HopperPush. */
   public SpinnerIndex() {
@@ -34,9 +37,8 @@ public class SpinnerIndex extends SubsystemBase {
     var motorConfigsleft = new MotorOutputConfigs();
     motorConfigsleft.Inverted = InvertedValue.Clockwise_Positive;
 
-    talonFXConfiguratorright.apply(motorConfigsleft);
+   SpinnerIndexmotorleft.setControl(new Follower(CAN_IDs.SPINNERINDEXRIGHT_MOTOR, MotorAlignmentValue.Opposed));
 
-    SpinnerIndexmotorleft.setControl(new Follower(45, MotorAlignmentValue.Opposed));
   }
 
   @Override
