@@ -22,10 +22,10 @@ import java.util.function.Supplier;
  */
 public class SpinnerIndex extends SubsystemBase {
   private final TalonFX SpinnerIndexmotorright =
-      new TalonFX(45);
+      new TalonFX(CAN_IDs.SPINNERINDEXRIGHT_MOTOR);
 
       private final TalonFX SpinnerIndexmotorleft =
-      new TalonFX(46);
+      new TalonFX(CAN_IDs.SPINNERINDEXLEFT_MOTOR);
 
   /** Creates a new HopperPush. */
   public SpinnerIndex() {
@@ -35,13 +35,13 @@ public class SpinnerIndex extends SubsystemBase {
 
    talonFXConfiguratorright.apply(motorConfigsright);
 
-       var talonFXConfiguratorleft = SpinnerIndexmotorright.getConfigurator();
+    var talonFXConfiguratorleft = SpinnerIndexmotorright.getConfigurator();
     var motorConfigsleft = new MotorOutputConfigs();
     motorConfigsleft.Inverted = InvertedValue.Clockwise_Positive;
     
    talonFXConfiguratorright.apply(motorConfigsleft);
 
-   SpinnerIndexmotorleft.setControl(new Follower(45, MotorAlignmentValue.Opposed));
+   SpinnerIndexmotorleft.setControl(new Follower(CAN_IDs.SPINNERINDEXRIGHT_MOTOR, MotorAlignmentValue.Opposed));
 
   }
 

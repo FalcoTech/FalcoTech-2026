@@ -7,6 +7,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -30,10 +31,12 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.HopperPush;
 import frc.robot.subsystems.IntakePivot;
+// import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.LEDS;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShotCalculator;
+import frc.robot.subsystems.SpinnerIndex;
 import frc.robot.subsystems.Turret;
 
 public class RobotContainer {
@@ -83,7 +86,8 @@ public class RobotContainer {
   public static final IntakeRoller intakeRoller = new IntakeRoller();
   public static final IntakePivot intakePivot = new IntakePivot();
   public static final Feeder feeder = new Feeder();
-  public static final HopperPush hopperPush = new HopperPush();
+//   public static final HopperPush hopperPush = new HopperPush();
+public static final SpinnerIndex spindexer = new SpinnerIndex();
   public static final LEDS leds = new LEDS();
   public static final Turret turret = new Turret();
   public static final Shooter shooter = new Shooter();
@@ -95,6 +99,8 @@ public class RobotContainer {
   public Pose2d testPose = new Pose2d(2, 2, Rotation2d.fromDegrees(0));
 
   public RobotContainer() {
+    // drivetrain.configNeutralMode(NeutralModeValue.Coast);
+
     DriverStation.silenceJoystickConnectionWarning(false); // Changed to false for comps
     RegisterNamedCommands();
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -175,11 +181,11 @@ public class RobotContainer {
                 .alongWith(
                     shooter.setAngularVelocity(() -> shotCalculator.getIdealShooterVelocity()))
                 .alongWith(new feedWhenReady())); // aim + auto-feed when ready
-    Copilot.x()
-        .whileTrue(
-            feeder
-                .runFeeder(() -> 0.5)
-                .alongWith(hopperPush.runHopperPush(() -> -0.5))); // RUNS THROUGH ROBOT
+    // Copilot.x()
+    //     .whileTrue(
+    //         feeder
+    //             .runFeeder(() -> 0.5)
+    //             .alongWith(hopperPush.runHopperPush(() -> -0.5))); // RUNS THROUGH ROBOT
     Copilot.y()
         .whileTrue(
             new aimTurretAtTarget()
@@ -196,6 +202,8 @@ public class RobotContainer {
                 .65
                     * (Copilot.getLeftTriggerAxis()
                         - Copilot.getRightTriggerAxis()))); // NEGATIVE RUNS THRU
+    
+    spindexer.setDefaultCommand(spindexer.runSpinnerIndex(() -> 0.4 * (Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis())));
 
     // Copilot.rightBumper().whileTrue(intakeSlide.setHeight(Inches.of(10))); //Does not work
     // currently
@@ -210,7 +218,7 @@ public class RobotContainer {
     // hopperPush.setDefaultCommand(
     // hopperPush.runHopperPush(
     // () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5)); //Works
-    hopperPush.setDefaultCommand(hopperPush.stopHopperPush());
+    // hopperPush.setDefaultCommand(hopperPush.stopHopperPush());
 
     // hopperPush.setDefaultCommand(hopperPush.runHopperPush(() -> Copilot.getLeftX()));
 
@@ -250,7 +258,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Stop Shooter", shooter.stop());
     NamedCommands.registerCommand("Stop Turret", turret.stop());
 
-    NamedCommands.registerCommand("Stop Hopper Push", hopperPush.stopHopperPush());
+    // NamedCommands.registerCommand("Stop Hopper Push", hopperPush.stopHopperPush());
     NamedCommands.registerCommand("Stop Feeder Push", feeder.stopFeeder());
     NamedCommands.registerCommand("Stop Intake Pivot", intakePivot.stop());
 
@@ -259,7 +267,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Pivot Intake In", intakePivot.runDutyCycle(-.6));
     NamedCommands.registerCommand("Intake", intakeRoller.runIntakeRollers(-.65));
     NamedCommands.registerCommand("Intake Stop", intakeRoller.runIntakeRollers(0));
-    NamedCommands.registerCommand("Hopper Push", hopperPush.runHopperPush(-.5));
+    // NamedCommands.registerCommand("Hopper Push", hopperPush.runHopperPush(-.5));
     NamedCommands.registerCommand("Feeder Push", feeder.runFeeder(.5));
     // NamedCommands.registerCommand(null, getAutonomousCommand());
   }
