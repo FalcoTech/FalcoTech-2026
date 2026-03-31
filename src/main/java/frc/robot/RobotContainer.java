@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PathPlanningConstants;
@@ -175,6 +176,7 @@ public static final SpinnerIndex spindexer = new SpinnerIndex();
     Copilot.leftBumper().onTrue(turret.hoodUp());
     Copilot.rightBumper().onTrue(turret.hoodDown());
 
+    new Trigger(this::isNearTrench).whileTrue(turret.hoodDown());
     // Copilot.start().whileTrue(shooter.sysId());
 
     // Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.set(.65)));
@@ -197,7 +199,7 @@ public static final SpinnerIndex spindexer = new SpinnerIndex();
 
     // INTAKE, HOPPER, FEEDER
 
-    intakePivot.setDefaultCommand(intakePivot.runDutyCycle(() -> 0.6 * (Copilot.getLeftX())));
+    intakePivot.setDefaultCommand(intakePivot.runDutyCycle(() -> 0.25 * (Copilot.getLeftX())));
 
     intakeRoller.setDefaultCommand(
         intakeRoller.runIntakeRollers(
@@ -277,5 +279,17 @@ public static final SpinnerIndex spindexer = new SpinnerIndex();
     // NamedCommands.registerCommand("Hopper Push", hopperPush.runHopperPush(-.5));
     NamedCommands.registerCommand("Feeder Push", feeder.runFeeder(.5));
     // NamedCommands.registerCommand(null, getAutonomousCommand());
+  }
+
+  public boolean isNearTrench(){
+    //TODO: Implement this based on the following pseudocode:
+    // Get current robot position
+    // check if the robot position is within either a box or circle around each trench
+    // The trench locations can be found using the april tags if you use circles, otherwise you will
+    // need to hardcode the rectangle locations based on the field dimensions
+    // ADD DIMENSIONS TO CONSTANTS
+    // return true if the robot is within the defined area, false otherwise
+
+    return false;
   }
 }
