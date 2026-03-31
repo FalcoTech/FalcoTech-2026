@@ -16,14 +16,15 @@ import java.util.function.Supplier;
 
 /**
  * Dual -motor subsystem that spins game pieces through the hopper toward the feeder. Runs 2
- * brushless motor via TalonFX in coast mode with a 30 A current limit.
+ * brushless motors via TalonFX in coast mode with a 30 A current limit.
  */
 public class SpinnerIndex extends SubsystemBase {
   private final TalonFX SpinnerIndexmotorright = new TalonFX(CAN_IDs.SPINNERINDEXRIGHT_MOTOR);
 
   private final TalonFX SpinnerIndexmotorleft = new TalonFX(CAN_IDs.SPINNERINDEXLEFT_MOTOR);
 
-  /** Creates a new HopperPush. */
+  /** Creates a new SpinnerIndex. */
+  // TODO: Rebuild the Spindexer as a YAMS flywheel subsystem; DO IN NEW FILE based on Shooter
   public SpinnerIndex() {
     var talonFXConfiguratorright = SpinnerIndexmotorright.getConfigurator();
     var motorConfigsright = new MotorOutputConfigs();

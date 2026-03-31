@@ -84,7 +84,6 @@ public class RobotContainer {
   public static final IntakeRoller intakeRoller = new IntakeRoller();
   public static final IntakePivot intakePivot = new IntakePivot();
   public static final Feeder feeder = new Feeder();
-  //   public static final HopperPush hopperPush = new HopperPush();
   public static final SpinnerIndex spindexer = new SpinnerIndex();
   public static final LEDS leds = new LEDS();
   public static final Turret turret = new Turret();
@@ -184,11 +183,6 @@ public class RobotContainer {
                 .alongWith(
                     shooter.setAngularVelocity(() -> shotCalculator.getIdealShooterVelocity()))
                 .alongWith(new feedWhenReady())); // aim + auto-feed when ready
-    // Copilot.x()
-    //     .whileTrue(
-    //         feeder
-    //             .runFeeder(() -> 0.5)
-    //             .alongWith(hopperPush.runHopperPush(() -> -0.5))); // RUNS THROUGH ROBOT
     Copilot.y()
         .whileTrue(
             new aimTurretAtTarget()
@@ -210,26 +204,16 @@ public class RobotContainer {
         spindexer.runSpinnerIndex(
             () -> 0.4 * (Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis())));
 
-    // Copilot.rightBumper().whileTrue(intakeSlide.setHeight(Inches.of(10))); //Does not work
-    // currently
-    // Copilot.leftBumper().whileTrue(intakeSlide.setHeight(Inches.of(1))); //Does not work
-    // currently
-
     // feeder.setDefaultCommand(
     // feeder.runFeeder(() -> 0.5 * (Copilot.getRightTriggerAxis() -
     // Copilot.getLeftTriggerAxis()))); //Works
     feeder.setDefaultCommand(feeder.stopFeeder());
 
-    // hopperPush.setDefaultCommand(
-    // hopperPush.runHopperPush(
-    // () -> (Copilot.getLeftTriggerAxis() - Copilot.getRightTriggerAxis()) * .5)); //Works
-    // hopperPush.setDefaultCommand(hopperPush.stopHopperPush());
 
     // spindexer.setDefaultCommand(spindexer.stopSpinnerIndex());
     Copilot.povLeft().whileTrue(spindexer.runSpinnerIndex(0.25));
     Copilot.povRight().whileTrue(spindexer.runSpinnerIndex(-0.25));
 
-    // hopperPush.setDefaultCommand(hopperPush.runHopperPush(() -> Copilot.getLeftX()));
 
     Copilot.povUp().onTrue(Commands.runOnce(() -> manualRPM += 250));
     Copilot.povDown().onTrue(Commands.runOnce(() -> manualRPM -= 250));
@@ -266,8 +250,7 @@ public class RobotContainer {
         shooter.setAngularVelocity(() -> shotCalculator.getIdealShooterVelocity()));
     NamedCommands.registerCommand("Stop Shooter", shooter.stop());
     NamedCommands.registerCommand("Stop Turret", turret.stop());
-
-    // NamedCommands.registerCommand("Stop Hopper Push", hopperPush.stopHopperPush());
+    // TODO: Rebuild the Spindexer commands and auto routines; AFTER YAMS implementation
     NamedCommands.registerCommand("Stop Feeder Push", feeder.stopFeeder());
     NamedCommands.registerCommand("Stop Intake Pivot", intakePivot.stop());
 
@@ -276,7 +259,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("Pivot Intake In", intakePivot.runDutyCycle(-.6));
     NamedCommands.registerCommand("Intake", intakeRoller.runIntakeRollers(-.65));
     NamedCommands.registerCommand("Intake Stop", intakeRoller.runIntakeRollers(0));
-    // NamedCommands.registerCommand("Hopper Push", hopperPush.runHopperPush(-.5));
     NamedCommands.registerCommand("Feeder Push", feeder.runFeeder(.5));
     // NamedCommands.registerCommand(null, getAutonomousCommand());
   }
