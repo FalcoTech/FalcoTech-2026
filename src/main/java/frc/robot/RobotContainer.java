@@ -172,6 +172,9 @@ public static final SpinnerIndex spindexer = new SpinnerIndex();
     turret.setDefaultCommand(turret.stop());
     shooter.setDefaultCommand(shooter.stop());
 
+    Copilot.leftBumper().onTrue(turret.hoodUp());
+    Copilot.rightBumper().onTrue(turret.hoodDown());
+
     // Copilot.start().whileTrue(shooter.sysId());
 
     // Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.set(.65)));

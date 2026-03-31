@@ -22,6 +22,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -57,6 +58,8 @@ public class Turret extends SubsystemBase {
   private final TalonFX turretMotor = new TalonFX(CAN_IDs.TURRET_MOTOR);
   // private TalonFXConfiguration WristMotorConfig = new TalonFXConfiguration();
   // private TalonFXConfigurator WristMotorConfigurator = turretMotor.getConfigurator();
+
+  private final Servo turretHood = new Servo(0);
 
   private final SmartMotorControllerConfig motorConfig =
       new SmartMotorControllerConfig(this)
@@ -174,6 +177,14 @@ public class Turret extends SubsystemBase {
 
   public Command setDutyCycle(double dutyCycle) {
     return turret.set(dutyCycle);
+  }
+
+  public Command hoodUp() {
+    return Commands.runOnce(() -> turretHood.set(1));
+  }
+
+  public Command hoodDown() {
+    return Commands.runOnce(() -> turretHood.set(0));
   }
 
   /**
