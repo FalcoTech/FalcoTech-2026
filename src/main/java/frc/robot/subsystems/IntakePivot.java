@@ -46,7 +46,7 @@ public class IntakePivot extends SubsystemBase {
           // .withSimClosedLoopController(
           //     25, 0, 0, InchesPerSecond.of(2), InchesPerSecondPerSecond.of(2))
           // Feedforward Constants
-          .withFeedforward(new ArmFeedforward(0, 1.25, 0.35,0.29))
+          .withFeedforward(new ArmFeedforward(0, 1.25, 0.35, 0.29))
           // .withSimFeedforward(new ElevatorFeedforward(.1, 0, 0))
           // Telemetry name and verbosity level
           .withTelemetry("PivotMotor", TelemetryVerbosity.HIGH)

@@ -3,13 +3,13 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import frc.robot.util.FieldZone;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -71,8 +71,8 @@ public final class Constants {
 
   public static final class TurretConstants {
     // CCW is positive in WPILib (think Unit Circle)
-    public static final Angle HARD_COUNTER_CLOCKWISE_LIMIT = Degrees.of(180);
-    public static final Angle HARD_CLOCKWISE_LIMIT = Degrees.of(-180);
+    public static final Angle HARD_COUNTER_CLOCKWISE_LIMIT = Degrees.of(160);
+    public static final Angle HARD_CLOCKWISE_LIMIT = Degrees.of(-160);
 
     public static final Angle DEADZONE = Degrees.of(10);
     public static final double SOFT_LOWER_LIMIT = HARD_CLOCKWISE_LIMIT.plus(DEADZONE).in(Degrees);
@@ -94,8 +94,10 @@ public final class Constants {
     public static final Translation2d OUTPOST_SIDE_TARGET = new Translation2d(2, 2);
     public static final Translation2d DEPOT_SIDE_TARGET = new Translation2d(2, 6);
     public static final Translation2d HUB_TARGET = new Translation2d(4.59, 4.03);
-    public static final FieldZone allianceZone = new FieldZone(-.5, 4.278, -.5, 8.5);
-    public static final FieldZone neutralZone = new FieldZone(4.278, 12.117, -.5, 8.5);
+    public static final Rectangle2d ALLIANCE_RECTANGLE2D =
+        new Rectangle2d(new Translation2d(-.5, -.5), new Translation2d(4.278, 8.5));
+    public static final Rectangle2d NEUTRAL_RECTANGLE2D =
+        new Rectangle2d(new Translation2d(4.278, -.5), new Translation2d(12.117, 8.5));
   }
 
   public static boolean isRedAlliance() {

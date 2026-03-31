@@ -7,7 +7,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -30,7 +29,6 @@ import frc.robot.commands.shootingCommands.feedWhenReady;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.HopperPush;
 import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.LEDS;
@@ -86,8 +84,8 @@ public class RobotContainer {
   public static final IntakeRoller intakeRoller = new IntakeRoller();
   public static final IntakePivot intakePivot = new IntakePivot();
   public static final Feeder feeder = new Feeder();
-//   public static final HopperPush hopperPush = new HopperPush();
-public static final SpinnerIndex spindexer = new SpinnerIndex();
+  //   public static final HopperPush hopperPush = new HopperPush();
+  public static final SpinnerIndex spindexer = new SpinnerIndex();
   public static final LEDS leds = new LEDS();
   public static final Turret turret = new Turret();
   public static final Shooter shooter = new Shooter();
@@ -207,8 +205,10 @@ public static final SpinnerIndex spindexer = new SpinnerIndex();
                 .65
                     * (Copilot.getLeftTriggerAxis()
                         - Copilot.getRightTriggerAxis()))); // NEGATIVE RUNS THRU
-    
-    spindexer.setDefaultCommand(spindexer.runSpinnerIndex(() -> 0.4 * (Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis())));
+
+    spindexer.setDefaultCommand(
+        spindexer.runSpinnerIndex(
+            () -> 0.4 * (Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis())));
 
     // Copilot.rightBumper().whileTrue(intakeSlide.setHeight(Inches.of(10))); //Does not work
     // currently
@@ -281,12 +281,13 @@ public static final SpinnerIndex spindexer = new SpinnerIndex();
     // NamedCommands.registerCommand(null, getAutonomousCommand());
   }
 
-  public boolean isNearTrench(){
-    //TODO: Implement this based on the following pseudocode:
+  public boolean isNearTrench() {
+    // TODO: Implement this based on the following pseudocode:
     // Get current robot position
-    // check if the robot position is within either a box or circle around each trench
-    // The trench locations can be found using the april tags if you use circles, otherwise you will
-    // need to hardcode the rectangle locations based on the field dimensions
+    // check if the robot position is within either a box or circle around any trench using .contains()
+    // Start with the blue alliance trench and then do use the fliputil like in shotcalculator to get the red alliance trench locations
+    // The trench locations can be found using the april tags locations
+    // 
     // ADD DIMENSIONS TO CONSTANTS
     // return true if the robot is within the defined area, false otherwise
 

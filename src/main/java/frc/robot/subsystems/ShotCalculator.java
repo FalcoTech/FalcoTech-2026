@@ -96,7 +96,7 @@ public class ShotCalculator extends SubsystemBase {
   // ── Position helpers ──────────────────────────────────────────────────────────
 
   private Translation2d getEffectiveTarget() {
-    // Update the target pose based on what FieldZone the Robot currently is in
+    // Update the target pose based on what Rectangle2d the Robot currently is in
     Pose2d robotPose = drivetrain.getState().Pose;
     // Convert robot Pose to blue coords when on red alliance so blue defined math is correct
     Translation2d robotPositionBlue;
@@ -104,7 +104,7 @@ public class ShotCalculator extends SubsystemBase {
       robotPositionBlue = FlippingUtil.flipFieldPosition(robotPose.getTranslation());
     } else robotPositionBlue = robotPose.getTranslation();
 
-    if (FieldConstants.allianceZone.contains(robotPositionBlue)) {
+    if (FieldConstants.ALLIANCE_RECTANGLE2D.contains(robotPositionBlue)) {
       targetLocation = FieldConstants.HUB_TARGET;
     } else {
       Collection<Translation2d> locations =
@@ -178,6 +178,8 @@ public class ShotCalculator extends SubsystemBase {
    */
   public double getAngleToTarget() {
     // return getRobotToTargetVector().getAngle().getDegrees();
+    // NOTE: Switch this out with the line above to disable velocity compensation and see how it
+    // affects aiming while moving
     return getShotVelocity().getAngle().getDegrees();
   }
 
