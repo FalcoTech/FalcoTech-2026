@@ -88,7 +88,7 @@ public class Turret extends SubsystemBase {
 
   private final PivotConfig turretConfig =
       new PivotConfig(turretSMC)
-          .withStartingPosition(Degrees.of(0))
+          .withStartingPosition(Degrees.of(-90))
           // Update to have 0 be forwards to reduce math overheard
           // .withStartingPosition(HARD_CLOCKWISE_LIMIT))?
           .withHardLimit(Degrees.of(-110), Degrees.of(110))

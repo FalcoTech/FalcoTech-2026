@@ -26,10 +26,11 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.PathPlanningConstants;
 import frc.robot.commands.shootingCommands.aimTurretAtTarget;
 import frc.robot.commands.shootingCommands.feedWhenReady;
+import frc.robot.commands.shootingCommands.hoodCommands.setHoodAngle;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.HopperPush;
+//import frc.robot.subsystems.HopperPush;
 import frc.robot.subsystems.IntakePivot;
 // import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.IntakeRoller;
@@ -186,6 +187,9 @@ public static final SpinnerIndex spindexer = new SpinnerIndex();
     //         feeder
     //             .runFeeder(() -> 0.5)
     //             .alongWith(hopperPush.runHopperPush(() -> -0.5))); // RUNS THROUGH ROBOT
+    Copilot.b().onTrue(new setHoodAngle(.9));
+    Copilot.x().onTrue(new setHoodAngle(.1));
+
     Copilot.y()
         .whileTrue(
             new aimTurretAtTarget()
@@ -194,12 +198,13 @@ public static final SpinnerIndex spindexer = new SpinnerIndex();
 
     // INTAKE, HOPPER, FEEDER
 
-    intakePivot.setDefaultCommand(intakePivot.runDutyCycle(() -> 0.6 * (Copilot.getLeftX())));
+    intakePivot.setDefaultCommand(intakePivot.runDutyCycle(() -> 0.2 * (Copilot.getLeftY())));
+    // intakePivot.setDefaultCommand(intakePivot.stop());
 
     intakeRoller.setDefaultCommand(
         intakeRoller.runIntakeRollers(
             () ->
-                .65
+                .55
                     * (Copilot.getLeftTriggerAxis()
                         - Copilot.getRightTriggerAxis()))); // NEGATIVE RUNS THRU
     

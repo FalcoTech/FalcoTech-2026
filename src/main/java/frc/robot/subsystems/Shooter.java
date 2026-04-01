@@ -23,6 +23,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -54,6 +55,8 @@ public class Shooter extends SubsystemBase {
       new SparkMax(CAN_IDs.FLYWHEEL_MOTOR_LEFT, MotorType.kBrushless);
   private final SparkMax sparkRight =
       new SparkMax(CAN_IDs.FLYWHEEL_MOTOR_RIGHT, MotorType.kBrushless);
+
+  public Servo hoodServo = new Servo(0);
 
   private SmartMotorControllerConfig smcConfig =
       new SmartMotorControllerConfig(this)
@@ -116,6 +119,7 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
     flywheel.updateTelemetry();
     SmartDashboard.putNumber("Flywheel Velocity", flywheel.getSpeed().in(RPM));
+
   }
 
   @Override
@@ -227,4 +231,6 @@ public class Shooter extends SubsystemBase {
   // public Command setShooterToTargetSpeed(){
   // return setAngularVelocity(RPM.of(ShotCalculator))
   // }
+
+  
 }

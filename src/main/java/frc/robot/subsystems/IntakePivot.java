@@ -53,9 +53,9 @@ public class IntakePivot extends SubsystemBase {
           // In this example gearbox(3,4) is the same as gearbox("3:1","4:1") which corresponds to
           // the
           // gearbox attached to your motor.
-          .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 100)))
+          .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 9, 2)))
           // Motor properties to prevent over currenting.
-          .withMotorInverted(true)
+          .withMotorInverted(false)
           .withIdleMode(MotorMode.BRAKE)
           .withStatorCurrentLimit(Amps.of(40));
 
@@ -71,6 +71,7 @@ public class IntakePivot extends SubsystemBase {
           // .withStartingHeight(Inches.of(0.5)) // Starting height of the IntakeSlide
           .withTelemetry("IntakePivot", TelemetryVerbosity.LOW) // Telemetry Name
           .withMass(Pounds.of(1)) // Mass of the carraige
+          .withStartingPosition(Degrees.of(0))
           //   .Wi(Pounds.of(1)) // Weight of the carriage.
           .withHardLimit(Degrees.of(0), Degrees.of(90)) // Hard limits defined
           .withSoftLimits(Degrees.of(0), Degrees.of(90)); // Limits imposed on the PID controller.
