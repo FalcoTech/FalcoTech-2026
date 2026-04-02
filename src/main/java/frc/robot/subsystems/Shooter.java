@@ -119,7 +119,6 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
     flywheel.updateTelemetry();
     SmartDashboard.putNumber("Flywheel Velocity", flywheel.getSpeed().in(RPM));
-
   }
 
   @Override
@@ -232,5 +231,4 @@ public class Shooter extends SubsystemBase {
   // return setAngularVelocity(RPM.of(ShotCalculator))
   // }
 
-  
 }

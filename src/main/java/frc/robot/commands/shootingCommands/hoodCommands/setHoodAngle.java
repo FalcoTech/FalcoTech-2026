@@ -4,14 +4,13 @@
 
 package frc.robot.commands.shootingCommands.hoodCommands;
 
-import com.pathplanner.lib.config.RobotConfig;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class setHoodAngle extends Command {
   private double commandedPos;
+
   /** Creates a new setHoodAngle. */
   public setHoodAngle(double angle) {
     // Use addRequirements() here to declare subsystem dependencies.

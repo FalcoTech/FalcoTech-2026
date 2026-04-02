@@ -7,7 +7,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -30,7 +29,7 @@ import frc.robot.commands.shootingCommands.hoodCommands.setHoodAngle;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
-//import frc.robot.subsystems.HopperPush;
+// import frc.robot.subsystems.HopperPush;
 import frc.robot.subsystems.IntakePivot;
 // import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.IntakeRoller;
@@ -87,8 +86,8 @@ public class RobotContainer {
   public static final IntakeRoller intakeRoller = new IntakeRoller();
   public static final IntakePivot intakePivot = new IntakePivot();
   public static final Feeder feeder = new Feeder();
-//   public static final HopperPush hopperPush = new HopperPush();
-public static final SpinnerIndex spindexer = new SpinnerIndex();
+  //   public static final HopperPush hopperPush = new HopperPush();
+  public static final SpinnerIndex spindexer = new SpinnerIndex();
   public static final LEDS leds = new LEDS();
   public static final Turret turret = new Turret();
   public static final Shooter shooter = new Shooter();
@@ -102,7 +101,7 @@ public static final SpinnerIndex spindexer = new SpinnerIndex();
   public RobotContainer() {
     // drivetrain.configNeutralMode(NeutralModeValue.Coast);
 
-    DriverStation.silenceJoystickConnectionWarning(false); // Changed to false for comps
+    DriverStation.silenceJoystickConnectionWarning(true); // Change to false for comps
     RegisterNamedCommands();
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Mode", autoChooser);
@@ -127,17 +126,20 @@ public static final SpinnerIndex spindexer = new SpinnerIndex();
                 drive
                     .withVelocityX(
                         -Pilot.getLeftY()
-                            * (Pilot.leftBumper().getAsBoolean() || Pilot.rightBumper().getAsBoolean()
+                            * (Pilot.leftBumper().getAsBoolean()
+                                    || Pilot.rightBumper().getAsBoolean()
                                 ? (MaxSpeed * .2)
                                 : MaxSpeed)) // Drive forward with negative Y (forward)
                     .withVelocityY(
                         -Pilot.getLeftX()
-                            * (Pilot.leftBumper().getAsBoolean() || Pilot.rightBumper().getAsBoolean()
+                            * (Pilot.leftBumper().getAsBoolean()
+                                    || Pilot.rightBumper().getAsBoolean()
                                 ? (MaxSpeed * .2)
                                 : MaxSpeed)) // Drive left with negative X (left)
                     .withRotationalRate(
                         -Pilot.getRightX()
-                            * (Pilot.leftBumper().getAsBoolean() || Pilot.rightBumper().getAsBoolean()
+                            * (Pilot.leftBumper().getAsBoolean()
+                                    || Pilot.rightBumper().getAsBoolean()
                                 ? MaxAngularRate * .85
                                 : MaxAngularRate)) // Drive counterclockwise with negative X (left)
             ));
@@ -209,8 +211,10 @@ public static final SpinnerIndex spindexer = new SpinnerIndex();
                 .55
                     * (Copilot.getLeftTriggerAxis()
                         - Copilot.getRightTriggerAxis()))); // NEGATIVE RUNS THRU
-    
-    spindexer.setDefaultCommand(spindexer.runSpinnerIndex(() -> 0.4 * (Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis())));
+
+    spindexer.setDefaultCommand(
+        spindexer.runSpinnerIndex(
+            () -> 0.4 * (Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis())));
 
     // Copilot.rightBumper().whileTrue(intakeSlide.setHeight(Inches.of(10))); //Does not work
     // currently
