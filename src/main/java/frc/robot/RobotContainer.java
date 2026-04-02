@@ -4,15 +4,25 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.locks.Condition;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.util.FlippingUtil;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathPlanningConstants;
 import frc.robot.commands.shootingCommands.aimTurretAtTarget;
 import frc.robot.commands.shootingCommands.feedWhenReady;
@@ -264,6 +275,15 @@ public class RobotContainer {
   }
 
   public boolean isNearTrench() {
+    Pose2d robotPose = drivetrain.getState().Pose;
+
+    Translation2d robotPositionBlue;
+      robotPositionBlue = FlippingUtil.flipFieldPosition(robotPose.getTranslation());
+
+    if (FieldConstants.BLUEOUTPOST_ELLIPSE2D.contains(robotPositionBlue) || 
+    (FieldConstants.BLUEHUMAN_ELLIPSE2D.contains(robotPositionBlue))) {
+        return true;
+    }
     // TODO: Implement this based on the following pseudocode:
     // Get current robot position
     // check if the robot position is within either a box or circle around any trench using .contains()
