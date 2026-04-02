@@ -127,17 +127,17 @@ public static final SpinnerIndex spindexer = new SpinnerIndex();
                 drive
                     .withVelocityX(
                         -Pilot.getLeftY()
-                            * (Pilot.leftBumper().getAsBoolean()
+                            * (Pilot.leftBumper().getAsBoolean() || Pilot.rightBumper().getAsBoolean()
                                 ? (MaxSpeed * .2)
                                 : MaxSpeed)) // Drive forward with negative Y (forward)
                     .withVelocityY(
                         -Pilot.getLeftX()
-                            * (Pilot.leftBumper().getAsBoolean()
+                            * (Pilot.leftBumper().getAsBoolean() || Pilot.rightBumper().getAsBoolean()
                                 ? (MaxSpeed * .2)
                                 : MaxSpeed)) // Drive left with negative X (left)
                     .withRotationalRate(
                         -Pilot.getRightX()
-                            * (Pilot.leftBumper().getAsBoolean()
+                            * (Pilot.leftBumper().getAsBoolean() || Pilot.rightBumper().getAsBoolean()
                                 ? MaxAngularRate * .85
                                 : MaxAngularRate)) // Drive counterclockwise with negative X (left)
             ));
@@ -198,7 +198,9 @@ public static final SpinnerIndex spindexer = new SpinnerIndex();
 
     // INTAKE, HOPPER, FEEDER
 
-    intakePivot.setDefaultCommand(intakePivot.runDutyCycle(() -> 0.2 * (Copilot.getLeftY())));
+    intakePivot.setDefaultCommand(intakePivot.runDutyCycle(() -> 0.3 * (Copilot.getLeftY())));
+    // Copilot.rightStick().onTrue(intakePivot.setAngle(Degrees.of(90)));
+    // Copilot.leftStick().onTrue(intakePivot.setAngle(Degrees.of(145)));
     // intakePivot.setDefaultCommand(intakePivot.stop());
 
     intakeRoller.setDefaultCommand(
