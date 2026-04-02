@@ -57,9 +57,8 @@ public class Turret extends SubsystemBase {
 
   private final TalonFX turretMotor = new TalonFX(CAN_IDs.TURRET_MOTOR);
 
-
   private final Servo turretHood = new Servo(0);
-    // TODO: Add additional servos and fill out commands as needed
+  // TODO: Add additional servos and fill out commands as needed
 
   private final SmartMotorControllerConfig motorConfig =
       new SmartMotorControllerConfig(this)
