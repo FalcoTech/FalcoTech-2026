@@ -42,7 +42,8 @@ public class IntakePivot extends SubsystemBase {
           // .withMechanismCircumference(Inches.of(Inches.of(0.25).in(Inches) * 22))
           // Feedback Constants (PID Constants)
           .withClosedLoopController(
-              0.25, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+              4, 0, 0.2)
+              // DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(180))
           // .withSimClosedLoopController(
           //     25, 0, 0, InchesPerSecond.of(2), InchesPerSecondPerSecond.of(2))
           // Feedforward Constants
@@ -58,7 +59,7 @@ public class IntakePivot extends SubsystemBase {
           // Motor properties to prevent over currenting.
           // .withMotorInverted(true)
           .withIdleMode(MotorMode.BRAKE)
-          .withStatorCurrentLimit(Amps.of(40));
+          .withStatorCurrentLimit(Amps.of(60));
 
   // Vendor motor controller object
   SparkMax spark = new SparkMax(CAN_IDs.INTAKEPIVOT_MOTOR, MotorType.kBrushless);
@@ -69,13 +70,12 @@ public class IntakePivot extends SubsystemBase {
 
   ArmConfig armConfig =
       new ArmConfig(sparkSmartMotorController)
-          // .withStartingHeight(Inches.of(0.5)) // Starting height of the IntakeSlide
           .withTelemetry("IntakePivot", TelemetryVerbosity.HIGH) // Telemetry Name
           .withMass(Pounds.of(5)) // Mass of the Arm
+          .withLength(Inches.of(14))
           .withStartingPosition(Degrees.of(0))
-          .withLength(Inches.of(14.75))
-          .withHardLimit(Degrees.of(0), Degrees.of(60)) // Hard limits defined
-          .withSoftLimits(Degrees.of(0), Degrees.of(60)); // Limits imposed on the PID controller.
+          .withHardLimit(Degrees.of(-10), Degrees.of(90)) // Hard limits defined
+          .withSoftLimits(Degrees.of(-5), Degrees.of(85)); // Limits imposed on the PID controller.
 
   private Arm intakePivot = new Arm(armConfig);
 
