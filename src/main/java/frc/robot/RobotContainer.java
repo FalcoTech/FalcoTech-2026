@@ -40,6 +40,7 @@ import frc.robot.commands.shootingCommands.feedWhenReady;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.IntakePivot;
 import frc.robot.subsystems.IntakeRoller;
 import frc.robot.subsystems.LEDS;
@@ -99,6 +100,7 @@ public class RobotContainer {
   public static final LEDS leds = new LEDS();
   public static final Turret turret = new Turret();
   public static final Shooter shooter = new Shooter();
+  public static final Hood hood = new Hood();
 
   public static final ShotCalculator shotCalculator = new ShotCalculator(drivetrain);
 
@@ -181,10 +183,10 @@ public class RobotContainer {
     turret.setDefaultCommand(turret.stop());
     shooter.setDefaultCommand(shooter.stop());
 
-    Copilot.leftBumper().onTrue(turret.hoodUp());
-    Copilot.rightBumper().onTrue(turret.hoodDown());
+    Copilot.leftBumper().onTrue(hood.hoodUp());
+    Copilot.rightBumper().onTrue(hood.hoodDown());
 
-    new Trigger(this::isNearTrench).whileTrue(turret.hoodDown());
+    new Trigger(this::isNearTrench).whileTrue(hood.hoodDown());
     // Copilot.start().whileTrue(shooter.sysId());
 
     // Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.set(.65)));
