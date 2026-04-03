@@ -24,7 +24,6 @@ public class SpinnerIndex extends SubsystemBase {
   private final TalonFX SpinnerIndexmotorleft = new TalonFX(CAN_IDs.SPINNERINDEXLEFT_MOTOR);
 
   /** Creates a new SpinnerIndex. */
-  // TODO: Rebuild the Spindexer as a YAMS flywheel subsystem; DO IN NEW FILE based on Shooter
   public SpinnerIndex() {
     var talonFXConfiguratorright = SpinnerIndexmotorright.getConfigurator();
     var motorConfigsright = new MotorOutputConfigs();

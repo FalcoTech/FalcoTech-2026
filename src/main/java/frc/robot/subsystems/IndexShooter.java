@@ -8,10 +8,13 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -35,9 +38,9 @@ import yams.motorcontrollers.remote.TalonFXWrapper;
  * <p>A "Use Turret" SmartDashboard toggle allows the turret to be disabled on the fly for debugging
  * without redeploying.
  */
+// TODO: Finish the YAMS rewrite by changing values
+
 public class IndexShooter extends SubsystemBase {
-  // private final SparkMax indexshooterMotor =
-  // new SparkMax(CAN_IDs.TURRET_MOTOR, SparkMax.MotorType.kBrushless);
 
   private final TalonFX indexshooterMotor = new TalonFX(CAN_IDs.indexshooterMotor);
 
@@ -46,16 +49,17 @@ public class IndexShooter extends SubsystemBase {
           .withControlMode(ControlMode.CLOSED_LOOP)
           .withClosedLoopController(1, 0, 0)
           .withFeedforward(new SimpleMotorFeedforward(.3, 0, 0.0))
-          // .withClosedLoopTolerance(Degrees.of(0.5)) //doesn't work with TalonFX
           // Configure Motor and Mechanism properties
-          // .withGearing(new MechanismGearing(GearBox.fromReductionStages(5, 10)))
           .withGearing(new MechanismGearing(GearBox.fromReductionStages(1)))
           .withIdleMode(MotorMode.COAST)
           .withMotorInverted(true)
-          //         // Setup Telemetry
+          .withFollowers(Pair.of(indexshooterMotor, true))
+          // Setup Telemetry
           .withTelemetry("TurretMotor", TelemetryVerbosity.LOW)
-          //         // Power Optimization
-          .withStatorCurrentLimit(Amps.of(20));
+          // Power Optimization
+          .withSupplyCurrentLimit(Amps.of(30))
+          .withStatorCurrentLimit(Amps.of(20))
+          .withVoltageCompensation(Volts.of(12));
 
   private final SmartMotorController motor =
       new TalonFXWrapper(indexshooterMotor, DCMotor.getKrakenX60(2), smcConfig);
@@ -76,15 +80,7 @@ public class IndexShooter extends SubsystemBase {
   private final FlyWheel flywheel = new FlyWheel(flywheelConfig);
 
   /* Creates new Shooter */
-  public IndexShooter() {
-    // Idle mode is burned to flash via REV Hardware Client — verify it here at startup.
-    // If this warning fires, reconnect the motor to the REV client and set coast mode, then burn.
-
-    // if (sparkRight.configAccessor.getIdleMode() != IdleMode.kCoast) {
-
-    System.err.println(
-        "[Shooter] WARNING: Right flywheel follower idle mode is not Coast! Burn with REV Hardware Client.");
-  }
+  public IndexShooter() {}
 
   @Override
   public void periodic() {
@@ -111,5 +107,14 @@ public class IndexShooter extends SubsystemBase {
   /** Stops the flywheel (duty cycle 0). */
   public Command stop() {
     return flywheel.set(0);
+  }
+
+  /**
+   * Runs the flywheel at a fixed angular velocity setpoint using closed-loop control.
+   *
+   * @param targetVelocity desired wheel speed (e.g. {@code RPM.of(4000)})
+   */
+  public Command setVelocity(AngularVelocity targetVelocity) {
+    return flywheel.run(targetVelocity);
   }
 }

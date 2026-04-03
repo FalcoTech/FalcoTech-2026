@@ -22,6 +22,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -106,6 +107,9 @@ public class Shooter extends SubsystemBase {
     // Idle mode is burned to flash via REV Hardware Client — verify it here at startup.
     // If this warning fires, reconnect the motor to the REV client and set coast mode, then burn.
     if (sparkRight.configAccessor.getIdleMode() != IdleMode.kCoast) {
+      DriverStation.reportWarning(
+          "[Shooter] WARNING: Right flywheel follower idle mode is not Coast! Burn with REV Hardware Client.",
+          false);
       System.err.println(
           "[Shooter] WARNING: Right flywheel follower idle mode is not Coast! Burn with REV Hardware Client.");
     }
