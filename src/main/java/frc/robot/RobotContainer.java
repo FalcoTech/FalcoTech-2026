@@ -212,7 +212,7 @@ public class RobotContainer {
 
     // INTAKE, HOPPER, FEEDER
 
-    intakePivot.setDefaultCommand(intakePivot.runDutyCycle(() -> 0.3 * (Copilot.getLeftY())));
+    intakePivot.setDefaultCommand(intakePivot.runDutyCycle(() -> -0.3 * (Copilot.getLeftY())));
     // intakePivot.setDefaultCommand(
     //     intakePivot.setAngle(() -> Degrees.of(90).times(Copilot.getLeftY())));
     Copilot.rightStick().toggleOnTrue((intakePivot.setAngle(Degrees.of(80))));

@@ -50,9 +50,9 @@ public class IntakePivot extends SubsystemBase {
           // gearbox attached to your motor.
           .withGearing(new MechanismGearing(GearBox.fromReductionStages(9, 2)))
           // Motor properties to prevent over currenting.
-          // .withMotorInverted(true)
+          .withMotorInverted(true)
           .withIdleMode(MotorMode.BRAKE)
-          .withStatorCurrentLimit(Amps.of(60));
+          .withStatorCurrentLimit(Amps.of(40));
 
   // Vendor motor controller object
   SparkMax spark = new SparkMax(CAN_IDs.INTAKEPIVOT_MOTOR, MotorType.kBrushless);
