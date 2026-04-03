@@ -228,6 +228,8 @@ public class RobotContainer {
                     * (Copilot.getLeftTriggerAxis()
                         - Copilot.getRightTriggerAxis()))); // NEGATIVE RUNS THRU
 
+    intakePivot.isInStoredPosition().whileTrue(intakeRoller.stopIntakeRollers());
+
     spindexer.setDefaultCommand(
         spindexer.runSpinnerIndex(
             () -> 0.4 * (Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis())));

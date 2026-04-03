@@ -14,8 +14,10 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CAN_IDs;
 import java.util.function.Supplier;
 import yams.gearing.GearBox;
@@ -78,6 +80,7 @@ public class IntakePivot extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     intakePivot.updateTelemetry();
+    SmartDashboard.putNumber("IntakePivot/Angle", intakePivot.getAngle().in(Degrees)); 
   }
 
   @Override
@@ -127,6 +130,11 @@ public class IntakePivot extends SubsystemBase {
 
   public Command runDutyCycle(double dutyCycle) {
     return intakePivot.set(dutyCycle);
+  }
+
+  public Trigger isInStoredPosition() {
+    return intakePivot
+        .isNear(Degrees.of(90), Degrees.of(5));
   }
 
   public Command stop() {
