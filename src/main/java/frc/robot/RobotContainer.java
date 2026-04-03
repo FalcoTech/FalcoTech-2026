@@ -198,8 +198,8 @@ public class RobotContainer {
     //         feeder
     //             .runFeeder(() -> 0.5)
     //             .alongWith(hopperPush.runHopperPush(() -> -0.5))); // RUNS THROUGH ROBOT
-    Copilot.b().onTrue(new setHoodAngle(.9));
-    Copilot.x().onTrue(new setHoodAngle(.1));
+    Copilot.b().onTrue(hood.setHoodPosition(.9));
+    Copilot.x().onTrue(hood.setHoodPosition(.1));
 
     Copilot.y()
         .whileTrue(

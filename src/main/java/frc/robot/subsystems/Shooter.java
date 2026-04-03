@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
@@ -59,8 +58,9 @@ public class Shooter extends SubsystemBase {
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
           // Feedback Constants (PID Constants)
-          .withClosedLoopController(0.0125, 0, 0, RPM.of(5000), DegreesPerSecondPerSecond.of(20000))
-          .withSimClosedLoopController(.2, 0, 0, RPM.of(5700), DegreesPerSecondPerSecond.of(20000))
+          .withClosedLoopController(0.0125, 0, 0)
+          // .withTrapezoidalProfile(RPM.of(5000), DegreesPerSecondPerSecond.of(20000))
+          .withSimClosedLoopController(.2, 0, 0)
           .withFeedforward(new SimpleMotorFeedforward(0.124, .124, 0))
           .withSimFeedforward(new SimpleMotorFeedforward(0, .124, 0))
           // Telemetry name and verbosity level

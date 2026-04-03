@@ -15,7 +15,7 @@ import frc.robot.Constants.CAN_IDs;
 import java.util.function.Supplier;
 
 /**
- * Dual -motor subsystem that spins game pieces through the hopper toward the feeder. Runs 2
+ * Dual-motor subsystem that spins game pieces through the hopper toward the feeder. Runs 2
  * brushless motors via TalonFX in coast mode with a 30 A current limit.
  */
 public class SpinnerIndex extends SubsystemBase {

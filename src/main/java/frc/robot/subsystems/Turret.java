@@ -59,14 +59,13 @@ public class Turret extends SubsystemBase {
   private final SmartMotorControllerConfig motorConfig =
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
-          .withClosedLoopController(
-              35,
-              0,
-              .75,
+          .withClosedLoopController(35, 0, .75)
+          .withTrapezoidalProfile(
               DegreesPerSecond.of(1080),
               DegreesPerSecondPerSecond.of(2160)) // Vel = 1080, Accel = 2160
-          // .withLinearClosedLoopController(false)
-          .withFeedforward(new SimpleMotorFeedforward(.3, 0, 0.0))
+          .withSimClosedLoopController(20,0,1))
+          .withFeedforward(new SimpleMotorFeedforward(.3, 0, 0))
+          .withSimFeedforward(new SimpleMotorFeedforward(0, .3, 0))
           // .withClosedLoopTolerance(Degrees.of(0.5)) //doesn't work with TalonFX
           // Configure Motor and Mechanism properties
           // .withGearing(new MechanismGearing(GearBox.fromReductionStages(5, 10)))
@@ -87,7 +86,7 @@ public class Turret extends SubsystemBase {
 
   private final PivotConfig turretConfig =
       new PivotConfig(turretSMC)
-          .withStartingPosition(Degrees.of(90))
+          .withStartingPosition(Degrees.of(-90))
           // Update to have 0 be forwards to reduce math overheard
           // .withStartingPosition(HARD_CLOCKWISE_LIMIT))?
           .withHardLimit(

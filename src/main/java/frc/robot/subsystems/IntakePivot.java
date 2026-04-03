@@ -6,8 +6,6 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 
@@ -41,14 +39,9 @@ public class IntakePivot extends SubsystemBase {
           // rotations to Inches.
           // .withMechanismCircumference(Inches.of(Inches.of(0.25).in(Inches) * 22))
           // Feedback Constants (PID Constants)
-          .withClosedLoopController(
-              4, 0, 0.2)
-              // DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(180))
-          // .withSimClosedLoopController(
-          //     25, 0, 0, InchesPerSecond.of(2), InchesPerSecondPerSecond.of(2))
+          .withClosedLoopController(4, 0, 0.2)
           // Feedforward Constants
           .withFeedforward(new ArmFeedforward(0.011, 0.8177, 0.01))
-          // .withSimFeedforward(new ElevatorFeedforward(.1, 0, 0))
           // Telemetry name and verbosity level
           .withTelemetry("PivotMotor", TelemetryVerbosity.HIGH)
           // Gearing from the motor rotor to final shaft.
@@ -73,7 +66,7 @@ public class IntakePivot extends SubsystemBase {
           .withTelemetry("IntakePivot", TelemetryVerbosity.HIGH) // Telemetry Name
           .withMass(Pounds.of(5)) // Mass of the Arm
           .withLength(Inches.of(14))
-          .withStartingPosition(Degrees.of(0))
+          .withStartingPosition(Degrees.of(90))
           .withHardLimit(Degrees.of(-10), Degrees.of(90)) // Hard limits defined
           .withSoftLimits(Degrees.of(-5), Degrees.of(85)); // Limits imposed on the PID controller.
 

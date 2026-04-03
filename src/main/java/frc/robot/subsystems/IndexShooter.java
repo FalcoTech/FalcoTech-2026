@@ -5,8 +5,6 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
@@ -46,19 +44,13 @@ public class IndexShooter extends SubsystemBase {
   private final SmartMotorControllerConfig smcConfig =
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
-          .withClosedLoopController(
-              35,
-              0,
-              .75,
-              DegreesPerSecond.of(1080),
-              DegreesPerSecondPerSecond.of(2160)) // Vel = 1080, Accel = 2160
-          // .withLinearClosedLoopController(false)
+          .withClosedLoopController(1, 0, 0)
           .withFeedforward(new SimpleMotorFeedforward(.3, 0, 0.0))
           // .withClosedLoopTolerance(Degrees.of(0.5)) //doesn't work with TalonFX
           // Configure Motor and Mechanism properties
           // .withGearing(new MechanismGearing(GearBox.fromReductionStages(5, 10)))
-          .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 10)))
-          .withIdleMode(MotorMode.BRAKE)
+          .withGearing(new MechanismGearing(GearBox.fromReductionStages(1)))
+          .withIdleMode(MotorMode.COAST)
           .withMotorInverted(true)
           //         // Setup Telemetry
           .withTelemetry("TurretMotor", TelemetryVerbosity.LOW)
