@@ -66,9 +66,9 @@ public class IntakePivot extends SubsystemBase {
           .withTelemetry("IntakePivot", TelemetryVerbosity.HIGH) // Telemetry Name
           .withMass(Pounds.of(5)) // Mass of the Arm
           .withLength(Inches.of(14))
-          .withStartingPosition(Degrees.of(90))
-          .withHardLimit(Degrees.of(-10), Degrees.of(90)) // Hard limits defined
-          .withSoftLimits(Degrees.of(-5), Degrees.of(85)); // Limits imposed on the PID controller.
+          .withStartingPosition(Degrees.of(110))
+          .withHardLimit(Degrees.of(-5), Degrees.of(90)) // Hard limits defined
+          .withSoftLimits(Degrees.of(0), Degrees.of(85)); // Limits imposed on the PID controller.
 
   private Arm intakePivot = new Arm(armConfig);
 
