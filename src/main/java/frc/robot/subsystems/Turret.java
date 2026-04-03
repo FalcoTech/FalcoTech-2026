@@ -63,7 +63,7 @@ public class Turret extends SubsystemBase {
           .withTrapezoidalProfile(
               DegreesPerSecond.of(1080),
               DegreesPerSecondPerSecond.of(2160)) // Vel = 1080, Accel = 2160
-          .withSimClosedLoopController(20,0,1))
+          .withSimClosedLoopController(20, 0, 1)
           .withFeedforward(new SimpleMotorFeedforward(.3, 0, 0))
           .withSimFeedforward(new SimpleMotorFeedforward(0, .3, 0))
           // .withClosedLoopTolerance(Degrees.of(0.5)) //doesn't work with TalonFX
@@ -72,9 +72,9 @@ public class Turret extends SubsystemBase {
           .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 10)))
           .withIdleMode(MotorMode.BRAKE)
           .withMotorInverted(true)
-          //         // Setup Telemetry
+          // Setup Telemetry
           .withTelemetry("TurretMotor", TelemetryVerbosity.LOW)
-          //         // Power Optimization
+          // Power Optimization
           .withStatorCurrentLimit(Amps.of(20));
   // .withClosedLoopRampRate(Seconds.of(0.25))
   // // .withOpenLoopRampRate(Seconds.of(0.25))
