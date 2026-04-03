@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Hood extends SubsystemBase {
@@ -21,14 +20,18 @@ public class Hood extends SubsystemBase {
   }
 
   public Command hoodUp() {
-    return Commands.runOnce(() -> turretHood.set(1));
+    return this.runOnce(() -> turretHood.setPosition(1));
   }
 
   public Command hoodDown() {
-    return Commands.runOnce(() -> turretHood.set(0));
+    return this.runOnce(() -> turretHood.setPosition(0));
   }
 
   public Command setHoodPosition(double position) {
-    return Commands.runOnce(() -> turretHood.setPosition(position));
+    return this.runOnce(() -> turretHood.setPosition(position));
+  }
+
+  public void set(double position) {
+    turretHood.setPosition(position);
   }
 }

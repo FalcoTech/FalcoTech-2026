@@ -203,12 +203,16 @@ public class RobotContainer {
                 .alongWith(new feedWhenReady()));
 
     // HOOD BUTTONS
-    Copilot.leftBumper().onTrue(hood.hoodDown());
-    Copilot.rightBumper().onTrue(hood.hoodUp());
+    // Copilot.leftBumper().onTrue(new setHoodAngle(0));//Hood down
+    Copilot.leftBumper().onTrue(hood.setHoodPosition(0));
+    // Copilot.rightBumper().onTrue(new setHoodAngle(1)); //Hood up
+    Copilot.rightBumper().onTrue(hood.setHoodPosition(1));
     Copilot.b().onTrue(hood.setHoodPosition(.9));
     Copilot.x().onTrue(hood.setHoodPosition(.1));
 
-    new Trigger(this::isNearTrench).whileTrue(hood.hoodDown().repeatedly()).onFalse(hood.hoodUp());
+    new Trigger(this::isNearTrench)
+        .whileTrue(hood.setHoodPosition(0).repeatedly())
+        .onFalse(hood.setHoodPosition(1));
 
     // INTAKE, HOPPER, FEEDER
 
