@@ -106,7 +106,7 @@ public class RobotContainer {
   public RobotContainer() {
     // drivetrain.configNeutralMode(NeutralModeValue.Coast);
 
-    DriverStation.silenceJoystickConnectionWarning(false); // Changed to false for comps
+    DriverStation.silenceJoystickConnectionWarning(true); // Change to false for comps
     RegisterNamedCommands();
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Mode", autoChooser);
@@ -132,16 +132,19 @@ public class RobotContainer {
                     .withVelocityX(
                         -Pilot.getLeftY()
                             * (Pilot.leftBumper().getAsBoolean()
+                                    || Pilot.rightBumper().getAsBoolean()
                                 ? (MaxSpeed * .2)
                                 : MaxSpeed)) // Drive forward with negative Y (forward)
                     .withVelocityY(
                         -Pilot.getLeftX()
                             * (Pilot.leftBumper().getAsBoolean()
+                                    || Pilot.rightBumper().getAsBoolean()
                                 ? (MaxSpeed * .2)
                                 : MaxSpeed)) // Drive left with negative X (left)
                     .withRotationalRate(
                         -Pilot.getRightX()
                             * (Pilot.leftBumper().getAsBoolean()
+                                    || Pilot.rightBumper().getAsBoolean()
                                 ? MaxAngularRate * .85
                                 : MaxAngularRate)) // Drive counterclockwise with negative X (left)
             ));
@@ -190,6 +193,14 @@ public class RobotContainer {
                 .alongWith(
                     shooter.setAngularVelocity(() -> shotCalculator.getIdealShooterVelocity()))
                 .alongWith(new feedWhenReady())); // aim + auto-feed when ready
+    // Copilot.x()
+    //     .whileTrue(
+    //         feeder
+    //             .runFeeder(() -> 0.5)
+    //             .alongWith(hopperPush.runHopperPush(() -> -0.5))); // RUNS THROUGH ROBOT
+    Copilot.b().onTrue(new setHoodAngle(.9));
+    Copilot.x().onTrue(new setHoodAngle(.1));
+
     Copilot.y()
         .whileTrue(
             new aimTurretAtTarget()
@@ -198,12 +209,15 @@ public class RobotContainer {
 
     // INTAKE, HOPPER, FEEDER
 
-    intakePivot.setDefaultCommand(intakePivot.runDutyCycle(() -> 0.25 * (Copilot.getLeftX())));
+    intakePivot.setDefaultCommand(intakePivot.runDutyCycle(() -> 0.3 * (Copilot.getLeftY())));
+    // Copilot.rightStick().onTrue(intakePivot.setAngle(Degrees.of(90)));
+    // Copilot.leftStick().onTrue(intakePivot.setAngle(Degrees.of(145)));
+    // intakePivot.setDefaultCommand(intakePivot.stop());
 
     intakeRoller.setDefaultCommand(
         intakeRoller.runIntakeRollers(
             () ->
-                .65
+                .55
                     * (Copilot.getLeftTriggerAxis()
                         - Copilot.getRightTriggerAxis()))); // NEGATIVE RUNS THRU
 

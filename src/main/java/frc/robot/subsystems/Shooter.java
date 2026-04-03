@@ -227,4 +227,5 @@ public class Shooter extends SubsystemBase {
   // public Command setShooterToTargetSpeed(){
   // return setAngularVelocity(RPM.of(ShotCalculator))
   // }
+
 }

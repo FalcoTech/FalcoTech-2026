@@ -36,7 +36,7 @@ public final class Constants {
     // Intake & Feeder Motors
     public static final int INTAKEROLLER_MOTOR = 41;
     public static final int FEEDER_MOTOR = 30;
-    public static final int INTAKEPIVOT_MOTOR = 40;
+    public static final int INTAKEPIVOT_MOTOR = 31;
     public static final int SPINNERINDEXLEFT_MOTOR = 46;
     public static final int SPINNERINDEXRIGHT_MOTOR = 45;
     public static final int indexshooterMotor = 99;

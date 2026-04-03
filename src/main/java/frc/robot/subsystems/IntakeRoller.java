@@ -32,7 +32,7 @@ public class IntakeRoller extends SubsystemBase {
     intakerollerMotorconfig.idleMode(IdleMode.kBrake);
     intakerollerMotorconfig.smartCurrentLimit(40);
     intakerollerMotorconfig.voltageCompensation(12);
-    intakerollerMotorconfig.inverted(true);
+    intakerollerMotorconfig.inverted(false);
 
     intakeRollerMotor.configure(
         intakerollerMotorconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

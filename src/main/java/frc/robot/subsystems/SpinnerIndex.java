@@ -36,6 +36,8 @@ public class SpinnerIndex extends SubsystemBase {
     var motorConfigsleft = new MotorOutputConfigs();
     motorConfigsleft.Inverted = InvertedValue.Clockwise_Positive;
 
+    talonFXConfiguratorright.apply(motorConfigsleft);
+
     SpinnerIndexmotorleft.setControl(
         new Follower(CAN_IDs.SPINNERINDEXRIGHT_MOTOR, MotorAlignmentValue.Opposed));
   }
