@@ -222,11 +222,9 @@ public class RobotContainer {
     // Copilot.getLeftTriggerAxis()))); //Works
     feeder.setDefaultCommand(feeder.stopFeeder());
 
-
     // spindexer.setDefaultCommand(spindexer.stopSpinnerIndex());
     Copilot.povLeft().whileTrue(spindexer.runSpinnerIndex(0.25));
     Copilot.povRight().whileTrue(spindexer.runSpinnerIndex(-0.25));
-
 
     Copilot.povUp().onTrue(Commands.runOnce(() -> manualRPM += 250));
     Copilot.povDown().onTrue(Commands.runOnce(() -> manualRPM -= 250));
@@ -288,10 +286,12 @@ public class RobotContainer {
     }
     // TODO: Implement this based on the following pseudocode:
     // Get current robot position
-    // check if the robot position is within either a box or circle around any trench using .contains()
-    // Start with the blue alliance trench and then do use the fliputil like in shotcalculator to get the red alliance trench locations
+    // check if the robot position is within either a box or circle around any trench using
+    // .contains()
+    // Start with the blue alliance trench and then do use the fliputil like in shotcalculator to
+    // get the red alliance trench locations
     // The trench locations can be found using the april tags locations
-    // 
+    //
     // ADD DIMENSIONS TO CONSTANTS
     // return true if the robot is within the defined area, false otherwise
 
