@@ -9,17 +9,12 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.locks.Condition;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.FlippingUtil;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -278,11 +273,11 @@ public class RobotContainer {
     Pose2d robotPose = drivetrain.getState().Pose;
 
     Translation2d robotPositionBlue;
-      robotPositionBlue = FlippingUtil.flipFieldPosition(robotPose.getTranslation());
+    robotPositionBlue = FlippingUtil.flipFieldPosition(robotPose.getTranslation());
 
-    if (FieldConstants.BLUEOUTPOST_ELLIPSE2D.contains(robotPositionBlue) || 
-    (FieldConstants.BLUEHUMAN_ELLIPSE2D.contains(robotPositionBlue))) {
-        return true;
+    if (FieldConstants.BLUEOUTPOST_ELLIPSE2D.contains(robotPositionBlue)
+        || (FieldConstants.BLUEHUMAN_ELLIPSE2D.contains(robotPositionBlue))) {
+      return true;
     }
     // TODO: Implement this based on the following pseudocode:
     // Get current robot position

@@ -58,20 +58,20 @@ public class Shooter extends SubsystemBase {
   private SmartMotorControllerConfig smcConfig =
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
-          //         // Feedback Constants (PID Constants)
+          // Feedback Constants (PID Constants)
           .withClosedLoopController(0.0125, 0, 0, RPM.of(5000), DegreesPerSecondPerSecond.of(20000))
           .withSimClosedLoopController(.2, 0, 0, RPM.of(5700), DegreesPerSecondPerSecond.of(20000))
           .withFeedforward(new SimpleMotorFeedforward(0.124, .124, 0))
           .withSimFeedforward(new SimpleMotorFeedforward(0, .124, 0))
-          //         // Telemetry name and verbosity level
+          // Telemetry name and verbosity level
 
           .withGearing(new MechanismGearing(GearBox.fromStages("1:1")))
 
-          //         // Motor properties to prevent over currenting.
+          // Motor properties to prevent over currenting.
           .withMotorInverted(true)
           .withIdleMode(MotorMode.COAST)
           .withStatorCurrentLimit(Amps.of(40))
-          .withSupplyCurrentLimit(Amps.of(30))
+          // .withSupplyCurrentLimit(Amps.of(30))
           .withTelemetry("FlyWheelMotors", TelemetryVerbosity.LOW)
           .withVoltageCompensation(Volts.of(12))
           .withFollowers(Pair.of(sparkRight, true))

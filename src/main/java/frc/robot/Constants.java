@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.pathplanner.lib.util.FlippingUtil;
-
 import edu.wpi.first.math.geometry.Ellipse2d;
 import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -40,6 +39,7 @@ public final class Constants {
     public static final int INTAKEPIVOT_MOTOR = 40;
     public static final int SPINNERINDEXLEFT_MOTOR = 46;
     public static final int SPINNERINDEXRIGHT_MOTOR = 45;
+    public static final int indexshooterMotor = 99;
 
     // Sensors and other devices could also be added here
   }
@@ -101,13 +101,13 @@ public final class Constants {
     public static final Rectangle2d NEUTRAL_RECTANGLE2D =
         new Rectangle2d(new Translation2d(4.278, -.5), new Translation2d(12.117, 8.5));
 
- 
     public static final Ellipse2d BLUEOUTPOST_ELLIPSE2D =
         new Ellipse2d(new Translation2d(4.635, 7.450), 1);
     public static final Ellipse2d BLUEHUMAN_ELLIPSE2D =
         new Ellipse2d(new Translation2d(4.635, .635), 1);
     public static final Ellipse2d BLUETURN_ELLIPSE2D =
-        new Ellipse2d(FlippingUtil.flipFieldPosition(BLUEOUTPOST_ELLIPSE2D.getCenter().getTranslation()), 1);
+        new Ellipse2d(
+            FlippingUtil.flipFieldPosition(BLUEOUTPOST_ELLIPSE2D.getCenter().getTranslation()), 1);
   }
 
   public static boolean isRedAlliance() {
