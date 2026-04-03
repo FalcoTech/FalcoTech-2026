@@ -50,35 +50,51 @@ public class feedWhenReady extends Command {
     addRequirements(feeder);
   }
 
+  private boolean isTurretReady(double toleranceMult) {
+    return turret
+        .getAngleSetpoint()
+        .map(
+            setpoint ->
+                turret
+                    .isNearAngle(setpoint, Degrees.of(ANGLE_TOLERANCE_DEG).times(toleranceMult))
+                    .getAsBoolean())
+        .orElse(false);
+  }
+
+  private boolean isShooterReady(double toleranceMult) {
+    return shooter
+        .getAngularVelocitySetpoint()
+        .map(
+            setpoint ->
+                shooter
+                    .isNearVelocity(setpoint, RPM.of(VELOCITY_TOLERANCE_RPM).times(toleranceMult))
+                    .getAsBoolean())
+        .orElse(false);
+  }
+
   @Override
   public void execute() {
-    boolean turretReady =
-        turret
-            .getAngleSetpoint()
-            .map(
-                setpoint ->
-                    turret.isNearAngle(setpoint, Degrees.of(ANGLE_TOLERANCE_DEG)).getAsBoolean())
-            .orElse(false);
-    boolean shooterReady =
-        shooter
-            .getAngularVelocitySetpoint()
-            .map(
-                setpoint ->
-                    shooter.isNearVelocity(setpoint, RPM.of(VELOCITY_TOLERANCE_RPM)).getAsBoolean())
-            .orElse(false);
-
     boolean isTargetingHub = RobotContainer.shotCalculator.isTargetingHub();
+    // For non-hub shots, we can be more lenient since they are less sensitive to aiming/speed
+    // This allows the feeder to run sooner, which can help with cycle times
+    boolean nonHubReady = isTurretReady(2.0) && isShooterReady(2.0);
     ChassisSpeeds speeds = RobotContainer.drivetrain.getState().Speeds;
     boolean robotStopped =
+        // Convert to "total" speed and compare to threshold to determine if robot is effectively
+        // stopped
         Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond) < STOPPED_THRESHOLD_MPS;
-    // Non-hub shots : bypass all gates, feed freely
+
+    // Non-hub shots : looser criteria so shooting happens sooner still matter to prevent
+    // ineffective shots
     // Hub shots: require turret aimed, shooter up to speed, and robot stopped
-    boolean shouldFeed = !isTargetingHub || (turretReady && shooterReady && robotStopped);
+    boolean shouldFeed =
+        (!isTargetingHub && nonHubReady)
+            || (isTurretReady(1.0) && isShooterReady(1.0) && robotStopped);
 
     SmartDashboard.putBoolean("FeedWhenReady/isTargetingHub", isTargetingHub);
     SmartDashboard.putBoolean("FeedWhenReady/robotStopped", robotStopped);
-    SmartDashboard.putBoolean("FeedWhenReady/turretReady", turretReady);
-    SmartDashboard.putBoolean("FeedWhenReady/shooterReady", shooterReady);
+    SmartDashboard.putBoolean("FeedWhenReady/turretReady", isTurretReady(1.0));
+    SmartDashboard.putBoolean("FeedWhenReady/shooterReady", isShooterReady(1.0));
     SmartDashboard.putBoolean(
         "FeedWhenReady/turretSetpointPresent", turret.getAngleSetpoint().isPresent());
     SmartDashboard.putBoolean(
