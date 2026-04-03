@@ -96,6 +96,16 @@ public class IntakePivot extends SubsystemBase {
   }
 
   /**
+   * Set the angle of the arm, does not stop when the arm reaches the setpoint.
+   *
+   * @param angle Angle to go to.
+   * @return A command.
+   */
+  public Command setAngle(Supplier<Angle> angle) {
+    return intakePivot.run(angle);
+  }
+
+  /**
    * Set the angle of the arm, ends the command but does not stop the arm when the arm reaches the
    * setpoint.
    *

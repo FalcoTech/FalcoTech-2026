@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -180,10 +181,6 @@ public class RobotContainer {
     turret.setDefaultCommand(turret.stop());
     shooter.setDefaultCommand(shooter.stop());
 
-    Copilot.leftBumper().onTrue(hood.hoodUp());
-    Copilot.rightBumper().onTrue(hood.hoodDown());
-
-    new Trigger(this::isNearTrench).whileTrue(hood.hoodDown().repeatedly()).onFalse(hood.hoodUp());
     // Copilot.start().whileTrue(shooter.sysId());
 
     // Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.set(.65)));
@@ -198,8 +195,6 @@ public class RobotContainer {
     //         feeder
     //             .runFeeder(() -> 0.5)
     //             .alongWith(hopperPush.runHopperPush(() -> -0.5))); // RUNS THROUGH ROBOT
-    Copilot.b().onTrue(hood.setHoodPosition(.9));
-    Copilot.x().onTrue(hood.setHoodPosition(.1));
 
     Copilot.y()
         .whileTrue(
@@ -207,11 +202,21 @@ public class RobotContainer {
                 .alongWith(shooter.setAngularVelocity(() -> RPM.of(manualRPM)))
                 .alongWith(new feedWhenReady()));
 
+    // HOOD BUTTONS
+    Copilot.leftBumper().onTrue(hood.hoodDown());
+    Copilot.rightBumper().onTrue(hood.hoodUp());
+    Copilot.b().onTrue(hood.setHoodPosition(.9));
+    Copilot.x().onTrue(hood.setHoodPosition(.1));
+
+    new Trigger(this::isNearTrench).whileTrue(hood.hoodDown().repeatedly()).onFalse(hood.hoodUp());
+
     // INTAKE, HOPPER, FEEDER
 
     intakePivot.setDefaultCommand(intakePivot.runDutyCycle(() -> 0.3 * (Copilot.getLeftY())));
-    // Copilot.rightStick().onTrue(intakePivot.setAngle(Degrees.of(90)));
-    // Copilot.leftStick().onTrue(intakePivot.setAngle(Degrees.of(145)));
+    // intakePivot.setDefaultCommand(
+    //     intakePivot.setAngle(() -> Degrees.of(90).times(Copilot.getLeftY())));
+    Copilot.rightStick().toggleOnTrue((intakePivot.setAngle(Degrees.of(80))));
+    Copilot.leftStick().toggleOnTrue(intakePivot.setAngle(Degrees.of(5)));
     // intakePivot.setDefaultCommand(intakePivot.stop());
 
     intakeRoller.setDefaultCommand(
@@ -282,6 +287,16 @@ public class RobotContainer {
     // NamedCommands.registerCommand(null, getAutonomousCommand());
   }
 
+  // Implements the following pseudocode:
+  // Get current robot position
+  // check if the robot position is within either a box or circle around any trench using
+  // .contains()
+  // Start with the blue alliance trench and then do use the fliputil like in shotcalculator to
+  // get the red alliance trench locations
+  // The trench locations can be found using the april tags locations
+  //
+  // ADD DIMENSIONS TO CONSTANTS
+  // return true if the robot is within the defined area, false otherwise
   public boolean isNearTrench() {
     Pose2d robotPose = drivetrain.getState().Pose;
 
@@ -293,17 +308,6 @@ public class RobotContainer {
         || (FieldConstants.REDHUMAN_ELLIPSE2D.contains(robotPositionBlue))) {
       return true;
     }
-    // TODO: Implement this based on the following pseudocode:
-    // Get current robot position
-    // check if the robot position is within either a box or circle around any trench using
-    // .contains()
-    // Start with the blue alliance trench and then do use the fliputil like in shotcalculator to
-    // get the red alliance trench locations
-    // The trench locations can be found using the april tags locations
-    //
-    // ADD DIMENSIONS TO CONSTANTS
-    // return true if the robot is within the defined area, false otherwise
-
     return false;
   }
 }
