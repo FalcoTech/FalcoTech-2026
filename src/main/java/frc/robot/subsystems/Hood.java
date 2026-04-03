@@ -27,4 +27,8 @@ public class Hood extends SubsystemBase {
   public Command hoodDown() {
     return Commands.runOnce(() -> turretHood.set(0));
   }
+
+  public Command setHoodPosition(double position) {
+    return Commands.runOnce(() -> turretHood.setPosition(position));
+  }
 }

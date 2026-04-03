@@ -14,7 +14,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -181,7 +180,7 @@ public class RobotContainer {
     Copilot.leftBumper().onTrue(hood.hoodUp());
     Copilot.rightBumper().onTrue(hood.hoodDown());
 
-    new Trigger(this::isNearTrench).whileTrue(hood.hoodDown());
+    new Trigger(this::isNearTrench).whileTrue(hood.hoodDown().repeatedly()).onFalse(hood.hoodUp());
     // Copilot.start().whileTrue(shooter.sysId());
 
     // Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.set(.65)));
@@ -272,11 +271,12 @@ public class RobotContainer {
   public boolean isNearTrench() {
     Pose2d robotPose = drivetrain.getState().Pose;
 
-    Translation2d robotPositionBlue;
-    robotPositionBlue = FlippingUtil.flipFieldPosition(robotPose.getTranslation());
+    Translation2d robotPositionBlue = robotPose.getTranslation();
 
     if (FieldConstants.BLUEOUTPOST_ELLIPSE2D.contains(robotPositionBlue)
-        || (FieldConstants.BLUEHUMAN_ELLIPSE2D.contains(robotPositionBlue))) {
+        || (FieldConstants.BLUEHUMAN_ELLIPSE2D.contains(robotPositionBlue))
+        || (FieldConstants.REDOUTPOST_ELLIPSE2D.contains(robotPositionBlue))
+        || (FieldConstants.REDHUMAN_ELLIPSE2D.contains(robotPositionBlue))) {
       return true;
     }
     // TODO: Implement this based on the following pseudocode:

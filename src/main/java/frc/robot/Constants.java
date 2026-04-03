@@ -105,9 +105,12 @@ public final class Constants {
         new Ellipse2d(new Translation2d(4.635, 7.450), 1);
     public static final Ellipse2d BLUEHUMAN_ELLIPSE2D =
         new Ellipse2d(new Translation2d(4.635, .635), 1);
-    public static final Ellipse2d BLUETURN_ELLIPSE2D =
+    public static final Ellipse2d REDOUTPOST_ELLIPSE2D =
         new Ellipse2d(
             FlippingUtil.flipFieldPosition(BLUEOUTPOST_ELLIPSE2D.getCenter().getTranslation()), 1);
+    public static final Ellipse2d REDHUMAN_ELLIPSE2D =
+        new Ellipse2d(
+            FlippingUtil.flipFieldPosition(BLUEHUMAN_ELLIPSE2D.getCenter().getTranslation()), 1);
   }
 
   public static boolean isRedAlliance() {

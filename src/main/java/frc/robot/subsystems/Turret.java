@@ -56,9 +56,6 @@ public class Turret extends SubsystemBase {
 
   private final TalonFX turretMotor = new TalonFX(CAN_IDs.TURRET_MOTOR);
 
-  // private final Servo turretHood = new Servo(0);
-  // TODO: Add additional servos and fill out commands as needed
-
   private final SmartMotorControllerConfig motorConfig =
       new SmartMotorControllerConfig(this)
           .withControlMode(ControlMode.CLOSED_LOOP)
@@ -176,14 +173,6 @@ public class Turret extends SubsystemBase {
   public Command setDutyCycle(double dutyCycle) {
     return turret.set(dutyCycle);
   }
-
-  // public Command hoodUp() {
-  //   return Commands.runOnce(() -> turretHood.set(1));
-  // }
-
-  // public Command hoodDown() {
-  //   return Commands.runOnce(() -> turretHood.set(0));
-  // }
 
   /**
    * Reset the encoder to the lowest position when the current threshhold is reached. Should be used
