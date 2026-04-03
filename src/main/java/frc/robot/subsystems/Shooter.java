@@ -232,9 +232,4 @@ public class Shooter extends SubsystemBase {
         .andThen(flywheel.run(RPM.of(1000)).withTimeout(STEP_DURATION))
         .andThen(flywheel.run(RPM.of(0)));
   }
-
-  // public Command setShooterToTargetSpeed(){
-  // return setAngularVelocity(RPM.of(ShotCalculator))
-  // }
-
 }
