@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Inches;
@@ -26,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CAN_IDs;
+import frc.robot.Constants.CurrentLimits;
 import java.util.function.Supplier;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -61,7 +61,8 @@ public class IntakePivot extends SubsystemBase {
           // Motor properties to prevent over currenting.
           .withMotorInverted(true)
           .withIdleMode(MotorMode.BRAKE)
-          .withStatorCurrentLimit(Amps.of(60));
+          .withStatorCurrentLimit(CurrentLimits.INTAKE_PIVOT_STATOR)
+          .withVoltageCompensation(Volts.of(12));
 
   // Vendor motor controller object
   SparkMax spark = new SparkMax(CAN_IDs.INTAKEPIVOT_MOTOR, MotorType.kBrushless);

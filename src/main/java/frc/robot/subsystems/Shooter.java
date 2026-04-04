@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
@@ -28,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CAN_IDs;
+import frc.robot.Constants.CurrentLimits;
 import java.util.Optional;
 import java.util.function.Supplier;
 import yams.gearing.GearBox;
@@ -71,7 +71,7 @@ public class Shooter extends SubsystemBase {
           // Motor properties to prevent over currenting.
           .withMotorInverted(true)
           .withIdleMode(MotorMode.COAST)
-          .withStatorCurrentLimit(Amps.of(40))
+          .withStatorCurrentLimit(CurrentLimits.SHOOTER_STATOR)
           // .withSupplyCurrentLimit(Amps.of(30))
           .withTelemetry("FlyWheelMotors", TelemetryVerbosity.LOW)
           .withVoltageCompensation(Volts.of(12))

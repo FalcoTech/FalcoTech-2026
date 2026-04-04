@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
@@ -28,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CAN_IDs;
+import frc.robot.Constants.CurrentLimits;
 import frc.robot.Constants.TurretConstants;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -75,7 +75,7 @@ public class Turret extends SubsystemBase {
           // Setup Telemetry
           .withTelemetry("TurretMotor", TelemetryVerbosity.LOW)
           // Power Optimization
-          .withStatorCurrentLimit(Amps.of(20));
+          .withStatorCurrentLimit(CurrentLimits.TURRET_STATOR);
   // .withClosedLoopRampRate(Seconds.of(0.25))
   // // .withOpenLoopRampRate(Seconds.of(0.25))
   // // .withVoltageCompensation(Volts.of(12)) // also doesn't work with TalonFX

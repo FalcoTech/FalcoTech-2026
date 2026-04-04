@@ -1,5 +1,6 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -9,6 +10,7 @@ import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -69,6 +71,31 @@ public final class Constants {
   }
 
   public static final class IntakeConstants {}
+
+  /**
+   * Centralized current limits for all motor controllers. Adjust values here, not in subsystems.
+   */
+  public static final class CurrentLimits {
+    // Swerve Drive (TalonFX)
+    public static final Current SWERVE_DRIVE_STATOR = Amps.of(30);
+    public static final Current SWERVE_DRIVE_SUPPLY = Amps.of(30);
+    // Swerve Steer (TalonFX)
+    public static final Current SWERVE_STEER_STATOR = Amps.of(30);
+    public static final Current SWERVE_STEER_SUPPLY = Amps.of(20);
+    // SpinnerIndex (TalonFX / Kraken X60, dual motor)
+    public static final Current SPINNER_INDEX_STATOR = Amps.of(20);
+    public static final Current SPINNER_INDEX_SUPPLY = Amps.of(30);
+    // IntakePivot (SparkMax / NEO)
+    public static final Current INTAKE_PIVOT_STATOR = Amps.of(60);
+    // Turret (TalonFX / Falcon 500)
+    public static final Current TURRET_STATOR = Amps.of(20);
+    // Shooter (SparkMax / dual NEO)
+    public static final Current SHOOTER_STATOR = Amps.of(40);
+    // IntakeRoller (SparkFlex)
+    public static final Current INTAKE_ROLLER_SMART = Amps.of(40);
+    // Feeder (SparkMax / NEO)
+    public static final Current FEEDER_SMART = Amps.of(40);
+  }
 
   public static final class TurretConstants {
     // CCW is positive in WPILib (think Unit Circle)

@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
@@ -19,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN_IDs;
+import frc.robot.Constants.CurrentLimits;
 import java.util.function.Supplier;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -55,8 +55,8 @@ public class Spindexer extends SubsystemBase {
           // Setup Telemetry
           .withTelemetry("SpindexerMotor", TelemetryVerbosity.LOW)
           // Power Optimization
-          .withSupplyCurrentLimit(Amps.of(30))
-          .withStatorCurrentLimit(Amps.of(20))
+          .withSupplyCurrentLimit(CurrentLimits.SPINNER_INDEX_SUPPLY)
+          .withStatorCurrentLimit(CurrentLimits.SPINNER_INDEX_STATOR)
           .withVoltageCompensation(Volts.of(12));
 
   private final SmartMotorController motor =

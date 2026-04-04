@@ -42,17 +42,17 @@ public class ShotCalculator extends SubsystemBase {
    */
   public record ShooterParams(double rpm, double tof) {}
 
-  // ── Viability tuning ──────────────────────────────────────────────────────────
+  // ── Viability tuning (live-tunable via SmartDashboard) ─────────────────────
 
   // Degrees before the hard limit where the turret angle score begins to drop.
-  private static final double TURRET_APPROACH_MARGIN_DEG = 10.0;
+  private double turretApproachMarginDeg = 10.0;
   // Distance margin (m) outside the SHOOTER_MAP bounds where score ramps to 0.
-  private static final double DISTANCE_MARGIN_M = 0.5;
+  private double distanceMarginM = 0.5;
   // Lateral speed (m/s) at which the lateral-speed score reaches 0.
-  private static final double LATERAL_SPEED_THRESHOLD_MPS = 1.5;
+  private double lateralSpeedThresholdMPS = 1.5;
 
   // TUNE THIS
-  private static final double LATENCY_COMP = 0.15;
+  private double latencyComp = 0.15;
 
   private final CommandSwerveDrivetrain drivetrain;
 
@@ -91,6 +91,10 @@ public class ShotCalculator extends SubsystemBase {
 
   public ShotCalculator(CommandSwerveDrivetrain drivetrain) {
     this.drivetrain = drivetrain;
+    SmartDashboard.putNumber("Tuning/LatencyComp", latencyComp);
+    SmartDashboard.putNumber("Tuning/TurretApproachMarginDeg", turretApproachMarginDeg);
+    SmartDashboard.putNumber("Tuning/DistanceMarginM", distanceMarginM);
+    SmartDashboard.putNumber("Tuning/LateralSpeedThresholdMPS", lateralSpeedThresholdMPS);
   }
 
   // ── Position helpers ──────────────────────────────────────────────────────────
@@ -139,7 +143,7 @@ public class ShotCalculator extends SubsystemBase {
   }
 
   private Translation2d getFuturePos() {
-    return getCurrentPos().plus(getRobotVelocityAsTrans().times(LATENCY_COMP));
+    return getCurrentPos().plus(getRobotVelocityAsTrans().times(latencyComp));
   }
 
   // ── Shot calculation ──────────────────────────────────────────────────────────
@@ -148,7 +152,7 @@ public class ShotCalculator extends SubsystemBase {
     return getEffectiveTarget().minus(getFuturePos());
   }
 
-  private double getDistanceToTarget() {
+  public double getDistanceToTarget() {
     return getRobotToTargetVector().getNorm();
   }
 
@@ -210,7 +214,7 @@ public class ShotCalculator extends SubsystemBase {
    * <ul>
    *   <li>Turret angle: score drops from 1→0 across the approach margin before the hard limit.
    *   <li>Distance: score is 1 inside the SHOOTER_MAP range, ramps to 0 outside the margin.
-   *   <li>Lateral speed: score is 1 at rest, drops to 0 at {@link #LATERAL_SPEED_THRESHOLD_MPS}.
+   *   <li>Lateral speed: score is 1 at rest, drops to 0 at {@link #lateralSpeedThresholdMPS}.
    * </ul>
    */
   public double getShotViabilityScale() {
@@ -220,7 +224,7 @@ public class ShotCalculator extends SubsystemBase {
   private double getTurretAngleScore() {
     double absAngle = Math.abs(getIdealTurretAngle().in(Degrees));
     double hardLimit = TurretConstants.HARD_COUNTER_CLOCKWISE_LIMIT.in(Degrees);
-    return MathUtil.clamp((hardLimit - absAngle) / TURRET_APPROACH_MARGIN_DEG, 0.0, 1.0);
+    return MathUtil.clamp((hardLimit - absAngle) / turretApproachMarginDeg, 0.0, 1.0);
   }
 
   private double getDistanceScore() {
@@ -228,9 +232,9 @@ public class ShotCalculator extends SubsystemBase {
     if (distance >= shooterMapMinDistance && distance <= shooterMapMaxDistance) return 1.0;
     if (distance < shooterMapMinDistance)
       return MathUtil.clamp(
-          (distance - (shooterMapMinDistance - DISTANCE_MARGIN_M)) / DISTANCE_MARGIN_M, 0.0, 1.0);
+          (distance - (shooterMapMinDistance - distanceMarginM)) / distanceMarginM, 0.0, 1.0);
     return MathUtil.clamp(
-        ((shooterMapMaxDistance + DISTANCE_MARGIN_M) - distance) / DISTANCE_MARGIN_M, 0.0, 1.0);
+        ((shooterMapMaxDistance + distanceMarginM) - distance) / distanceMarginM, 0.0, 1.0);
   }
 
   private double getLateralSpeedScore() {
@@ -242,16 +246,38 @@ public class ShotCalculator extends SubsystemBase {
     double radial = robotVel.getX() * unitToTarget.getX() + robotVel.getY() * unitToTarget.getY();
     double velNormSq = robotVel.getX() * robotVel.getX() + robotVel.getY() * robotVel.getY();
     double lateral = Math.sqrt(Math.max(0.0, velNormSq - radial * radial));
-    return MathUtil.clamp(1.0 - lateral / LATERAL_SPEED_THRESHOLD_MPS, 0.0, 1.0);
+    return MathUtil.clamp(1.0 - lateral / lateralSpeedThresholdMPS, 0.0, 1.0);
+  }
+
+  // ── Data logging ──────────────────────────────────────────────────────────────
+
+  /**
+   * Logs a shot data point to the console for later extraction. Call this while the turret is aimed
+   * and the shooter is running at a manually-set RPM.
+   *
+   * @param manualRPM the RPM value currently being tested
+   */
+  public void logDataPoint(double manualRPM) {
+    double distance = getDistanceToTarget();
+    System.out.println(
+        String.format("SHOT_DATA | dist=%.2f | manualRPM=%.0f", distance, manualRPM));
+    SmartDashboard.putString(
+        "Tuning/LastLoggedPoint", String.format("%.2fm -> %.0f RPM", distance, manualRPM));
   }
 
   // ── Periodic ─────────────────────────────────────────────────────────────────
 
   @Override
   public void periodic() {
+    latencyComp = SmartDashboard.getNumber("Tuning/LatencyComp", 0.15);
+    turretApproachMarginDeg = SmartDashboard.getNumber("Tuning/TurretApproachMarginDeg", 10.0);
+    distanceMarginM = SmartDashboard.getNumber("Tuning/DistanceMarginM", 0.5);
+    lateralSpeedThresholdMPS = SmartDashboard.getNumber("Tuning/LateralSpeedThresholdMPS", 1.5);
+
     SmartDashboard.putNumber("Ideal Turret Angle", getIdealTurretAngle().in(Degrees));
     SmartDashboard.putNumber("Distance To Target", getDistanceToTarget());
     SmartDashboard.putNumber("Shot Viability", getShotViabilityScale());
     SmartDashboard.putBoolean("ShotCalc/isTargetingHub", isTargetingHub());
+    SmartDashboard.putNumber("Tuning/MapSuggestedRPM", SHOOTER_MAP.get(getDistanceToTarget()).rpm);
   }
 }

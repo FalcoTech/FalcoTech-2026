@@ -116,6 +116,7 @@ public class RobotContainer {
     SmartDashboard.putNumber("Shooter/Manual RPM", manualRPM);
     SmartDashboard.putNumber("Shooter/RPM Step", 250);
     SmartDashboard.putBoolean("Enable MegaTag2", false);
+    SmartDashboard.putBoolean("Tuning/ShootOnTheMove", false);
 
     // Push the Git Commit and Branch to SmartDashbaord
     SmartDashboard.putString(
@@ -281,6 +282,8 @@ public class RobotContainer {
                   manualRPM -= step;
                   SmartDashboard.putNumber("Shooter/Manual RPM", manualRPM);
                 }));
+
+    Copilot.povLeft().onTrue(Commands.runOnce(() -> shotCalculator.logDataPoint(manualRPM)));
   }
 
   public Command getAutonomousCommand() {
