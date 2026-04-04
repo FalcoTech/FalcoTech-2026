@@ -219,6 +219,10 @@ public class Turret extends SubsystemBase {
             });
   }
 
+  public Command zeroEncoder() {
+    return runOnce(() -> turretSMC.setEncoderPosition(Degrees.of(0)));
+  }
+
   /** Stops the turret (duty cycle 0). */
   public Command stop() {
     return turret.set(0);

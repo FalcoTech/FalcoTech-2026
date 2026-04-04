@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RPM;
@@ -106,12 +107,14 @@ public class RobotContainer {
   public RobotContainer() {
     // drivetrain.configNeutralMode(NeutralModeValue.Coast);
 
-    DriverStation.silenceJoystickConnectionWarning(true); // Change to false for comps
+    DriverStation.silenceJoystickConnectionWarning(true); // TODO: Change to false for comps
     RegisterNamedCommands();
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Mode", autoChooser);
     configureBindings();
 
+    SmartDashboard.putNumber("Shooter/Manual RPM", manualRPM);
+    SmartDashboard.putNumber("Shooter/RPM Step", 250);
     SmartDashboard.putBoolean("Enable MegaTag2", false);
 
     // Push the Git Commit and Branch to SmartDashbaord
@@ -180,6 +183,8 @@ public class RobotContainer {
     turret.setDefaultCommand(turret.stop());
     shooter.setDefaultCommand(shooter.stop());
 
+    Copilot.back().and(Copilot.rightStick()).onTrue(turret.zeroEncoder());
+
     // Copilot.start().whileTrue(shooter.sysId());
 
     // Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.set(.65)));
@@ -199,7 +204,12 @@ public class RobotContainer {
         .whileTrue(
             turret
                 .setAngle(shotCalculator::getIdealTurretAngle)
-                .alongWith(shooter.setAngularVelocity(() -> RPM.of(manualRPM)))
+                .alongWith(
+                    shooter.setAngularVelocity(
+                        () -> {
+                          manualRPM = SmartDashboard.getNumber("Shooter/Manual RPM", manualRPM);
+                          return RPM.of(manualRPM);
+                        }))
                 .alongWith(new feedWhenReady()));
 
     // HOOD BUTTONS
@@ -207,32 +217,43 @@ public class RobotContainer {
     // Copilot.leftBumper().onTrue(hood.setHoodPosition(0));
     // Copilot.rightBumper().onTrue(new setHoodAngle(1)); //Hood up
     // Copilot.rightBumper().onTrue(hood.setHoodPosition(1));
-    Copilot.b().onTrue(hood.setHoodPosition(.9));
-    Copilot.x().onTrue(hood.setHoodPosition(.1));
+    Copilot.b().onTrue(hood.hoodUp());
+    Copilot.x().onTrue(hood.hoodDown());
 
-    new Trigger(this::isNearTrench).whileTrue(hood.setHoodPosition(0).repeatedly()).onFalse(hood.setHoodPosition(1));
+    new Trigger(this::isNearTrench).whileTrue(hood.hoodDown().repeatedly()).onFalse(hood.hoodUp());
 
     // INTAKE, HOPPER, FEEDER
 
-    intakePivot.setDefaultCommand(intakePivot.runDutyCycle(() -> -0.3 * (Copilot.getLeftY())));
+    intakePivot.setDefaultCommand(intakePivot.runDutyCycle(() -> -Math.pow(Copilot.getLeftY(), 3)));
     // intakePivot.setDefaultCommand(
     //     intakePivot.setAngle(() -> Degrees.of(90).times(Copilot.getLeftY())));
     Copilot.rightStick().toggleOnTrue((intakePivot.setAngle(Degrees.of(80))));
     Copilot.leftStick().toggleOnTrue(intakePivot.setAngle(Degrees.of(5)));
     // intakePivot.setDefaultCommand(intakePivot.stop());
 
+    // Right bumper held = isolate spindexer only (mute intake roller)
     intakeRoller.setDefaultCommand(
         intakeRoller.runIntakeRollers(
             () ->
-                .55
-                    * (Copilot.getLeftTriggerAxis()
-                        - Copilot.getRightTriggerAxis()))); // NEGATIVE RUNS THRU
+                Copilot.rightBumper().getAsBoolean()
+                    ? 0.0
+                    : .55
+                        * (Copilot.getLeftTriggerAxis()
+                            - Copilot.getRightTriggerAxis()))); // NEGATIVE RUNS THRU
 
     intakePivot.isInStoredPosition().whileTrue(intakeRoller.stopIntakeRollers());
+    // Enable intake pivot zeroring on the fly
+    Copilot.start()
+        .and(Copilot.leftStick())
+        .whileTrue(intakePivot.resetZeroToHardStop(Amps.of(30)));
 
+    // Left bumper held = isolate intake only (mute spindexer)
     spindexer.setDefaultCommand(
         spindexer.runSpinnerIndex(
-            () -> 0.4 * (Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis())));
+            () ->
+                Copilot.leftBumper().getAsBoolean()
+                    ? 0.0
+                    : 0.4 * (Copilot.getRightTriggerAxis() - Copilot.getLeftTriggerAxis())));
 
     // feeder.setDefaultCommand(
     // feeder.runFeeder(() -> 0.5 * (Copilot.getRightTriggerAxis() -
@@ -240,11 +261,24 @@ public class RobotContainer {
     feeder.setDefaultCommand(feeder.stopFeeder());
 
     // spindexer.setDefaultCommand(spindexer.stopSpinnerIndex());
-    Copilot.povLeft().whileTrue(spindexer.runSpinnerIndex(0.25));
-    Copilot.povRight().whileTrue(spindexer.runSpinnerIndex(-0.25));
+    // POV left/right freed up — bumper isolation replaces independent spindexer control
 
-    Copilot.povUp().onTrue(Commands.runOnce(() -> manualRPM += 250));
-    Copilot.povDown().onTrue(Commands.runOnce(() -> manualRPM -= 250));
+    Copilot.povUp()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  double step = SmartDashboard.getNumber("Shooter/RPM Step", 250);
+                  manualRPM += step;
+                  SmartDashboard.putNumber("Shooter/Manual RPM", manualRPM);
+                }));
+    Copilot.povDown()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  double step = SmartDashboard.getNumber("Shooter/RPM Step", 250);
+                  manualRPM -= step;
+                  SmartDashboard.putNumber("Shooter/Manual RPM", manualRPM);
+                }));
   }
 
   public Command getAutonomousCommand() {
@@ -307,12 +341,13 @@ public class RobotContainer {
 
     Translation2d robotPositionBlue = robotPose.getTranslation();
 
-    if (FieldConstants.BLUEOUTPOST_ELLIPSE2D.contains(robotPositionBlue)
-        || (FieldConstants.BLUEHUMAN_ELLIPSE2D.contains(robotPositionBlue))
-        || (FieldConstants.REDOUTPOST_ELLIPSE2D.contains(robotPositionBlue))
-        || (FieldConstants.REDHUMAN_ELLIPSE2D.contains(robotPositionBlue))) {
-      return true;
-    }
-    return false;
+    boolean near =
+        FieldConstants.BLUEOUTPOST_ELLIPSE2D.contains(robotPositionBlue)
+            || FieldConstants.BLUEHUMAN_ELLIPSE2D.contains(robotPositionBlue)
+            || FieldConstants.REDOUTPOST_ELLIPSE2D.contains(robotPositionBlue)
+            || FieldConstants.REDHUMAN_ELLIPSE2D.contains(robotPositionBlue);
+
+    SmartDashboard.putBoolean("isNearTrench", near);
+    return near;
   }
 }

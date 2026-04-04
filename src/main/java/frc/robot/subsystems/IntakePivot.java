@@ -6,16 +6,23 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CAN_IDs;
@@ -60,11 +67,10 @@ public class IntakePivot extends SubsystemBase {
   SparkMax spark = new SparkMax(CAN_IDs.INTAKEPIVOT_MOTOR, MotorType.kBrushless);
 
   // Create our SmartMotorController from our Spark and config with the NEO.
-  private SmartMotorController sparkSmartMotorController =
-      new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
+  private SmartMotorController intakeArmSMC = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
 
   ArmConfig armConfig =
-      new ArmConfig(sparkSmartMotorController)
+      new ArmConfig(intakeArmSMC)
           .withTelemetry("IntakePivot", TelemetryVerbosity.HIGH) // Telemetry Name
           .withMass(Pounds.of(5)) // Mass of the Arm
           .withLength(Inches.of(14))
@@ -80,7 +86,7 @@ public class IntakePivot extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     intakePivot.updateTelemetry();
-    SmartDashboard.putNumber("IntakePivot/Angle", intakePivot.getAngle().in(Degrees)); 
+    SmartDashboard.putNumber("IntakePivot/Angle", intakePivot.getAngle().in(Degrees));
   }
 
   @Override
@@ -138,11 +144,47 @@ public class IntakePivot extends SubsystemBase {
   }
 
   public Trigger isInStoredPosition() {
-    return intakePivot
-        .isNear(Degrees.of(90), Degrees.of(5));
+    return intakePivot.isNear(Degrees.of(90), Degrees.of(5));
   }
 
   public Command stop() {
     return intakePivot.set(0);
+  }
+
+  /**
+   * Reset the encoder to the max position when the current threshhold is reached. Should be used
+   * when the Mechanism position is unreliable, like startup. Threshhold is only detected if
+   * exceeded for 0.2 seconds, and the motor moves less than 2 degrees per second.
+   *
+   * @param threshhold The current threshhold held when the Mechanism is at it's hard limit.
+   * @return
+   */
+  public Command resetZeroToHardStop(Current threshold) {
+    // copied/ based on the example from YAMS github
+    Debouncer currentDebouncer = new Debouncer(0.2); // Current threshold must last 0.2s
+    Voltage stopVoltage = Volts.of(0); // Voltage to set at end of Command
+    Voltage runVoltage =
+        Volts.of(-3); // Voltage to run mechanism with (variable upon mechanism), negative to run in
+    // reverse
+    // TODO: Check this and see if I need to switch to useing lower hard limit and positive voltage
+    Angle limitAngle =
+        this.armConfig.getUpperHardLimit().get(); // Use Mechanism hard limit as the new start point
+    AngularVelocity velocityThreshold =
+        DegreesPerSecond.of(2); // Max amount of movement to be considered stopped
+
+    return Commands.startRun(
+            intakeArmSMC::stopClosedLoopController, () -> intakeArmSMC.setVoltage(runVoltage))
+        .until(
+            () ->
+                currentDebouncer.calculate(
+                    intakeArmSMC.getStatorCurrent().gte(threshold)
+                        && intakeArmSMC.getMechanismVelocity().abs(DegreesPerSecond)
+                            <= velocityThreshold.in(DegreesPerSecond)))
+        .finallyDo(
+            () -> {
+              intakeArmSMC.setVoltage(stopVoltage);
+              intakeArmSMC.setEncoderPosition(limitAngle);
+              intakeArmSMC.startClosedLoopController();
+            });
   }
 }

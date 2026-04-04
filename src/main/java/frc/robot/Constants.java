@@ -39,7 +39,6 @@ public final class Constants {
     public static final int INTAKEPIVOT_MOTOR = 31;
     public static final int SPINNERINDEXLEFT_MOTOR = 46;
     public static final int SPINNERINDEXRIGHT_MOTOR = 45;
-    public static final int indexshooterMotor = 99;
 
     // Sensors and other devices could also be added here
   }
