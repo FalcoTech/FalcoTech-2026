@@ -115,13 +115,21 @@ public class Turret extends SubsystemBase {
   }
 
   /**
-   * Immediately sets the turret motor position setpoint without creating a command. Used by {@link
-   * frc.robot.commands.shootingCommands.aimTurretAtTarget} for direct per-cycle updates.
+   * Immediately sets the turret motor position setpoint without creating a command.
    *
    * @param targetAngle desired angle
    */
   public void setAngleDirect(Angle targetAngle) {
     turretSMC.setPosition(targetAngle);
+  }
+
+  /**
+   * Set turret closed loop controller to go to the specified mechanism position.
+   *
+   * @param angle Angle to go to.
+   */
+  public void setAngleSetpoint(Angle targetAngle) {
+    turret.setMechanismPositionSetpoint(targetAngle);
   }
 
   /**

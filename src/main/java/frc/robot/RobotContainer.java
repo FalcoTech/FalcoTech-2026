@@ -30,7 +30,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathPlanningConstants;
-import frc.robot.commands.shootingCommands.aimTurretAtTarget;
 import frc.robot.commands.shootingCommands.feedWhenReady;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -186,9 +185,9 @@ public class RobotContainer {
     // Copilot.a().whileTrue(turret.aimAtTarget().alongWith(shooter.set(.65)));
     Copilot.a()
         .whileTrue(
-            new aimTurretAtTarget()
-                .alongWith(
-                    shooter.setAngularVelocity(() -> shotCalculator.getIdealShooterVelocity()))
+            turret
+                .setAngle(shotCalculator::getIdealTurretAngle)
+                .alongWith(shooter.setAngularVelocity(shotCalculator::getIdealShooterVelocity))
                 .alongWith(new feedWhenReady())); // aim + auto-feed when ready
     // Copilot.x()
     //     .whileTrue(
@@ -198,7 +197,8 @@ public class RobotContainer {
 
     Copilot.y()
         .whileTrue(
-            new aimTurretAtTarget()
+            turret
+                .setAngle(shotCalculator::getIdealTurretAngle)
                 .alongWith(shooter.setAngularVelocity(() -> RPM.of(manualRPM)))
                 .alongWith(new feedWhenReady()));
 
@@ -272,10 +272,11 @@ public class RobotContainer {
   }
 
   private void RegisterNamedCommands() {
-    NamedCommands.registerCommand("Aim Turret", new aimTurretAtTarget());
+    NamedCommands.registerCommand(
+        "Aim Turret", turret.setAngle(shotCalculator::getIdealTurretAngle));
     NamedCommands.registerCommand(
         "Spin Shooter To Target",
-        shooter.setAngularVelocity(() -> shotCalculator.getIdealShooterVelocity()));
+        shooter.setAngularVelocity(shotCalculator::getIdealShooterVelocity));
     NamedCommands.registerCommand("Stop Shooter", shooter.stop());
     NamedCommands.registerCommand("Stop Turret", turret.stop());
     // TODO: Rebuild the Spindexer commands and auto routines; AFTER YAMS implementation

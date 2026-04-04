@@ -180,6 +180,15 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
+   * Set flywheel closed loop controller to go to the specified mechanism velocity.
+   *
+   * @param targetVelocity Velocity to spin at.
+   */
+  public void setVelocitySetpoint(AngularVelocity targetVelocity) {
+    flywheel.setMechanismVelocitySetpoint(targetVelocity);
+  }
+
+  /**
    * @return the current measured angular velocity of the flywheel.
    */
   public AngularVelocity getVelocity() {
@@ -227,9 +236,4 @@ public class Shooter extends SubsystemBase {
         .andThen(flywheel.run(RPM.of(1000)).withTimeout(STEP_DURATION))
         .andThen(flywheel.run(RPM.of(0)));
   }
-
-  // public Command setShooterToTargetSpeed(){
-  // return setAngularVelocity(RPM.of(ShotCalculator))
-  // }
-
 }
