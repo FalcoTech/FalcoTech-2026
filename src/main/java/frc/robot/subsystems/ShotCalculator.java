@@ -92,9 +92,9 @@ public class ShotCalculator extends SubsystemBase {
   public ShotCalculator(CommandSwerveDrivetrain drivetrain) {
     this.drivetrain = drivetrain;
     SmartDashboard.putNumber("Tuning/LatencyComp", latencyComp);
-    SmartDashboard.putNumber("Tuning/TurretApproachMarginDeg", turretApproachMarginDeg);
-    SmartDashboard.putNumber("Tuning/DistanceMarginM", distanceMarginM);
-    SmartDashboard.putNumber("Tuning/LateralSpeedThresholdMPS", lateralSpeedThresholdMPS);
+    // SmartDashboard.putNumber("Tuning/TurretApproachMarginDeg", turretApproachMarginDeg);
+    // SmartDashboard.putNumber("Tuning/DistanceMarginM", distanceMarginM);
+    // SmartDashboard.putNumber("Tuning/LateralSpeedThresholdMPS", lateralSpeedThresholdMPS);
   }
 
   // ── Position helpers ──────────────────────────────────────────────────────────
@@ -270,13 +270,13 @@ public class ShotCalculator extends SubsystemBase {
   @Override
   public void periodic() {
     latencyComp = SmartDashboard.getNumber("Tuning/LatencyComp", 0.15);
-    turretApproachMarginDeg = SmartDashboard.getNumber("Tuning/TurretApproachMarginDeg", 10.0);
-    distanceMarginM = SmartDashboard.getNumber("Tuning/DistanceMarginM", 0.5);
-    lateralSpeedThresholdMPS = SmartDashboard.getNumber("Tuning/LateralSpeedThresholdMPS", 1.5);
+    // turretApproachMarginDeg = SmartDashboard.getNumber("Tuning/TurretApproachMarginDeg", 10.0);
+    // distanceMarginM = SmartDashboard.getNumber("Tuning/DistanceMarginM", 0.5);
+    // lateralSpeedThresholdMPS = SmartDashboard.getNumber("Tuning/LateralSpeedThresholdMPS", 1.5);
 
     SmartDashboard.putNumber("Ideal Turret Angle", getIdealTurretAngle().in(Degrees));
     SmartDashboard.putNumber("Distance To Target", getDistanceToTarget());
-    SmartDashboard.putNumber("Shot Viability", getShotViabilityScale());
+    // SmartDashboard.putNumber("Shot Viability", getShotViabilityScale());
     SmartDashboard.putBoolean("ShotCalc/isTargetingHub", isTargetingHub());
     SmartDashboard.putNumber("Tuning/MapSuggestedRPM", SHOOTER_MAP.get(getDistanceToTarget()).rpm);
   }
