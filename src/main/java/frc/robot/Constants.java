@@ -76,7 +76,7 @@ public final class Constants {
    * Centralized current limits for all motor controllers. Adjust values here, not in subsystems.
    */
   public static final class CurrentLimits {
-    // Swerve Drive (TalonFX)
+    // Swerve Drive (TalonFX / Kraken X60)
     public static final Current SWERVE_DRIVE_STATOR = Amps.of(30);
     public static final Current SWERVE_DRIVE_SUPPLY = Amps.of(30);
     // Swerve Steer (TalonFX)
@@ -86,7 +86,7 @@ public final class Constants {
     public static final Current SPINNER_INDEX_STATOR = Amps.of(20);
     public static final Current SPINNER_INDEX_SUPPLY = Amps.of(30);
     // IntakePivot (SparkMax / NEO)
-    public static final Current INTAKE_PIVOT_STATOR = Amps.of(60);
+    public static final Current INTAKE_PIVOT_STATOR = Amps.of(30);
     // Turret (TalonFX / Falcon 500)
     public static final Current TURRET_STATOR = Amps.of(20);
     // Shooter (SparkMax / dual NEO)
@@ -127,16 +127,18 @@ public final class Constants {
     public static final Rectangle2d NEUTRAL_RECTANGLE2D =
         new Rectangle2d(new Translation2d(4.278, -.5), new Translation2d(12.117, 8.5));
 
+    public static final double TRENCH_SLOW_RADIUS = 1.5; // Slow down when within range of trench TODO: tune this value
+
     public static final Ellipse2d BLUEOUTPOST_ELLIPSE2D =
-        new Ellipse2d(new Translation2d(4.635, 7.450), 1);
+        new Ellipse2d(new Translation2d(4.635, 7.450), TRENCH_SLOW_RADIUS);
     public static final Ellipse2d BLUEHUMAN_ELLIPSE2D =
-        new Ellipse2d(new Translation2d(4.635, .635), 1);
+        new Ellipse2d(new Translation2d(4.635, .635), TRENCH_SLOW_RADIUS);
     public static final Ellipse2d REDOUTPOST_ELLIPSE2D =
         new Ellipse2d(
-            FlippingUtil.flipFieldPosition(BLUEOUTPOST_ELLIPSE2D.getCenter().getTranslation()), 1);
+            FlippingUtil.flipFieldPosition(BLUEOUTPOST_ELLIPSE2D.getCenter().getTranslation()), TRENCH_SLOW_RADIUS);
     public static final Ellipse2d REDHUMAN_ELLIPSE2D =
         new Ellipse2d(
-            FlippingUtil.flipFieldPosition(BLUEHUMAN_ELLIPSE2D.getCenter().getTranslation()), 1);
+            FlippingUtil.flipFieldPosition(BLUEHUMAN_ELLIPSE2D.getCenter().getTranslation()), TRENCH_SLOW_RADIUS);
   }
 
   public static boolean isRedAlliance() {
