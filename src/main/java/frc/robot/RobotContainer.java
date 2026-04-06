@@ -227,7 +227,14 @@ public class RobotContainer {
 
     // INTAKE, HOPPER, FEEDER
 
-    intakePivot.setDefaultCommand(intakePivot.runDutyCycle(() -> -(Math.pow(Copilot.getLeftY(), 5) + (0.25* Copilot.getLeftY())))); // x^5 control with linear control at smaller inputs. Negative sign to correct for joystick direction.
+    intakePivot.setDefaultCommand(
+        intakePivot.runDutyCycle(
+            () ->
+                -(Math.pow(Copilot.getLeftY(), 5)
+                    + (0.25
+                        * Copilot
+                            .getLeftY())))); // x^5 control with linear control at smaller inputs.
+    // Negative sign to correct for joystick direction.
     // intakePivot.setDefaultCommand(
     //     intakePivot.setAngle(() -> Degrees.of(90).times(Copilot.getLeftY())));
     Copilot.rightStick().toggleOnTrue((intakePivot.setAngle(Degrees.of(80))));

@@ -127,7 +127,8 @@ public final class Constants {
     public static final Rectangle2d NEUTRAL_RECTANGLE2D =
         new Rectangle2d(new Translation2d(4.278, -.5), new Translation2d(12.117, 8.5));
 
-    public static final double TRENCH_SLOW_RADIUS = 1.5; // Slow down when within range of trench TODO: tune this value
+    public static final double TRENCH_SLOW_RADIUS = 1.5;
+    // Slow down when within range of trench TODO: tune this value
 
     public static final Ellipse2d BLUEOUTPOST_ELLIPSE2D =
         new Ellipse2d(new Translation2d(4.635, 7.450), TRENCH_SLOW_RADIUS);
@@ -135,10 +136,12 @@ public final class Constants {
         new Ellipse2d(new Translation2d(4.635, .635), TRENCH_SLOW_RADIUS);
     public static final Ellipse2d REDOUTPOST_ELLIPSE2D =
         new Ellipse2d(
-            FlippingUtil.flipFieldPosition(BLUEOUTPOST_ELLIPSE2D.getCenter().getTranslation()), TRENCH_SLOW_RADIUS);
+            FlippingUtil.flipFieldPosition(BLUEOUTPOST_ELLIPSE2D.getCenter().getTranslation()),
+            TRENCH_SLOW_RADIUS);
     public static final Ellipse2d REDHUMAN_ELLIPSE2D =
         new Ellipse2d(
-            FlippingUtil.flipFieldPosition(BLUEHUMAN_ELLIPSE2D.getCenter().getTranslation()), TRENCH_SLOW_RADIUS);
+            FlippingUtil.flipFieldPosition(BLUEHUMAN_ELLIPSE2D.getCenter().getTranslation()),
+            TRENCH_SLOW_RADIUS);
   }
 
   public static boolean isRedAlliance() {
