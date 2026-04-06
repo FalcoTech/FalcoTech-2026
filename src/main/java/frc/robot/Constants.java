@@ -86,7 +86,7 @@ public final class Constants {
     public static final Current SPINNER_INDEX_STATOR = Amps.of(20);
     public static final Current SPINNER_INDEX_SUPPLY = Amps.of(30);
     // IntakePivot (SparkMax / NEO)
-    public static final Current INTAKE_PIVOT_STATOR = Amps.of(30);
+    public static final Current INTAKE_PIVOT_STATOR = Amps.of(80);
     // Turret (TalonFX / Falcon 500)
     public static final Current TURRET_STATOR = Amps.of(20);
     // Shooter (SparkMax / dual NEO)

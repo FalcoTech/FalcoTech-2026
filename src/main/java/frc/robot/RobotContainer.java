@@ -223,7 +223,7 @@ public class RobotContainer {
     Copilot.b().onTrue(hood.hoodUp());
     Copilot.x().onTrue(hood.hoodDown());
 
-    new Trigger(this::isNearTrench).whileTrue(hood.hoodDown().repeatedly()).onFalse(hood.hoodUp());
+    // new Trigger(this::isNearTrench).whileTrue(hood.hoodDown().repeatedly()).onFalse(hood.hoodUp());
 
     // INTAKE, HOPPER, FEEDER
 
@@ -255,7 +255,7 @@ public class RobotContainer {
     // Enable intake pivot zeroring on the fly
     Copilot.start()
         .and(Copilot.leftStick())
-        .whileTrue(intakePivot.resetZeroToHardStop(Amps.of(30)));
+        .whileTrue(intakePivot.resetZeroToHardStop(Amps.of(40)));
 
     // Left bumper held = isolate intake only (mute spindexer)
     spindexer.setDefaultCommand(

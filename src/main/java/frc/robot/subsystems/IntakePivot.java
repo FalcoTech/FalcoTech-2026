@@ -165,7 +165,7 @@ public class IntakePivot extends SubsystemBase {
     Debouncer currentDebouncer = new Debouncer(0.2); // Current threshold must last 0.2s
     Voltage stopVoltage = Volts.of(0); // Voltage to set at end of Command
     Voltage runVoltage =
-        Volts.of(-3); // Voltage to run mechanism with (variable upon mechanism), negative to run in
+        Volts.of(8); // Voltage to run mechanism with (variable upon mechanism), negative to run in
     // reverse
     // TODO: Check this and see if I need to switch to useing lower hard limit and positive voltage
     Angle limitAngle =
