@@ -17,7 +17,7 @@ public class Hood extends SubsystemBase {
 
   /** Creates a new Hood. */
   public Hood() {
-    SmartDashboard.putNumber("Hood/Up Position", 0.9);
+    SmartDashboard.putNumber("Hood/Up Position", 0.5);
   }
 
   @Override
@@ -28,7 +28,7 @@ public class Hood extends SubsystemBase {
   public Command hoodUp() {
     return this.runOnce(
         () -> {
-          double pos = SmartDashboard.getNumber("Hood/Up Position", 0.9);
+          double pos = SmartDashboard.getNumber("Hood/Up Position", 0.5);
           turretHood.setPosition(pos);
           // turretHood2.setPosition(pos);
         });

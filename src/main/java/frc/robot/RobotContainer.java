@@ -107,7 +107,7 @@ public class RobotContainer {
   public RobotContainer() {
     // drivetrain.configNeutralMode(NeutralModeValue.Coast);
 
-    DriverStation.silenceJoystickConnectionWarning(true); // TODO: Change to false for comps
+    DriverStation.silenceJoystickConnectionWarning(false); // TODO: Change to false for comps
     RegisterNamedCommands();
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Mode", autoChooser);
@@ -325,7 +325,7 @@ public class RobotContainer {
         shooter.setAngularVelocity(shotCalculator::getIdealShooterVelocity));
     NamedCommands.registerCommand("Stop Shooter", shooter.stop());
     NamedCommands.registerCommand("Stop Turret", turret.stop());
-    // TODO: Rebuild the Spindexer commands and auto routines; AFTER YAMS implementation
+    // TODO: Rebuild the Spindexer commands and auto routines;
     NamedCommands.registerCommand("Stop Feeder Push", feeder.stopFeeder());
     NamedCommands.registerCommand("Stop Intake Pivot", intakePivot.stop());
 
