@@ -72,6 +72,11 @@ public final class Constants {
 
   public static final class IntakeConstants {}
 
+  public static final class HoodConstants {
+    public static final double HOOD_UP = 0.5;
+    public static final double HOOD_DOWN = 0;
+  }
+
   /**
    * Centralized current limits for all motor controllers. Adjust values here, not in subsystems.
    */
