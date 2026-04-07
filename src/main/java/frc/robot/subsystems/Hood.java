@@ -25,15 +25,15 @@ public class Hood extends SubsystemBase {
   private static final double kMaxPosition = 0.77;
   private static final double kPositionTolerance = 0.02;
 
-  private final Servo leftServo;
+  public Servo leftServo = new Servo(0);
   // private final Servo rightServo;
 
-  private double currentPosition = 0.5;
+  private double currentPosition = 0.0;
   private double targetPosition = 0.5;
   private Time lastUpdateTime = Seconds.of(0);
 
   public Hood() {
-    leftServo = new Servo(0);
+    // leftServo = new Servo(0);
     // rightServo = new Servo(Ports.kHoodRightServo);
     leftServo.setBoundsMicroseconds(2000, 1800, 1500, 1200, 1000);
     // Using the defaults from WCP

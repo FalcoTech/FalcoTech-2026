@@ -19,7 +19,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -192,8 +191,8 @@ public class IntakePivot extends SubsystemBase {
             });
   }
 
-  public Command resetEncoderToLimit(){
-     return runOnce(() -> intakeArmSMC.setEncoderPosition(Degrees.of(110)));
+  public Command resetEncoderToLimit() {
+    return runOnce(() -> intakeArmSMC.setEncoderPosition(Degrees.of(110)));
   }
 
   // @Override
@@ -202,8 +201,11 @@ public class IntakePivot extends SubsystemBase {
   //         "Command",
   //         () -> getCurrentCommand() != null ? getCurrentCommand().getName() : "null",
   //         null);
-  
-  //     // builder.addDoubleProperty("Current Position", () -> intakePivot.getAngle().in(Degrees), null);
-  //     builder.addDoubleProperty("Target Position", () -> intakePivot.getMechanismSetpoint().orElse(Degrees.of(0)).in(Degrees), value -> intakePivot.setAngle(Degrees.of(value)));
+
+  //     // builder.addDoubleProperty("Current Position", () -> intakePivot.getAngle().in(Degrees),
+  // null);
+  //     builder.addDoubleProperty("Target Position", () ->
+  // intakePivot.getMechanismSetpoint().orElse(Degrees.of(0)).in(Degrees), value ->
+  // intakePivot.setAngle(Degrees.of(value)));
   // }
 }

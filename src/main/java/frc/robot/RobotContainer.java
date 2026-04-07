@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RPM;
@@ -16,7 +15,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -27,11 +25,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathPlanningConstants;
+import frc.robot.commands.setHoodAngle;
 import frc.robot.commands.shootingCommands.feedWhenReady;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -219,10 +217,14 @@ public class RobotContainer {
                 .withName("Manual RPM & Fire"));
 
     // HOOD BUTTONS
-    Copilot.b().onTrue(hood.hoodUp());
-    Copilot.x().onTrue(hood.hoodDown());
+    // Copilot.b().onTrue(hood.hoodUp());
+
+    // Copilot.x().onTrue(hood.hoodDown());
     Copilot.x().and(Copilot.back()).onTrue(hood.positionCommand(0.25));
-    new Trigger(this::isNearTrench).and(RobotModeTriggers.teleop()).whileTrue(hood.hoodDown().repeatedly()).onFalse(hood.hoodUp());  
+    Copilot.b().onTrue(new setHoodAngle(0.5));
+    Copilot.x().onTrue(new setHoodAngle(0));
+    // new
+    // Trigger(this::isNearTrench).and(RobotModeTriggers.teleop()).whileTrue(hood.hoodDown().repeatedly()).onFalse(hood.hoodUp());
 
     // INTAKE, HOPPER, FEEDER
 
@@ -252,11 +254,8 @@ public class RobotContainer {
 
     intakePivot.isInStoredPosition().whileTrue(intakeRoller.stopIntakeRollers());
     // Enable intake pivot zeroring on the fly
-    Copilot.start()
-        .and(Copilot.leftStick())
-        .whileTrue(intakePivot.resetEncoderToLimit());
-        // .whileTrue(intakePivot.resetZeroToHardStop(Amps.of(40)));
-
+    Copilot.start().and(Copilot.leftStick()).whileTrue(intakePivot.resetEncoderToLimit());
+    // .whileTrue(intakePivot.resetZeroToHardStop(Amps.of(40)));
 
     // Left bumper held = isolate intake only (mute spindexer)
     spindexer.setDefaultCommand(

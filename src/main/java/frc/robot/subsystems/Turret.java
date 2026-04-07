@@ -258,12 +258,15 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-      builder.addStringProperty(
-          "Command",
-          () -> getCurrentCommand() != null ? getCurrentCommand().getName() : "null",
-          null);
-  
-      builder.addDoubleProperty("Current Position", () -> turret.getAngle().in(Degrees), null);
-      builder.addDoubleProperty("Target Position", () -> turret.getMechanismSetpoint().orElse(Degrees.of(0)).in(Degrees), value -> turret.setAngle(Degrees.of(value)));
+    builder.addStringProperty(
+        "Command",
+        () -> getCurrentCommand() != null ? getCurrentCommand().getName() : "null",
+        null);
+
+    builder.addDoubleProperty("Current Position", () -> turret.getAngle().in(Degrees), null);
+    builder.addDoubleProperty(
+        "Target Position",
+        () -> turret.getMechanismSetpoint().orElse(Degrees.of(0)).in(Degrees),
+        value -> turret.setAngle(Degrees.of(value)));
   }
 }
