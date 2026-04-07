@@ -85,8 +85,8 @@ public final class Constants {
     public static final Current SWERVE_DRIVE_STATOR = Amps.of(30);
     public static final Current SWERVE_DRIVE_SUPPLY = Amps.of(30);
     // Swerve Steer (TalonFX)
-    public static final Current SWERVE_STEER_STATOR = Amps.of(30);
-    public static final Current SWERVE_STEER_SUPPLY = Amps.of(20);
+    public static final Current SWERVE_STEER_STATOR = Amps.of(40);
+    public static final Current SWERVE_STEER_SUPPLY = Amps.of(40);
     // SpinnerIndex (TalonFX / Kraken X60, dual motor)
     public static final Current SPINNER_INDEX_STATOR = Amps.of(20);
     public static final Current SPINNER_INDEX_SUPPLY = Amps.of(30);

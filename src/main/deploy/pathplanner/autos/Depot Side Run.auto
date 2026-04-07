@@ -11,6 +11,31 @@
               {
                 "type": "wait",
                 "data": {
+                  "waitTime": 1.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Hood Up"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Spin Shooter To Target"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
                   "waitTime": 1.4
                 }
               },
@@ -97,7 +122,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.1
+                  "waitTime": 1.2
                 }
               },
               {
