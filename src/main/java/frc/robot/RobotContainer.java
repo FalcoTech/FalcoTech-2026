@@ -16,6 +16,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -26,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.FieldConstants;
@@ -222,8 +224,7 @@ public class RobotContainer {
     Copilot.b().onTrue(hood.hoodUp());
     Copilot.x().onTrue(hood.hoodDown());
 
-    // new Trigger(this::isNearTrench).whileTrue(hood.hoodDown().repeatedly()).onFalse(hood.hoodUp());
-
+    //new Trigger(this::isNearTrench).onTrue(hood.hoodDown());
     // INTAKE, HOPPER, FEEDER
 
     intakePivot.setDefaultCommand(
@@ -334,6 +335,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake", intakeRoller.runIntakeRollers(-.65));
     NamedCommands.registerCommand("Intake Stop", intakeRoller.runIntakeRollers(0));
     NamedCommands.registerCommand("Feeder Push", feeder.runFeeder(.5));
+    NamedCommands.registerCommand("Hood Up", hood.hoodUp());
+    NamedCommands.registerCommand("Hood Down", hood.hoodDown());
+    NamedCommands.registerCommand("Spindexer In", spindexer.runSpinnerIndex(.4));
+    NamedCommands.registerCommand("Spindexer Stop", spindexer.stopSpinnerIndex());
     // NamedCommands.registerCommand(null, getAutonomousCommand());
   }
 

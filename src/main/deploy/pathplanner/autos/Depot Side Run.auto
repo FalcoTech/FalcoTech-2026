@@ -41,7 +41,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Hopper Push"
+                  "name": "Spindexer In"
                 }
               }
             ]
@@ -84,7 +84,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Hopper Push"
+                  "name": "Spindexer In"
                 }
               }
             ]
@@ -103,7 +103,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Stop Hopper Push"
+                  "name": "Spindexer Stop"
                 }
               },
               {
@@ -234,7 +234,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Hopper Push"
+                  "name": "Spindexer In"
                 }
               },
               {
