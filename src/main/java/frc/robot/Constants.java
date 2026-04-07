@@ -97,7 +97,7 @@ public final class Constants {
     // Shooter (SparkMax / dual NEO)
     public static final Current SHOOTER_STATOR = Amps.of(40);
     // IntakeRoller (SparkFlex)
-    public static final Current INTAKE_ROLLER_SMART = Amps.of(40);
+    public static final Current INTAKE_ROLLER_SMART = Amps.of(60);
     // Feeder (SparkMax / NEO)
     public static final Current FEEDER_SMART = Amps.of(40);
   }
