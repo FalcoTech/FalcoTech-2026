@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RPM;
@@ -15,6 +16,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -30,7 +32,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.PathPlanningConstants;
-import frc.robot.commands.setHoodAngle;
 import frc.robot.commands.shootingCommands.feedWhenReady;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -223,8 +224,7 @@ public class RobotContainer {
     Copilot.x().and(Copilot.back()).onTrue(hood.positionCommand(0.25));
     // Copilot.b().onTrue(new setHoodAngle(0.5));
     // Copilot.x().onTrue(new setHoodAngle(0));
-    new Trigger(this::isNearTrench).and(RobotModeTriggers.teleop()).whileTrue(hood.hoodDown().repeatedly()).onFalse(hood.hoodUp());
-
+    new Trigger(this::isNearTrench).and(RobotModeTriggers.teleop()).whileTrue(hood.hoodDown().repeatedly());
     // INTAKE, HOPPER, FEEDER
 
     intakePivot.setDefaultCommand(
@@ -326,9 +326,11 @@ public class RobotContainer {
     NamedCommands.registerCommand("Stop Turret", turret.stop());
     NamedCommands.registerCommand("Stop Feeder Push", feeder.stopFeeder());
     NamedCommands.registerCommand("Stop Intake Pivot", intakePivot.stop());
-    NamedCommands.registerCommand("Pivot Intake Out", intakePivot.runDutyCycle(.6));
+  NamedCommands.registerCommand("Pivot Intake Out", intakePivot.setAngle(Degrees.of(0)));
+    //NamedCommands.registerCommand("Pivot Intake Out", intakePivot.runDutyCycle(.6));
     NamedCommands.registerCommand("Slow Pivot Intake Out", intakePivot.runDutyCycle(.3));
-    NamedCommands.registerCommand("Pivot Intake In", intakePivot.runDutyCycle(-.6));
+     NamedCommands.registerCommand("Pivot Intake In", intakePivot.setAngle(Degree.of(100)));
+    // NamedCommands.registerCommand("Pivot Intake In", intakePivot.runDutyCycle(-.6));
     NamedCommands.registerCommand("Intake", intakeRoller.runIntakeRollers(-.65));
     NamedCommands.registerCommand("Intake Stop", intakeRoller.runIntakeRollers(0));
     NamedCommands.registerCommand("Feeder Push", feeder.runFeeder(.5));

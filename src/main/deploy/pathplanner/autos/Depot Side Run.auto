@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Slide Intake Out"
+                  "name": "Pivot Intake Out"
                 }
               },
               {
@@ -60,7 +60,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Slow Slide Intake Out"
+                  "name": "Pivot Intake Out"
                 }
               },
               {
@@ -127,7 +127,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Stop Intake Slide"
+                  "name": "Stop Intake Pivot"
                 }
               }
             ]
