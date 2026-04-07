@@ -1,62 +1,92 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Millimeters;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Value;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+
 public class Hood extends SubsystemBase {
-  private final Servo turretHood = new Servo(0);
-  private double positionSetpoint = 0.0;
+    private static final Distance kServoLength = Millimeters.of(30);
+    private static final LinearVelocity kMaxServoSpeed = Millimeters.of(13).per(Second);
+    private static final double kMinPosition = 0.01;
+    private static final double kMaxPosition = 0.77;
+    private static final double kPositionTolerance = 0.02;
 
-  // If Y-cable doesn't work with both servos, uncomment to drive them independently
-  // private final Servo turretHood2 = new Servo(1);
+    private final Servo leftServo;
+    private final Servo rightServo;
 
-  /** Creates a new Hood. */
-  public Hood() {
-    SmartDashboard.putNumber("Hood/Up Position", 0.5);
-    turretHood.set(positionSetpoint);
-  }
+    private double currentPosition = 0.5;
+    private double targetPosition = 0.5;
+    private Time lastUpdateTime = Seconds.of(0);
 
-  @Override
-  public void periodic() {
-    double pos = SmartDashboard.getNumber("Hood/Up Position", 0.5);
-    // SmartDashboard.putNumber("Hood/Current Position", turretHood.getPosition());
-    turretHood.set(positionSetpoint);
-  }
+    public Hood() {
+        leftServo = new Servo(0);
+        // rightServo = new Servo(Ports.kHoodRightServo);
+        leftServo.setBoundsMicroseconds(2000, 1800, 1500, 1200, 1000);
+        // Using the defaults from WCP
+        // rightServo.setBoundsMicroseconds(2000, 1800, 1500, 1200, 1000);
+        setPosition(currentPosition);
+        SmartDashboard.putData(this);
+    }
 
-  public Command hoodUp() {
-    return this.runOnce(
-        () -> {
-          positionSetpoint = SmartDashboard.getNumber("Hood/Up Position",0.5);
-          // turretHood2.setPosition(pos);
-        });
-  }
+    /** Expects a position between 0.0 and 1.0 */
+    public void setPosition(double position) {
+        // final double clampedPosition = MathUtil.clamp(position, kMinPosition, kMaxPosition);
+        // leftServo.set(clampedPosition);
+        // rightServo.set(clampedPosition);
+        // targetPosition = clampedPosition;
+        targetPosition = position;
+    }
 
-  public Command hoodDown() {
-    return this.runOnce(
-        () -> {
-          positionSetpoint = 0;
-          // turretHood.setPosition(0);
-          // turretHood2.setPosition(0);
-        });
-  }
+    /** Expects a position between 0.0 and 1.0 */
+    public Command positionCommand(double position) {
+        return runOnce(() -> setPosition(position))
+            .andThen(Commands.waitUntil(this::isPositionWithinTolerance));
+    }
 
-  public Command setHoodPosition(double position) {
-    return this.runOnce(
-        () -> {
-          positionSetpoint = position;
-          // turretHood.setPosition(position);
-          // turretHood2.setPosition(position);
-        });
-  }
+    public boolean isPositionWithinTolerance() {
+        return MathUtil.isNear(targetPosition, currentPosition, kPositionTolerance);
+    }
 
-  public void set(double position) {
-    turretHood.set(position);
-    // turretHood2.setPosition(position);
-  }
+    private void updateCurrentPosition() {
+        final Time currentTime = Seconds.of(Timer.getFPGATimestamp());
+        final Time elapsedTime = currentTime.minus(lastUpdateTime);
+        lastUpdateTime = currentTime;
+
+        if (isPositionWithinTolerance()) {
+            currentPosition = targetPosition;
+            return;
+        }
+
+        final Distance maxDistanceTraveled = kMaxServoSpeed.times(elapsedTime);
+        final double maxPercentageTraveled = maxDistanceTraveled.div(kServoLength).in(Value);
+        currentPosition = targetPosition > currentPosition
+            ? Math.min(targetPosition, currentPosition + maxPercentageTraveled)
+            : Math.max(targetPosition, currentPosition - maxPercentageTraveled);
+    }
+
+    @Override
+    public void periodic() {
+        updateCurrentPosition();
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.addStringProperty("Command", () -> getCurrentCommand() != null ? getCurrentCommand().getName() : "null", null);
+        builder.addDoubleProperty("Current Position", () -> currentPosition, null);
+        builder.addDoubleProperty("Target Position", () -> targetPosition, value -> setPosition(value));
+    }
 }
