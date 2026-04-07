@@ -21,6 +21,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -102,6 +103,7 @@ public class Turret extends SubsystemBase {
   /** Creates a new Turret. */
   public Turret() {
     SmartDashboard.putBoolean("Use Turret", true);
+    SmartDashboard.putData(this);
   }
 
   /**
@@ -252,5 +254,16 @@ public class Turret extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     turret.simIterate();
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+      builder.addStringProperty(
+          "Command",
+          () -> getCurrentCommand() != null ? getCurrentCommand().getName() : "null",
+          null);
+  
+      builder.addDoubleProperty("Current Position", () -> turret.getAngle().in(Degrees), null);
+      builder.addDoubleProperty("Target Position", () -> turret.getMechanismSetpoint().orElse(Degrees.of(0)).in(Degrees), value -> turret.setAngle(Degrees.of(value)));
   }
 }

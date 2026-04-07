@@ -19,6 +19,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -81,7 +82,9 @@ public class IntakePivot extends SubsystemBase {
 
   private Arm intakePivot = new Arm(armConfig);
 
-  public IntakePivot() {}
+  public IntakePivot() {
+    SmartDashboard.putData(this);
+  }
 
   @Override
   public void periodic() {
@@ -167,7 +170,7 @@ public class IntakePivot extends SubsystemBase {
     Voltage runVoltage =
         Volts.of(8); // Voltage to run mechanism with (variable upon mechanism), negative to run in
     // reverse
-    // TODO: Check this and see if I need to switch to useing lower hard limit and positive voltage
+    // TODO: I think this is still goofy and not working right
     Angle limitAngle =
         this.armConfig.getUpperHardLimit().get(); // Use Mechanism hard limit as the new start point
     AngularVelocity velocityThreshold =
@@ -188,4 +191,19 @@ public class IntakePivot extends SubsystemBase {
               intakeArmSMC.startClosedLoopController();
             });
   }
+
+  public Command resetEncoderToLimit(){
+     return runOnce(() -> intakeArmSMC.setEncoderPosition(Degrees.of(110)));
+  }
+
+  // @Override
+  // public void initSendable(SendableBuilder builder) {
+  //     builder.addStringProperty(
+  //         "Command",
+  //         () -> getCurrentCommand() != null ? getCurrentCommand().getName() : "null",
+  //         null);
+  
+  //     // builder.addDoubleProperty("Current Position", () -> intakePivot.getAngle().in(Degrees), null);
+  //     builder.addDoubleProperty("Target Position", () -> intakePivot.getMechanismSetpoint().orElse(Degrees.of(0)).in(Degrees), value -> intakePivot.setAngle(Degrees.of(value)));
+  // }
 }

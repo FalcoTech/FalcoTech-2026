@@ -196,7 +196,8 @@ public class RobotContainer {
                 .setAngle(shotCalculator::getIdealTurretAngle)
                 .alongWith(shooter.setAngularVelocity(shotCalculator::getIdealShooterVelocity))
                 .alongWith(hood.hoodUp().unless(this::isNearTrench))
-                .alongWith(new feedWhenReady())); // aim + auto-feed when ready
+                .alongWith(new feedWhenReady())
+                .withName("Auto Aim & Fire")); // aim + auto-feed when ready
     // Copilot.x()
     //     .whileTrue(
     //         feeder
@@ -214,17 +215,15 @@ public class RobotContainer {
                           return RPM.of(manualRPM);
                         }))
                 .alongWith(hood.hoodUp().unless(this::isNearTrench))
-                .alongWith(new feedWhenReady()));
+                .alongWith(new feedWhenReady())
+                .withName("Manual RPM & Fire"));
 
     // HOOD BUTTONS
-    // Copilot.leftBumper().onTrue(new setHoodAngle(0));//Hood down
-    // Copilot.leftBumper().onTrue(hood.setHoodPosition(0));
-    // Copilot.rightBumper().onTrue(new setHoodAngle(1)); //Hood up
-    // Copilot.rightBumper().onTrue(hood.setHoodPosition(1));
     Copilot.b().onTrue(hood.hoodUp());
     Copilot.x().onTrue(hood.hoodDown());
+    Copilot.x().and(Copilot.back()).onTrue(hood.positionCommand(0.25));
+    new Trigger(this::isNearTrench).and(RobotModeTriggers.teleop()).whileTrue(hood.hoodDown().repeatedly()).onFalse(hood.hoodUp());  
 
-    //new Trigger(this::isNearTrench).onTrue(hood.hoodDown());
     // INTAKE, HOPPER, FEEDER
 
     intakePivot.setDefaultCommand(
@@ -255,7 +254,9 @@ public class RobotContainer {
     // Enable intake pivot zeroring on the fly
     Copilot.start()
         .and(Copilot.leftStick())
-        .whileTrue(intakePivot.resetZeroToHardStop(Amps.of(40)));
+        .whileTrue(intakePivot.resetEncoderToLimit());
+        // .whileTrue(intakePivot.resetZeroToHardStop(Amps.of(40)));
+
 
     // Left bumper held = isolate intake only (mute spindexer)
     spindexer.setDefaultCommand(
@@ -325,10 +326,8 @@ public class RobotContainer {
         shooter.setAngularVelocity(shotCalculator::getIdealShooterVelocity));
     NamedCommands.registerCommand("Stop Shooter", shooter.stop());
     NamedCommands.registerCommand("Stop Turret", turret.stop());
-    // TODO: Rebuild the Spindexer commands and auto routines;
     NamedCommands.registerCommand("Stop Feeder Push", feeder.stopFeeder());
     NamedCommands.registerCommand("Stop Intake Pivot", intakePivot.stop());
-
     NamedCommands.registerCommand("Pivot Intake Out", intakePivot.runDutyCycle(.6));
     NamedCommands.registerCommand("Slow Pivot Intake Out", intakePivot.runDutyCycle(.3));
     NamedCommands.registerCommand("Pivot Intake In", intakePivot.runDutyCycle(-.6));

@@ -5,7 +5,63 @@
     {
       "name": "Teleoperated",
       "grid_layout": {
-        "layouts": [],
+        "layouts": [
+          {
+            "title": "Hood",
+            "x": 0.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Command",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Hood/Command",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Current Position",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Hood/Current Position",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Target Position",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Hood/Target Position",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          }
+        ],
         "containers": [
           {
             "title": "Auto Mode",
@@ -18,27 +74,6 @@
               "topic": "/SmartDashboard/Auto Mode",
               "period": 0.06,
               "sort_options": false
-            }
-          },
-          {
-            "title": "Feeder Motor Output",
-            "x": 512.0,
-            "y": 256.0,
-            "width": 384.0,
-            "height": 256.0,
-            "type": "Radial Gauge",
-            "properties": {
-              "topic": "/SmartDashboard/Feeder Motor Output",
-              "period": 0.06,
-              "data_type": "double",
-              "start_angle": -140.0,
-              "end_angle": 140.0,
-              "min_value": -1.0,
-              "max_value": 1.0,
-              "number_of_labels": 8,
-              "wrap_value": false,
-              "show_pointer": true,
-              "show_ticks": true
             }
           },
           {
@@ -102,7 +137,7 @@
           },
           {
             "title": "robotStopped",
-            "x": 0.0,
+            "x": 128.0,
             "y": 128.0,
             "width": 128.0,
             "height": 128.0,
@@ -119,8 +154,8 @@
           },
           {
             "title": "shooterReady",
-            "x": 0.0,
-            "y": 256.0,
+            "x": 128.0,
+            "y": 0.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -137,7 +172,7 @@
           {
             "title": "turretReady",
             "x": 0.0,
-            "y": 384.0,
+            "y": 128.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -152,48 +187,116 @@
             }
           },
           {
-            "title": "shooterSetpointPresent",
-            "x": 128.0,
+            "title": "Manual RPM",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Shooter/Manual RPM",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "RPM Step",
+            "x": 1024.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Shooter/RPM Step",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "ShootOnTheMove",
+            "x": 384.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Toggle Switch",
+            "properties": {
+              "topic": "/SmartDashboard/Tuning/ShootOnTheMove",
+              "period": 0.06,
+              "data_type": "boolean"
+            }
+          },
+          {
+            "title": "Distance To Target",
+            "x": 384.0,
             "y": 256.0,
             "width": 128.0,
             "height": 128.0,
-            "type": "Boolean Box",
+            "type": "Text Display",
             "properties": {
-              "topic": "/SmartDashboard/FeedWhenReady/shooterSetpointPresent",
+              "topic": "/SmartDashboard/Distance To Target",
               "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
+              "data_type": "double",
+              "show_submit_button": false
             }
           },
           {
-            "title": "turretSetpointPresent",
-            "x": 128.0,
-            "y": 384.0,
+            "title": "Enable MegaTag2",
+            "x": 384.0,
+            "y": 128.0,
             "width": 128.0,
             "height": 128.0,
-            "type": "Boolean Box",
+            "type": "Toggle Switch",
             "properties": {
-              "topic": "/SmartDashboard/FeedWhenReady/turretSetpointPresent",
+              "topic": "/SmartDashboard/Enable MegaTag2",
               "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
+              "data_type": "boolean"
             }
           },
           {
-            "title": "shouldFeed",
+            "title": "Git Info",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Git Info",
+              "period": 0.06,
+              "data_type": "string"
+            }
+          },
+          {
+            "title": "Flywheel Velocity",
+            "x": 640.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "Radial Gauge",
+            "properties": {
+              "topic": "/SmartDashboard/Flywheel Velocity",
+              "period": 0.06,
+              "data_type": "double",
+              "start_angle": -140.0,
+              "end_angle": 140.0,
+              "min_value": 0.0,
+              "max_value": 5400.0,
+              "number_of_labels": 8,
+              "wrap_value": false,
+              "show_pointer": true,
+              "show_ticks": true
+            }
+          },
+          {
+            "title": "isNearTrench",
             "x": 256.0,
-            "y": 512.0,
+            "y": 0.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
-              "topic": "/SmartDashboard/FeedWhenReady/shouldFeed",
+              "topic": "/SmartDashboard/isNearTrench",
               "period": 0.06,
               "data_type": "boolean",
               "true_color": 4283215696,
