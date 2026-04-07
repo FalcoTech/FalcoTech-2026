@@ -247,7 +247,7 @@ public class RobotContainer {
             () ->
                 Copilot.rightBumper().getAsBoolean()
                     ? 0.0
-                    : .55
+                    : 1
                         * (Copilot.getLeftTriggerAxis()
                             - Copilot.getRightTriggerAxis()))); // NEGATIVE RUNS THRU
 

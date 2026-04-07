@@ -129,6 +129,12 @@
                 "data": {
                   "name": "Stop Intake Pivot"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Hood Down"
+                }
               }
             ]
           }
