@@ -29,7 +29,7 @@ public class Hood extends SubsystemBase {
   // private final Servo rightServo;
 
   private double currentPosition = 0.0;
-  private double targetPosition = 0.5;
+  private double targetPosition = 0.0;
   private Time lastUpdateTime = Seconds.of(0);
 
   public Hood() {
@@ -48,6 +48,7 @@ public class Hood extends SubsystemBase {
     // leftServo.set(clampedPosition);
     // rightServo.set(clampedPosition);
     // targetPosition = clampedPosition;
+    leftServo.set(position);
     targetPosition = position;
   }
 

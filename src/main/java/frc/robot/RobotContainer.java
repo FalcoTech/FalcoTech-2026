@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.FieldConstants;
@@ -217,14 +218,12 @@ public class RobotContainer {
                 .withName("Manual RPM & Fire"));
 
     // HOOD BUTTONS
-    // Copilot.b().onTrue(hood.hoodUp());
-
-    // Copilot.x().onTrue(hood.hoodDown());
+    Copilot.b().onTrue(hood.hoodUp());
+    Copilot.x().onTrue(hood.hoodDown());
     Copilot.x().and(Copilot.back()).onTrue(hood.positionCommand(0.25));
-    Copilot.b().onTrue(new setHoodAngle(0.5));
-    Copilot.x().onTrue(new setHoodAngle(0));
-    // new
-    // Trigger(this::isNearTrench).and(RobotModeTriggers.teleop()).whileTrue(hood.hoodDown().repeatedly()).onFalse(hood.hoodUp());
+    // Copilot.b().onTrue(new setHoodAngle(0.5));
+    // Copilot.x().onTrue(new setHoodAngle(0));
+    new Trigger(this::isNearTrench).and(RobotModeTriggers.teleop()).whileTrue(hood.hoodDown().repeatedly()).onFalse(hood.hoodUp());
 
     // INTAKE, HOPPER, FEEDER
 
