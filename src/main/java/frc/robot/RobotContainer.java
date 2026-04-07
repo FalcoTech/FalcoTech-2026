@@ -50,7 +50,7 @@ public class RobotContainer {
   private static double MaxSpeed =
       TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   private static double MaxAngularRate =
-      .4
+      .7
           * RotationsPerSecond.of(0.75)
               .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -326,14 +326,14 @@ public class RobotContainer {
     NamedCommands.registerCommand("Stop Turret", turret.stop());
     NamedCommands.registerCommand("Stop Feeder Push", feeder.stopFeeder());
     NamedCommands.registerCommand("Stop Intake Pivot", intakePivot.stop());
-  NamedCommands.registerCommand("Pivot Intake Out", intakePivot.setAngle(Degrees.of(0)));
+  NamedCommands.registerCommand("Pivot Intake Out", intakePivot.setAngleAndStop(Degree.of(0),Degrees.of(5)));
     //NamedCommands.registerCommand("Pivot Intake Out", intakePivot.runDutyCycle(.6));
     NamedCommands.registerCommand("Slow Pivot Intake Out", intakePivot.runDutyCycle(.3));
-     NamedCommands.registerCommand("Pivot Intake In", intakePivot.setAngle(Degree.of(100)));
+     NamedCommands.registerCommand("Pivot Intake In", intakePivot.setAngleAndStop(Degree.of(100),Degrees.of(5)));
     // NamedCommands.registerCommand("Pivot Intake In", intakePivot.runDutyCycle(-.6));
     NamedCommands.registerCommand("Intake", intakeRoller.runIntakeRollers(-.65));
     NamedCommands.registerCommand("Intake Stop", intakeRoller.runIntakeRollers(0));
-    NamedCommands.registerCommand("Feeder Push", feeder.runFeeder(.5));
+    NamedCommands.registerCommand("Feeder Push", new feedWhenReady());
     NamedCommands.registerCommand("Hood Up", hood.hoodUp());
     NamedCommands.registerCommand("Hood Down", hood.hoodDown());
     NamedCommands.registerCommand("Spindexer In", spindexer.runSpinnerIndex(.4));

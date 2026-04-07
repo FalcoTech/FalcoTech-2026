@@ -5,15 +5,71 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": null
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Hood Up"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Spin Shooter To Target"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "New Path"
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Pivot Intake Out"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Aim Turret"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Spin Shooter To Target"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Spindexer In"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Feeder Push"
+                }
+              }
+            ]
           }
         }
       ]

@@ -82,8 +82,8 @@ public final class Constants {
    */
   public static final class CurrentLimits {
     // Swerve Drive (TalonFX / Kraken X60)
-    public static final Current SWERVE_DRIVE_STATOR = Amps.of(30);
-    public static final Current SWERVE_DRIVE_SUPPLY = Amps.of(30);
+    public static final Current SWERVE_DRIVE_STATOR = Amps.of(80);
+    public static final Current SWERVE_DRIVE_SUPPLY = Amps.of(60);
     // Swerve Steer (TalonFX)
     public static final Current SWERVE_STEER_STATOR = Amps.of(40);
     public static final Current SWERVE_STEER_SUPPLY = Amps.of(40);
