@@ -16,7 +16,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -224,17 +223,32 @@ public class RobotContainer {
     Copilot.x().and(Copilot.back()).onTrue(hood.positionCommand(0.25));
     // Copilot.b().onTrue(new setHoodAngle(0.5));
     // Copilot.x().onTrue(new setHoodAngle(0));
-    new Trigger(this::isNearTrench).and(RobotModeTriggers.teleop()).whileTrue(hood.hoodDown().repeatedly());
+    new Trigger(this::isNearTrench)
+        .and(RobotModeTriggers.teleop())
+        .whileTrue(hood.hoodDown().repeatedly());
     // INTAKE, HOPPER, FEEDER
 
-    intakePivot.setDefaultCommand(
-        intakePivot.runDutyCycle(
-            () ->
-                -(Math.pow(Copilot.getLeftY(), 5)
-                    + (0.25
-                        * Copilot
-                            .getLeftY())))); // x^5 control with linear control at smaller inputs.
+
+    // RobotModeTriggers.teleop()
+    //     .whileTrue(
+    //         intakePivot.runDutyCycle(
+    //             () ->
+    //                 -0.75*(Math.pow(Copilot.getLeftY(), 5)
+    //                     + (0.25
+    //                         * Copilot
+    //                             .getLeftY())))); // x^5 control with linear control at smaller inputs.
     // Negative sign to correct for joystick direction.
+
+    intakePivot.setDefaultCommand(
+    Commands.either(
+        intakePivot.runDutyCycle(
+            () -> -(Math.pow(Copilot.getLeftY(), 5)
+                + (0.25 * Copilot.getLeftY()))
+        ),
+        Commands.idle(intakePivot),
+        DriverStation::isTeleop
+    )
+);
     // intakePivot.setDefaultCommand(
     //     intakePivot.setAngle(() -> Degrees.of(90).times(Copilot.getLeftY())));
     Copilot.rightStick().toggleOnTrue((intakePivot.setAngle(Degrees.of(80))));
@@ -326,10 +340,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("Stop Turret", turret.stop());
     NamedCommands.registerCommand("Stop Feeder Push", feeder.stopFeeder());
     NamedCommands.registerCommand("Stop Intake Pivot", intakePivot.stop());
-  NamedCommands.registerCommand("Pivot Intake Out", intakePivot.setAngleAndStop(Degree.of(0),Degrees.of(5)));
-    //NamedCommands.registerCommand("Pivot Intake Out", intakePivot.runDutyCycle(.6));
+    NamedCommands.registerCommand("Pivot Intake Out", intakePivot.setAngle(Degree.of(0)));
+    // NamedCommands.registerCommand("Pivot Intake Out", intakePivot.runDutyCycle(.6));
     NamedCommands.registerCommand("Slow Pivot Intake Out", intakePivot.runDutyCycle(.3));
-     NamedCommands.registerCommand("Pivot Intake In", intakePivot.setAngleAndStop(Degree.of(100),Degrees.of(5)));
+    NamedCommands.registerCommand("Pivot Intake In", intakePivot.setAngle(Degree.of(100)));
     // NamedCommands.registerCommand("Pivot Intake In", intakePivot.runDutyCycle(-.6));
     NamedCommands.registerCommand("Intake", intakeRoller.runIntakeRollers(-.65));
     NamedCommands.registerCommand("Intake Stop", intakeRoller.runIntakeRollers(0));

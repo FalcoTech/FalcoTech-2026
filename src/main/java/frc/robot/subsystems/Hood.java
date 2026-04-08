@@ -62,7 +62,7 @@ public class Hood extends SubsystemBase {
     return runOnce(() -> setPosition(HoodConstants.HOOD_UP))
         .andThen(Commands.waitUntil(this::isPositionWithinTolerance));
   }
-  
+
   public Command hoodDown() {
     return runOnce(() -> setPosition(HoodConstants.HOOD_DOWN))
         .andThen(Commands.waitUntil(this::isPositionWithinTolerance));
