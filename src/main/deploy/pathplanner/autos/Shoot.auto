@@ -5,68 +5,50 @@
     "data": {
       "commands": [
         {
-          "type": "race",
+          "type": "path",
+          "data": {
+            "pathName": "Shoot"
+          }
+        },
+        {
+          "type": "deadline",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Pivot Intake Out"
-                }
-              },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 3.0
+                  "waitTime": 1.0
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "5"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "6"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "7"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "8"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
+              },
               {
                 "type": "named",
                 "data": {
-                  "name": "Aim Turret"
+                  "name": "Hood Up"
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "Spin Shooter To Target"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 10.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Aim Turret"
                 }
               },
               {
@@ -79,12 +61,6 @@
                 "type": "named",
                 "data": {
                   "name": "Spindexer In"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
                 }
               }
             ]

@@ -237,12 +237,12 @@ public class RobotContainer {
     //                     + (0.25
     //                         * Copilot
     //                             .getLeftY())))); // x^5 control with linear control at smaller inputs.
-    // Negative sign to correct for joystick direction.
+// Negative sign to correct for joystick direction.
 
     intakePivot.setDefaultCommand(
     Commands.either(
         intakePivot.runDutyCycle(
-            () -> -(Math.pow(Copilot.getLeftY(), 5)
+            () -> -0.75*(Math.pow(Copilot.getLeftY(), 5)
                 + (0.25 * Copilot.getLeftY()))
         ),
         Commands.idle(intakePivot),
