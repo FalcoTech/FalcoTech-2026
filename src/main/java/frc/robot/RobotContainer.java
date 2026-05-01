@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import java.util.Set;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -265,7 +266,7 @@ public class RobotContainer {
                         * (Copilot.getLeftTriggerAxis()
                             - Copilot.getRightTriggerAxis()))); // NEGATIVE RUNS THRU
 
-    intakePivot.isInStoredPosition().whileTrue(intakeRoller.stopIntakeRollers());
+    intakePivot.isInStoredPosition().and(RobotModeTriggers.teleop()).whileTrue(intakeRoller.stopIntakeRollers());
     // Enable intake pivot zeroring on the fly
     Copilot.start().and(Copilot.leftStick()).whileTrue(intakePivot.resetEncoderToLimit());
     // .whileTrue(intakePivot.resetZeroToHardStop(Amps.of(40)));
@@ -332,27 +333,51 @@ public class RobotContainer {
 
   private void RegisterNamedCommands() {
     NamedCommands.registerCommand(
-        "Aim Turret", turret.setAngle(shotCalculator::getIdealTurretAngle));
+        "Aim Turret",
+        Commands.defer(() -> turret.setAngle(shotCalculator::getIdealTurretAngle), Set.of(turret)));
     NamedCommands.registerCommand(
         "Spin Shooter To Target",
-        shooter.setAngularVelocity(shotCalculator::getIdealShooterVelocity));
-    NamedCommands.registerCommand("Stop Shooter", shooter.stop());
-    NamedCommands.registerCommand("Stop Turret", turret.stop());
-    NamedCommands.registerCommand("Stop Feeder Push", feeder.stopFeeder());
-    NamedCommands.registerCommand("Stop Intake Pivot", intakePivot.stop());
-    NamedCommands.registerCommand("Pivot Intake Out", intakePivot.setAngle(Degree.of(0)));
-    // NamedCommands.registerCommand("Pivot Intake Out", intakePivot.runDutyCycle(.6));
-    NamedCommands.registerCommand("Slow Pivot Intake Out", intakePivot.runDutyCycle(.3));
-    NamedCommands.registerCommand("Pivot Intake In", intakePivot.setAngle(Degree.of(100)));
-    // NamedCommands.registerCommand("Pivot Intake In", intakePivot.runDutyCycle(-.6));
-    NamedCommands.registerCommand("Intake", intakeRoller.runIntakeRollers(-.65));
-    NamedCommands.registerCommand("Intake Stop", intakeRoller.runIntakeRollers(0));
-    NamedCommands.registerCommand("Feeder Push", new feedWhenReady());
-    NamedCommands.registerCommand("Hood Up", hood.hoodUp());
-    NamedCommands.registerCommand("Hood Down", hood.hoodDown());
-    NamedCommands.registerCommand("Spindexer In", spindexer.runSpinnerIndex(.4));
-    NamedCommands.registerCommand("Spindexer Stop", spindexer.stopSpinnerIndex());
-    // NamedCommands.registerCommand(null, getAutonomousCommand());
+        Commands.defer(
+            () -> shooter.setAngularVelocity(shotCalculator::getIdealShooterVelocity),
+            Set.of(shooter)));
+    NamedCommands.registerCommand(
+        "Stop Shooter", Commands.defer(() -> shooter.stop(), Set.of(shooter)));
+    NamedCommands.registerCommand(
+        "Stop Turret", Commands.defer(() -> turret.stop(), Set.of(turret)));
+    NamedCommands.registerCommand(
+        "Stop Feeder Push", Commands.defer(() -> feeder.stopFeeder(), Set.of(feeder)));
+    NamedCommands.registerCommand(
+        "Stop Intake Pivot", Commands.defer(() -> intakePivot.stop(), Set.of(intakePivot)));
+    NamedCommands.registerCommand(
+        "Pivot Intake Out",
+        Commands.defer(
+            () -> intakePivot.setAngleAndStop(Degree.of(0), Degrees.of(5)),
+            Set.of(intakePivot)));
+    NamedCommands.registerCommand(
+        "Slow Pivot Intake Out",
+        Commands.defer(() -> intakePivot.runDutyCycle(.3), Set.of(intakePivot)));
+    NamedCommands.registerCommand(
+        "Pivot Intake In",
+        Commands.defer(
+            () -> intakePivot.setAngleAndStop(Degree.of(100), Degrees.of(5)),
+            Set.of(intakePivot)));
+    NamedCommands.registerCommand(
+        "Intake", Commands.defer(() -> intakeRoller.runIntakeRollers(-.65), Set.of(intakeRoller)));
+    NamedCommands.registerCommand(
+        "Intake Stop",
+        Commands.defer(() -> intakeRoller.runIntakeRollers(0), Set.of(intakeRoller)));
+    NamedCommands.registerCommand(
+        "Feeder Push", Commands.defer(() -> new feedWhenReady(), Set.of(feeder)));
+    NamedCommands.registerCommand(
+        "Hood Up", Commands.defer(() -> hood.hoodUp(), Set.of(hood)));
+    NamedCommands.registerCommand(
+        "Hood Down", Commands.defer(() -> hood.hoodDown(), Set.of(hood)));
+    NamedCommands.registerCommand(
+        "Spindexer In",
+        Commands.defer(() -> spindexer.runSpinnerIndex(.4), Set.of(spindexer)));
+    NamedCommands.registerCommand(
+        "Spindexer Stop",
+        Commands.defer(() -> spindexer.stopSpinnerIndex(), Set.of(spindexer)));
   }
 
   // Implements the following pseudocode:
