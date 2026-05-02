@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
+import frc.robot.util.HubShiftUtil;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
@@ -52,6 +53,7 @@ public class feedWhenReady extends Command {
     SmartDashboard.putNumber("Tuning/FeedVelocityToleranceRPM", velocityToleranceRPM);
     SmartDashboard.putNumber("Tuning/FeederSpeed", feederSpeed);
     SmartDashboard.putNumber("Tuning/StoppedThresholdMPS", stoppedThresholdMPS);
+    SmartDashboard.putBoolean("Tuning/HubShiftGating", true);
   }
 
   private boolean isTurretReady(double toleranceMult) {
@@ -83,8 +85,10 @@ public class feedWhenReady extends Command {
     feederSpeed = SmartDashboard.getNumber("Tuning/FeederSpeed", 0.8);
     stoppedThresholdMPS = SmartDashboard.getNumber("Tuning/StoppedThresholdMPS", 0.15);
     boolean shootOnTheMove = SmartDashboard.getBoolean("Tuning/ShootOnTheMove", false);
+    boolean hubShiftGating = SmartDashboard.getBoolean("Tuning/HubShiftGating", true);
 
     boolean isTargetingHub = RobotContainer.shotCalculator.isTargetingHub();
+    boolean windowActive = !hubShiftGating || !isTargetingHub || HubShiftUtil.getShiftedShiftInfo().active();
     // For non-hub shots, we can be more lenient since they are less sensitive to aiming/speed
     // This allows the feeder to run sooner, which can help with cycle times
     boolean nonHubReady = isTurretReady(2.0) && isShooterReady(2.0);
@@ -99,7 +103,7 @@ public class feedWhenReady extends Command {
     // Hub shots: require turret aimed, shooter up to speed, and robot stopped (or ShootOnTheMove)
     boolean hubReady =
         isTurretReady(1.0) && isShooterReady(1.0) && (robotStopped || shootOnTheMove);
-    boolean shouldFeed = (!isTargetingHub && nonHubReady) || hubReady;
+    boolean shouldFeed = windowActive && ((!isTargetingHub && nonHubReady) || hubReady);
 
     SmartDashboard.putBoolean("FeedWhenReady/isTargetingHub", isTargetingHub);
     SmartDashboard.putBoolean("FeedWhenReady/robotStopped", robotStopped);
@@ -109,6 +113,8 @@ public class feedWhenReady extends Command {
         "FeedWhenReady/turretSetpointPresent", turret.getAngleSetpoint().isPresent());
     SmartDashboard.putBoolean(
         "FeedWhenReady/shooterSetpointPresent", shooter.getAngularVelocitySetpoint().isPresent());
+    SmartDashboard.putBoolean("FeedWhenReady/windowActive", windowActive);
+    SmartDashboard.putString("FeedWhenReady/currentShift", HubShiftUtil.getShiftedShiftInfo().currentShift().name());
 
     feeder.runFeederVoid(shouldFeed ? feederSpeed : 0.0);
   }

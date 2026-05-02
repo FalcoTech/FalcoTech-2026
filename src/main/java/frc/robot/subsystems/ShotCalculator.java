@@ -275,7 +275,7 @@ public class ShotCalculator extends SubsystemBase {
 
     SmartDashboard.putNumber("Ideal Turret Angle", getIdealTurretAngle().in(Degrees));
     SmartDashboard.putNumber("Distance To Target", getDistanceToTarget());
-    // SmartDashboard.putNumber("Shot Viability", getShotViabilityScale());
+    SmartDashboard.putNumber("Shot Viability", getShotViabilityScale());
     SmartDashboard.putBoolean("ShotCalc/isTargetingHub", isTargetingHub());
     SmartDashboard.putNumber("Tuning/MapSuggestedRPM", SHOOTER_MAP.get(getDistanceToTarget()).rpm);
   }

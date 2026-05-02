@@ -44,6 +44,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShotCalculator;
 import frc.robot.subsystems.SpinnerIndex;
 import frc.robot.subsystems.Turret;
+import frc.robot.util.HubShiftUtil;
 
 public class RobotContainer {
   // Drive speeds
@@ -159,6 +160,11 @@ public class RobotContainer {
     final var idle = new SwerveRequest.Idle();
     RobotModeTriggers.disabled()
         .whileTrue(drivetrain.applyRequest(() -> idle).ignoringDisable(true));
+
+    RobotModeTriggers.teleop().onTrue(Commands.runOnce(HubShiftUtil::initialize));
+    RobotModeTriggers.autonomous().onTrue(Commands.runOnce(HubShiftUtil::initialize));
+    RobotModeTriggers.disabled().onTrue(
+        Commands.runOnce(HubShiftUtil::initialize).ignoringDisable(true));
 
     Pilot.a().whileTrue(drivetrain.applyRequest(() -> XForm));
 
