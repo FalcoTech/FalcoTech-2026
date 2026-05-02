@@ -168,6 +168,9 @@ public class RobotContainer {
 
     Pilot.a().whileTrue(drivetrain.applyRequest(() -> XForm));
 
+    Pilot.b().onTrue(Commands.runOnce(() -> drivetrain.setDriveBoost(true)));
+    Pilot.b().onFalse(Commands.runOnce(() -> drivetrain.setDriveBoost(false)));
+
     // Pilot.b().whileTrue(drivetrain.pathFindToPose(testPose));
     // Pilot.b().whileTrue(drivetrain.rotateThenPathfind(0, testPose));
 
