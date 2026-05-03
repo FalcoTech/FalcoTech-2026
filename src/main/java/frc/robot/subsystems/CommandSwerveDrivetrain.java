@@ -360,7 +360,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             .withStatorCurrentLimitEnable(true)
             .withSupplyCurrentLimit(boost ? CurrentLimits.SWERVE_DRIVE_BOOST_SUPPLY : CurrentLimits.SWERVE_DRIVE_SUPPLY)
             .withSupplyCurrentLimitEnable(true);
-        for (int i = 0; i < getModuleCount(); i++) {
+        for (int i = 0; i < getModules().length; i++) {
             getModule(i).getDriveMotor().getConfigurator().apply(config);
         }
     }

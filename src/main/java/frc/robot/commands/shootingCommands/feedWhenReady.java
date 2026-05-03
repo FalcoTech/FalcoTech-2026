@@ -11,10 +11,10 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import frc.robot.util.HubShiftUtil;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
+import frc.robot.util.HubShiftUtil;
 
 /**
  * Feeds game pieces into the shooter when readiness conditions are met. Only requires the {@link
@@ -88,7 +88,8 @@ public class feedWhenReady extends Command {
     boolean hubShiftGating = SmartDashboard.getBoolean("Tuning/HubShiftGating", true);
 
     boolean isTargetingHub = RobotContainer.shotCalculator.isTargetingHub();
-    boolean windowActive = !hubShiftGating || !isTargetingHub || HubShiftUtil.getShiftedShiftInfo().active();
+    boolean windowActive =
+        !hubShiftGating || !isTargetingHub || HubShiftUtil.getShiftedShiftInfo().active();
     // For non-hub shots, we can be more lenient since they are less sensitive to aiming/speed
     // This allows the feeder to run sooner, which can help with cycle times
     boolean nonHubReady = isTurretReady(2.0) && isShooterReady(2.0);
@@ -114,7 +115,8 @@ public class feedWhenReady extends Command {
     SmartDashboard.putBoolean(
         "FeedWhenReady/shooterSetpointPresent", shooter.getAngularVelocitySetpoint().isPresent());
     SmartDashboard.putBoolean("FeedWhenReady/windowActive", windowActive);
-    SmartDashboard.putString("FeedWhenReady/currentShift", HubShiftUtil.getShiftedShiftInfo().currentShift().name());
+    SmartDashboard.putString(
+        "FeedWhenReady/currentShift", HubShiftUtil.getShiftedShiftInfo().currentShift().name());
 
     feeder.runFeederVoid(shouldFeed ? feederSpeed : 0.0);
   }

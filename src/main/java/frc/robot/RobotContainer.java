@@ -22,7 +22,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import java.util.Set;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -45,6 +44,7 @@ import frc.robot.subsystems.ShotCalculator;
 import frc.robot.subsystems.SpinnerIndex;
 import frc.robot.subsystems.Turret;
 import frc.robot.util.HubShiftUtil;
+import java.util.Set;
 
 public class RobotContainer {
   // Drive speeds
@@ -163,8 +163,8 @@ public class RobotContainer {
 
     RobotModeTriggers.teleop().onTrue(Commands.runOnce(HubShiftUtil::initialize));
     RobotModeTriggers.autonomous().onTrue(Commands.runOnce(HubShiftUtil::initialize));
-    RobotModeTriggers.disabled().onTrue(
-        Commands.runOnce(HubShiftUtil::initialize).ignoringDisable(true));
+    RobotModeTriggers.disabled()
+        .onTrue(Commands.runOnce(HubShiftUtil::initialize).ignoringDisable(true));
 
     Pilot.a().whileTrue(drivetrain.applyRequest(() -> XForm));
 
@@ -238,7 +238,6 @@ public class RobotContainer {
         .whileTrue(hood.hoodDown().repeatedly());
     // INTAKE, HOPPER, FEEDER
 
-
     // RobotModeTriggers.teleop()
     //     .whileTrue(
     //         intakePivot.runDutyCycle(
@@ -246,19 +245,16 @@ public class RobotContainer {
     //                 -0.75*(Math.pow(Copilot.getLeftY(), 5)
     //                     + (0.25
     //                         * Copilot
-    //                             .getLeftY())))); // x^5 control with linear control at smaller inputs.
-// Negative sign to correct for joystick direction.
+    //                             .getLeftY())))); // x^5 control with linear control at smaller
+    // inputs.
+    // Negative sign to correct for joystick direction.
 
     intakePivot.setDefaultCommand(
-    Commands.either(
-        intakePivot.runDutyCycle(
-            () -> -0.75*(Math.pow(Copilot.getLeftY(), 5)
-                + (0.25 * Copilot.getLeftY()))
-        ),
-        Commands.idle(intakePivot),
-        DriverStation::isTeleop
-    )
-);
+        Commands.either(
+            intakePivot.runDutyCycle(
+                () -> -0.75 * (Math.pow(Copilot.getLeftY(), 5) + (0.25 * Copilot.getLeftY()))),
+            Commands.idle(intakePivot),
+            DriverStation::isTeleop));
     // intakePivot.setDefaultCommand(
     //     intakePivot.setAngle(() -> Degrees.of(90).times(Copilot.getLeftY())));
     Copilot.rightStick().toggleOnTrue((intakePivot.setAngle(Degrees.of(80))));
@@ -275,7 +271,10 @@ public class RobotContainer {
                         * (Copilot.getLeftTriggerAxis()
                             - Copilot.getRightTriggerAxis()))); // NEGATIVE RUNS THRU
 
-    intakePivot.isInStoredPosition().and(RobotModeTriggers.teleop()).whileTrue(intakeRoller.stopIntakeRollers());
+    intakePivot
+        .isInStoredPosition()
+        .and(RobotModeTriggers.teleop())
+        .whileTrue(intakeRoller.stopIntakeRollers());
     // Enable intake pivot zeroring on the fly
     Copilot.start().and(Copilot.leftStick()).whileTrue(intakePivot.resetEncoderToLimit());
     // .whileTrue(intakePivot.resetZeroToHardStop(Amps.of(40)));
@@ -360,16 +359,14 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "Pivot Intake Out",
         Commands.defer(
-            () -> intakePivot.setAngleAndStop(Degree.of(0), Degrees.of(5)),
-            Set.of(intakePivot)));
+            () -> intakePivot.setAngleAndStop(Degree.of(0), Degrees.of(5)), Set.of(intakePivot)));
     NamedCommands.registerCommand(
         "Slow Pivot Intake Out",
         Commands.defer(() -> intakePivot.runDutyCycle(.3), Set.of(intakePivot)));
     NamedCommands.registerCommand(
         "Pivot Intake In",
         Commands.defer(
-            () -> intakePivot.setAngleAndStop(Degree.of(100), Degrees.of(5)),
-            Set.of(intakePivot)));
+            () -> intakePivot.setAngleAndStop(Degree.of(100), Degrees.of(5)), Set.of(intakePivot)));
     NamedCommands.registerCommand(
         "Intake", Commands.defer(() -> intakeRoller.runIntakeRollers(-.65), Set.of(intakeRoller)));
     NamedCommands.registerCommand(
@@ -377,16 +374,12 @@ public class RobotContainer {
         Commands.defer(() -> intakeRoller.runIntakeRollers(0), Set.of(intakeRoller)));
     NamedCommands.registerCommand(
         "Feeder Push", Commands.defer(() -> new feedWhenReady(), Set.of(feeder)));
+    NamedCommands.registerCommand("Hood Up", Commands.defer(() -> hood.hoodUp(), Set.of(hood)));
+    NamedCommands.registerCommand("Hood Down", Commands.defer(() -> hood.hoodDown(), Set.of(hood)));
     NamedCommands.registerCommand(
-        "Hood Up", Commands.defer(() -> hood.hoodUp(), Set.of(hood)));
+        "Spindexer In", Commands.defer(() -> spindexer.runSpinnerIndex(.4), Set.of(spindexer)));
     NamedCommands.registerCommand(
-        "Hood Down", Commands.defer(() -> hood.hoodDown(), Set.of(hood)));
-    NamedCommands.registerCommand(
-        "Spindexer In",
-        Commands.defer(() -> spindexer.runSpinnerIndex(.4), Set.of(spindexer)));
-    NamedCommands.registerCommand(
-        "Spindexer Stop",
-        Commands.defer(() -> spindexer.stopSpinnerIndex(), Set.of(spindexer)));
+        "Spindexer Stop", Commands.defer(() -> spindexer.stopSpinnerIndex(), Set.of(spindexer)));
   }
 
   // Implements the following pseudocode:

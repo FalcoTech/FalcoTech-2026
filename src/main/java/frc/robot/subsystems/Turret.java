@@ -244,7 +244,7 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putNumber("Turret Position", getAngle().in(Degrees));
 
     if (!SmartDashboard.getBoolean("Use Turret", true)) {
-      turretSMC.set(0);
+      turretSMC.setDutyCycle(0);
     }
     // SmartDashboard.putNumber("Turret Shot Angle", ShotCalculator.getIdealTurretAngle());
     // This method will be called once per scheduler run
