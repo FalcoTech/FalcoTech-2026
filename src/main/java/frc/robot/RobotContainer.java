@@ -16,6 +16,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -520,5 +521,58 @@ public class RobotContainer {
 
     // Back+X — intakePivot encoder reset to limit switch
     TestController.back().and(TestController.x()).onTrue(intakePivot.resetEncoderToLimit());
+
+    // D-pad up — hood setpoint increase
+    TestController.povUp()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  double step = SmartDashboard.getNumber("Testing/Hood Step", 0.1);
+                  testHoodSetpoint = MathUtil.clamp(testHoodSetpoint + step, 0.0, 1.0);
+                  SmartDashboard.putNumber("Testing/Hood Setpoint", testHoodSetpoint);
+                }));
+
+    // D-pad down — hood setpoint decrease
+    TestController.povDown()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  double step = SmartDashboard.getNumber("Testing/Hood Step", 0.1);
+                  testHoodSetpoint = MathUtil.clamp(testHoodSetpoint - step, 0.0, 1.0);
+                  SmartDashboard.putNumber("Testing/Hood Setpoint", testHoodSetpoint);
+                }));
+
+    // D-pad right — manual RPM increase
+    TestController.povRight()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  double step = SmartDashboard.getNumber("Testing/RPM Step", 250.0);
+                  manualRPM += step;
+                  SmartDashboard.putNumber("Shooter/Manual RPM", manualRPM);
+                }));
+
+    // D-pad left — manual RPM decrease
+    TestController.povLeft()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  double step = SmartDashboard.getNumber("Testing/RPM Step", 250.0);
+                  manualRPM -= step;
+                  SmartDashboard.putNumber("Shooter/Manual RPM", manualRPM);
+                }));
+
+    // Right stick click — log shot data point to console and SmartDashboard
+    TestController.rightStick()
+        .onTrue(Commands.runOnce(() -> shotCalculator.logDataPoint(manualRPM, testHoodSetpoint)));
+
+    // Left stick click — toggle slow drive mode
+    TestController.leftStick().onTrue(Commands.runOnce(() -> testSlowMode = !testSlowMode));
+
+    // Right bumper — manual feeder push while held
+    TestController.rightBumper().whileTrue(feeder.runFeeder(0.8));
+
+    // Start — seed field-centric heading
+    TestController.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
   }
 }
