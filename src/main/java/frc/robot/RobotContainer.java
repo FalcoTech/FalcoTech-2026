@@ -466,7 +466,7 @@ public class RobotContainer {
         intakeRoller.runIntakeRollers(
             () -> TestController.getLeftTriggerAxis() - TestController.getRightTriggerAxis()));
 
-    // SPINDEXER — right trigger in, left trigger reverse (mirrors copilot direction)
+    // SPINDEXER — right trigger in, left trigger reverse (same formula as copilot)
     spindexer.setDefaultCommand(
         spindexer.runSpinnerIndex(
             () ->
