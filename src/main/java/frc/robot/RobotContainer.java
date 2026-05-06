@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.PathPlanningConstants;
 import frc.robot.commands.shootingCommands.feedWhenReady;
 import frc.robot.generated.TunerConstants;
@@ -87,6 +88,7 @@ public class RobotContainer {
   // Joysticks
   private final CommandXboxController Pilot = new CommandXboxController(0);
   private final CommandXboxController Copilot = new CommandXboxController(1);
+  private final CommandXboxController TestController = new CommandXboxController(5);
 
   // Subsystems
   public static final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -103,6 +105,8 @@ public class RobotContainer {
 
   // Manual RPM setpoint for shooter tuning — D-pad up/down increments, Y runs it.
   public static double manualRPM = 4000.0;
+  public static double testHoodSetpoint = HoodConstants.HOOD_UP;
+  private boolean testSlowMode = false;
 
   public Pose2d testPose = new Pose2d(2, 2, Rotation2d.fromDegrees(0));
 
@@ -117,6 +121,9 @@ public class RobotContainer {
 
     SmartDashboard.putNumber("Shooter/Manual RPM", manualRPM);
     SmartDashboard.putNumber("Shooter/RPM Step", 250);
+    SmartDashboard.putNumber("Testing/Hood Step", 0.1);
+    SmartDashboard.putNumber("Testing/RPM Step", 250.0);
+    SmartDashboard.putNumber("Testing/Hood Setpoint", testHoodSetpoint);
     SmartDashboard.putBoolean("Enable MegaTag2", false);
     SmartDashboard.putBoolean("Tuning/ShootOnTheMove", false);
 
@@ -312,7 +319,10 @@ public class RobotContainer {
                   SmartDashboard.putNumber("Shooter/Manual RPM", manualRPM);
                 }));
 
-    Copilot.povLeft().onTrue(Commands.runOnce(() -> shotCalculator.logDataPoint(manualRPM)));
+    Copilot.povLeft()
+        .onTrue(Commands.runOnce(() -> shotCalculator.logDataPoint(manualRPM, testHoodSetpoint)));
+
+    configureTestBindings();
   }
 
   public Command getAutonomousCommand() {
@@ -405,5 +415,23 @@ public class RobotContainer {
 
     SmartDashboard.putBoolean("isNearTrench", near);
     return near;
+  }
+
+  private boolean isGatingValid() {
+    boolean turretReady =
+        turret
+            .getAngleSetpoint()
+            .map(sp -> turret.isNearAngle(sp, Degrees.of(3)).getAsBoolean())
+            .orElse(false);
+    boolean shooterReady =
+        shooter
+            .getAngularVelocitySetpoint()
+            .map(sp -> shooter.isNearVelocity(sp, RPM.of(150)).getAsBoolean())
+            .orElse(false);
+    return turretReady && shooterReady;
+  }
+
+  private void configureTestBindings() {
+    // Test controller bindings — added in subsequent tasks
   }
 }
