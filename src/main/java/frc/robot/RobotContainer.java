@@ -348,6 +348,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake", intakeRoller.runIntakeRollers(-.65));
     NamedCommands.registerCommand("Intake Stop", intakeRoller.runIntakeRollers(0));
     NamedCommands.registerCommand("Feeder Push", new feedWhenReady());
+    NamedCommands.registerCommand("Dumb Feeder", feeder.runFeeder(.8));
     NamedCommands.registerCommand("Hood Up", hood.hoodUp());
     NamedCommands.registerCommand("Hood Down", hood.hoodDown());
     NamedCommands.registerCommand("Spindexer In", spindexer.runSpinnerIndex(.4));
