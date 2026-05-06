@@ -432,6 +432,46 @@ public class RobotContainer {
   }
 
   private void configureTestBindings() {
-    // Test controller bindings — added in subsequent tasks
+    // DRIVETRAIN — medium speed (0.6), slow toggle (0.2)
+    drivetrain.setDefaultCommand(
+        drivetrain.applyRequest(
+            () ->
+                drive
+                    .withVelocityX(
+                        -TestController.getLeftY()
+                            * (testSlowMode ? MaxSpeed * 0.2 : MaxSpeed * 0.6))
+                    .withVelocityY(
+                        -TestController.getLeftX()
+                            * (testSlowMode ? MaxSpeed * 0.2 : MaxSpeed * 0.6))
+                    .withRotationalRate(
+                        -TestController.getRightX()
+                            * (testSlowMode ? MaxAngularRate * 0.4 : MaxAngularRate * 0.85))));
+
+    // HOOD — always tracks testHoodSetpoint
+    hood.setDefaultCommand(hood.run(() -> hood.setPosition(testHoodSetpoint)));
+
+    // INTAKE PIVOT — right stick Y with x^5 curve (same formula as copilot)
+    intakePivot.setDefaultCommand(
+        Commands.either(
+            intakePivot.runDutyCycle(
+                () ->
+                    -0.75
+                        * (Math.pow(TestController.getRightY(), 5)
+                            + (0.25 * TestController.getRightY()))),
+            Commands.idle(intakePivot),
+            DriverStation::isTeleop));
+
+    // INTAKE ROLLER — left trigger in, right trigger reverse (no bumper isolation)
+    intakeRoller.setDefaultCommand(
+        intakeRoller.runIntakeRollers(
+            () -> TestController.getLeftTriggerAxis() - TestController.getRightTriggerAxis()));
+
+    // SPINDEXER — right trigger in, left trigger reverse (mirrors copilot direction)
+    spindexer.setDefaultCommand(
+        spindexer.runSpinnerIndex(
+            () ->
+                0.4
+                    * (TestController.getRightTriggerAxis()
+                        - TestController.getLeftTriggerAxis())));
   }
 }
