@@ -16,6 +16,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.PathPlanningConstants;
 import frc.robot.commands.shootingCommands.feedWhenReady;
 import frc.robot.generated.TunerConstants;
@@ -43,6 +45,8 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShotCalculator;
 import frc.robot.subsystems.SpinnerIndex;
 import frc.robot.subsystems.Turret;
+import frc.robot.util.HubShiftUtil;
+import java.util.Set;
 
 public class RobotContainer {
   // Drive speeds
@@ -85,6 +89,7 @@ public class RobotContainer {
   // Joysticks
   private final CommandXboxController Pilot = new CommandXboxController(0);
   private final CommandXboxController Copilot = new CommandXboxController(1);
+  private final CommandXboxController TestController = new CommandXboxController(5);
 
   // Subsystems
   public static final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -101,6 +106,8 @@ public class RobotContainer {
 
   // Manual RPM setpoint for shooter tuning — D-pad up/down increments, Y runs it.
   public static double manualRPM = 4000.0;
+  private static double testHoodSetpoint = HoodConstants.HOOD_UP;
+  private boolean testSlowMode = false;
 
   public Pose2d testPose = new Pose2d(2, 2, Rotation2d.fromDegrees(0));
 
@@ -115,6 +122,10 @@ public class RobotContainer {
 
     SmartDashboard.putNumber("Shooter/Manual RPM", manualRPM);
     SmartDashboard.putNumber("Shooter/RPM Step", 250);
+    SmartDashboard.putNumber("Testing/Hood Step", 0.1);
+    SmartDashboard.putNumber("Testing/RPM Step", 250.0);
+    SmartDashboard.putNumber("Testing/Hood Setpoint", testHoodSetpoint);
+    SmartDashboard.putBoolean("Testing/Slow Mode", testSlowMode);
     SmartDashboard.putBoolean("Enable MegaTag2", false);
     SmartDashboard.putBoolean("Tuning/ShootOnTheMove", false);
 
@@ -159,7 +170,15 @@ public class RobotContainer {
     RobotModeTriggers.disabled()
         .whileTrue(drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
+    RobotModeTriggers.teleop().onTrue(Commands.runOnce(HubShiftUtil::initialize));
+    RobotModeTriggers.autonomous().onTrue(Commands.runOnce(HubShiftUtil::initialize));
+    RobotModeTriggers.disabled()
+        .onTrue(Commands.runOnce(HubShiftUtil::initialize).ignoringDisable(true));
+
     Pilot.a().whileTrue(drivetrain.applyRequest(() -> XForm));
+
+    Pilot.b().onTrue(Commands.runOnce(() -> drivetrain.setDriveBoost(true)));
+    Pilot.b().onFalse(Commands.runOnce(() -> drivetrain.setDriveBoost(false)));
 
     // Pilot.b().whileTrue(drivetrain.pathFindToPose(testPose));
     // Pilot.b().whileTrue(drivetrain.rotateThenPathfind(0, testPose));
@@ -228,7 +247,6 @@ public class RobotContainer {
         .whileTrue(hood.hoodDown().repeatedly());
     // INTAKE, HOPPER, FEEDER
 
-
     // RobotModeTriggers.teleop()
     //     .whileTrue(
     //         intakePivot.runDutyCycle(
@@ -236,19 +254,16 @@ public class RobotContainer {
     //                 -0.75*(Math.pow(Copilot.getLeftY(), 5)
     //                     + (0.25
     //                         * Copilot
-    //                             .getLeftY())))); // x^5 control with linear control at smaller inputs.
-// Negative sign to correct for joystick direction.
+    //                             .getLeftY())))); // x^5 control with linear control at smaller
+    // inputs.
+    // Negative sign to correct for joystick direction.
 
     intakePivot.setDefaultCommand(
-    Commands.either(
-        intakePivot.runDutyCycle(
-            () -> -0.75*(Math.pow(Copilot.getLeftY(), 5)
-                + (0.25 * Copilot.getLeftY()))
-        ),
-        Commands.idle(intakePivot),
-        DriverStation::isTeleop
-    )
-);
+        Commands.either(
+            intakePivot.runDutyCycle(
+                () -> -0.75 * (Math.pow(Copilot.getLeftY(), 5) + (0.25 * Copilot.getLeftY()))),
+            Commands.idle(intakePivot),
+            DriverStation::isTeleop));
     // intakePivot.setDefaultCommand(
     //     intakePivot.setAngle(() -> Degrees.of(90).times(Copilot.getLeftY())));
     Copilot.rightStick().toggleOnTrue((intakePivot.setAngle(Degrees.of(80))));
@@ -265,7 +280,10 @@ public class RobotContainer {
                         * (Copilot.getLeftTriggerAxis()
                             - Copilot.getRightTriggerAxis()))); // NEGATIVE RUNS THRU
 
-    intakePivot.isInStoredPosition().whileTrue(intakeRoller.stopIntakeRollers());
+    intakePivot
+        .isInStoredPosition()
+        .and(RobotModeTriggers.teleop())
+        .whileTrue(intakeRoller.stopIntakeRollers());
     // Enable intake pivot zeroring on the fly
     Copilot.start().and(Copilot.leftStick()).whileTrue(intakePivot.resetEncoderToLimit());
     // .whileTrue(intakePivot.resetZeroToHardStop(Amps.of(40)));
@@ -303,7 +321,10 @@ public class RobotContainer {
                   SmartDashboard.putNumber("Shooter/Manual RPM", manualRPM);
                 }));
 
-    Copilot.povLeft().onTrue(Commands.runOnce(() -> shotCalculator.logDataPoint(manualRPM)));
+    Copilot.povLeft()
+        .onTrue(Commands.runOnce(() -> shotCalculator.logDataPoint(manualRPM, testHoodSetpoint)));
+
+    configureTestBindings();
   }
 
   public Command getAutonomousCommand() {
@@ -332,28 +353,46 @@ public class RobotContainer {
 
   private void RegisterNamedCommands() {
     NamedCommands.registerCommand(
-        "Aim Turret", turret.setAngle(shotCalculator::getIdealTurretAngle));
+        "Aim Turret",
+        Commands.defer(() -> turret.setAngle(shotCalculator::getIdealTurretAngle), Set.of(turret)));
     NamedCommands.registerCommand(
         "Spin Shooter To Target",
-        shooter.setAngularVelocity(shotCalculator::getIdealShooterVelocity));
-    NamedCommands.registerCommand("Stop Shooter", shooter.stop());
-    NamedCommands.registerCommand("Stop Turret", turret.stop());
-    NamedCommands.registerCommand("Stop Feeder Push", feeder.stopFeeder());
-    NamedCommands.registerCommand("Stop Intake Pivot", intakePivot.stop());
-    NamedCommands.registerCommand("Pivot Intake Out", intakePivot.setAngle(Degree.of(0)));
-    // NamedCommands.registerCommand("Pivot Intake Out", intakePivot.runDutyCycle(.6));
-    NamedCommands.registerCommand("Slow Pivot Intake Out", intakePivot.runDutyCycle(.3));
-    NamedCommands.registerCommand("Pivot Intake In", intakePivot.setAngle(Degree.of(100)));
-    // NamedCommands.registerCommand("Pivot Intake In", intakePivot.runDutyCycle(-.6));
-    NamedCommands.registerCommand("Intake", intakeRoller.runIntakeRollers(-.65));
-    NamedCommands.registerCommand("Intake Stop", intakeRoller.runIntakeRollers(0));
-    NamedCommands.registerCommand("Feeder Push", new feedWhenReady());
+        Commands.defer(
+            () -> shooter.setAngularVelocity(shotCalculator::getIdealShooterVelocity),
+            Set.of(shooter)));
+    NamedCommands.registerCommand(
+        "Stop Shooter", Commands.defer(() -> shooter.stop(), Set.of(shooter)));
+    NamedCommands.registerCommand(
+        "Stop Turret", Commands.defer(() -> turret.stop(), Set.of(turret)));
+    NamedCommands.registerCommand(
+        "Stop Feeder Push", Commands.defer(() -> feeder.stopFeeder(), Set.of(feeder)));
+    NamedCommands.registerCommand(
+        "Stop Intake Pivot", Commands.defer(() -> intakePivot.stop(), Set.of(intakePivot)));
+    NamedCommands.registerCommand(
+        "Pivot Intake Out",
+        Commands.defer(
+            () -> intakePivot.setAngleAndStop(Degree.of(0), Degrees.of(5)), Set.of(intakePivot)));
+    NamedCommands.registerCommand(
+        "Slow Pivot Intake Out",
+        Commands.defer(() -> intakePivot.runDutyCycle(.3), Set.of(intakePivot)));
+    NamedCommands.registerCommand(
+        "Pivot Intake In",
+        Commands.defer(
+            () -> intakePivot.setAngleAndStop(Degree.of(100), Degrees.of(5)), Set.of(intakePivot)));
+    NamedCommands.registerCommand(
+        "Intake", Commands.defer(() -> intakeRoller.runIntakeRollers(-.65), Set.of(intakeRoller)));
+    NamedCommands.registerCommand(
+        "Intake Stop",
+        Commands.defer(() -> intakeRoller.runIntakeRollers(0), Set.of(intakeRoller)));
+    NamedCommands.registerCommand(
+        "Feeder Push", Commands.defer(() -> new feedWhenReady(), Set.of(feeder)));
+    NamedCommands.registerCommand("Hood Up", Commands.defer(() -> hood.hoodUp(), Set.of(hood)));
+    NamedCommands.registerCommand("Hood Down", Commands.defer(() -> hood.hoodDown(), Set.of(hood)));
+    NamedCommands.registerCommand(
+        "Spindexer In", Commands.defer(() -> spindexer.runSpinnerIndex(.4), Set.of(spindexer)));
+    NamedCommands.registerCommand(
+        "Spindexer Stop", Commands.defer(() -> spindexer.stopSpinnerIndex(), Set.of(spindexer)));
     NamedCommands.registerCommand("Dumb Feeder", feeder.runFeeder(.8));
-    NamedCommands.registerCommand("Hood Up", hood.hoodUp());
-    NamedCommands.registerCommand("Hood Down", hood.hoodDown());
-    NamedCommands.registerCommand("Spindexer In", spindexer.runSpinnerIndex(.4));
-    NamedCommands.registerCommand("Spindexer Stop", spindexer.stopSpinnerIndex());
-    // NamedCommands.registerCommand(null, getAutonomousCommand());
   }
 
   // Implements the following pseudocode:
@@ -379,5 +418,169 @@ public class RobotContainer {
 
     SmartDashboard.putBoolean("isNearTrench", near);
     return near;
+  }
+
+  private boolean isGatingValid() {
+    boolean turretReady =
+        turret
+            .getAngleSetpoint()
+            .map(sp -> turret.isNearAngle(sp, Degrees.of(3)).getAsBoolean())
+            .orElse(false);
+    boolean shooterReady =
+        shooter
+            .getAngularVelocitySetpoint()
+            .map(sp -> shooter.isNearVelocity(sp, RPM.of(150)).getAsBoolean())
+            .orElse(false);
+    return turretReady && shooterReady;
+  }
+
+  private void configureTestBindings() {
+    // DRIVETRAIN — medium speed (0.6), slow toggle (0.2)
+    drivetrain.setDefaultCommand(
+        drivetrain.applyRequest(
+            () ->
+                drive
+                    .withVelocityX(
+                        -TestController.getLeftY()
+                            * (testSlowMode ? MaxSpeed * 0.2 : MaxSpeed * 0.6))
+                    .withVelocityY(
+                        -TestController.getLeftX()
+                            * (testSlowMode ? MaxSpeed * 0.2 : MaxSpeed * 0.6))
+                    .withRotationalRate(
+                        -TestController.getRightX()
+                            * (testSlowMode ? MaxAngularRate * 0.4 : MaxAngularRate * 0.85))));
+
+    // HOOD — always tracks testHoodSetpoint
+    hood.setDefaultCommand(hood.run(() -> hood.setPosition(testHoodSetpoint)));
+
+    // INTAKE PIVOT — right stick Y with x^5 curve (same formula as copilot)
+    intakePivot.setDefaultCommand(
+        Commands.either(
+            intakePivot.runDutyCycle(
+                () ->
+                    -0.75
+                        * (Math.pow(TestController.getRightY(), 5)
+                            + (0.25 * TestController.getRightY()))),
+            Commands.idle(intakePivot),
+            DriverStation::isTeleop));
+
+    // INTAKE ROLLER — left trigger in, right trigger reverse (no bumper isolation)
+    intakeRoller.setDefaultCommand(
+        intakeRoller.runIntakeRollers(
+            () -> TestController.getLeftTriggerAxis() - TestController.getRightTriggerAxis()));
+
+    // SPINDEXER — right trigger in, left trigger reverse (same formula as copilot)
+    spindexer.setDefaultCommand(
+        spindexer.runSpinnerIndex(
+            () ->
+                0.4
+                    * (TestController.getRightTriggerAxis()
+                        - TestController.getLeftTriggerAxis())));
+
+    // A — manual RPM + turret auto-aim + spindexer creep when gating valid
+    TestController.a()
+        .whileTrue(
+            turret
+                .setAngle(shotCalculator::getIdealTurretAngle)
+                .alongWith(shooter.setAngularVelocity(() -> RPM.of(manualRPM)))
+                .alongWith(spindexer.runSpinnerIndex(() -> isGatingValid() ? 0.2 : 0.0))
+                .withName("Test Manual RPM & Fire"));
+
+    // B (alone) — snap manualRPM to shot calculator table value for current distance
+    TestController.b()
+        .and(TestController.back().negate())
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  manualRPM = shotCalculator.getIdealShooterVelocity().in(RPM);
+                  SmartDashboard.putNumber("Shooter/Manual RPM", manualRPM);
+                }));
+
+    // X (alone) — reset testHoodSetpoint to HOOD_UP baseline
+    TestController.x()
+        .and(TestController.back().negate())
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  testHoodSetpoint = HoodConstants.HOOD_UP;
+                  SmartDashboard.putNumber("Testing/Hood Setpoint", testHoodSetpoint);
+                }));
+
+    // Y — full auto aim using shot calculator (mirrors copilot A)
+    TestController.y()
+        .whileTrue(
+            turret
+                .setAngle(shotCalculator::getIdealTurretAngle)
+                .alongWith(shooter.setAngularVelocity(shotCalculator::getIdealShooterVelocity))
+                .alongWith(hood.hoodUp().unless(this::isNearTrench))
+                .alongWith(new feedWhenReady())
+                .withName("Test Auto Aim & Fire"));
+
+    // NOTE: Back must be pressed before B/X for the negate() guard to prevent the solo
+    // B/X actions from also firing. For test use, this is acceptable — both actions are safe.
+    // Back+B — turret encoder zero
+    TestController.back().and(TestController.b()).onTrue(turret.zeroEncoder());
+
+    // Back+X — intakePivot encoder reset to limit switch
+    TestController.back().and(TestController.x()).onTrue(intakePivot.resetEncoderToLimit());
+
+    // D-pad up — hood setpoint increase
+    TestController.povUp()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  double step = SmartDashboard.getNumber("Testing/Hood Step", 0.1);
+                  testHoodSetpoint = MathUtil.clamp(testHoodSetpoint + step, 0.0, 1.0);
+                  SmartDashboard.putNumber("Testing/Hood Setpoint", testHoodSetpoint);
+                }));
+
+    // D-pad down — hood setpoint decrease
+    TestController.povDown()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  double step = SmartDashboard.getNumber("Testing/Hood Step", 0.1);
+                  testHoodSetpoint = MathUtil.clamp(testHoodSetpoint - step, 0.0, 1.0);
+                  SmartDashboard.putNumber("Testing/Hood Setpoint", testHoodSetpoint);
+                }));
+
+    // D-pad right — manual RPM increase
+    TestController.povRight()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  double step = SmartDashboard.getNumber("Testing/RPM Step", 250.0);
+                  manualRPM += step;
+                  SmartDashboard.putNumber("Shooter/Manual RPM", manualRPM);
+                }));
+
+    // D-pad left — manual RPM decrease
+    TestController.povLeft()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  double step = SmartDashboard.getNumber("Testing/RPM Step", 250.0);
+                  manualRPM -= step;
+                  SmartDashboard.putNumber("Shooter/Manual RPM", manualRPM);
+                }));
+
+    // Right stick click — log shot data point to console and SmartDashboard
+    TestController.rightStick()
+        .onTrue(Commands.runOnce(() -> shotCalculator.logDataPoint(manualRPM, testHoodSetpoint)));
+
+    // Left stick click — toggle slow drive mode
+    TestController.leftStick()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  testSlowMode = !testSlowMode;
+                  SmartDashboard.putBoolean("Testing/Slow Mode", testSlowMode);
+                }));
+
+    // Right bumper — manual feeder push while held
+    TestController.rightBumper().whileTrue(feeder.runFeeder(0.8));
+
+    // Start — seed field-centric heading
+    TestController.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
   }
 }

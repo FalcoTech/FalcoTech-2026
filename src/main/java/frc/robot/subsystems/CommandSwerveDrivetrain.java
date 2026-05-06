@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -35,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Constants.CurrentLimits;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
 /**
@@ -350,6 +352,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     @Override
     public Optional<Pose2d> samplePoseAt(double timestampSeconds) {
         return super.samplePoseAt(Utils.fpgaToCurrentTime(timestampSeconds));
+    }
+
+    public void setDriveBoost(boolean boost) {
+        var config = new CurrentLimitsConfigs()
+            .withStatorCurrentLimit(boost ? CurrentLimits.SWERVE_DRIVE_BOOST_STATOR : CurrentLimits.SWERVE_DRIVE_STATOR)
+            .withStatorCurrentLimitEnable(true)
+            .withSupplyCurrentLimit(boost ? CurrentLimits.SWERVE_DRIVE_BOOST_SUPPLY : CurrentLimits.SWERVE_DRIVE_SUPPLY)
+            .withSupplyCurrentLimitEnable(true);
+        for (int i = 0; i < getModules().length; i++) {
+            getModule(i).getDriveMotor().getConfigurator().apply(config);
+        }
     }
 
     public Command pathFindToPose(Pose2d pose){
