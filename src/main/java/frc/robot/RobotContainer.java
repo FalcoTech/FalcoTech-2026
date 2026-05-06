@@ -125,7 +125,7 @@ public class RobotContainer {
     SmartDashboard.putNumber("Testing/Hood Step", 0.1);
     SmartDashboard.putNumber("Testing/RPM Step", 250.0);
     SmartDashboard.putNumber("Testing/Hood Setpoint", testHoodSetpoint);
-    SmartDashboard.putBoolean("Testing/Slow Mode", false);
+    SmartDashboard.putBoolean("Testing/Slow Mode", testSlowMode);
     SmartDashboard.putBoolean("Enable MegaTag2", false);
     SmartDashboard.putBoolean("Tuning/ShootOnTheMove", false);
 
