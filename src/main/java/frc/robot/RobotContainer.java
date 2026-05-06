@@ -473,5 +473,52 @@ public class RobotContainer {
                 0.4
                     * (TestController.getRightTriggerAxis()
                         - TestController.getLeftTriggerAxis())));
+
+    // A — manual RPM + turret auto-aim + spindexer creep when gating valid
+    TestController.a()
+        .whileTrue(
+            turret
+                .setAngle(shotCalculator::getIdealTurretAngle)
+                .alongWith(shooter.setAngularVelocity(() -> RPM.of(manualRPM)))
+                .alongWith(hood.run(() -> hood.setPosition(testHoodSetpoint)))
+                .alongWith(spindexer.runSpinnerIndex(() -> isGatingValid() ? 0.2 : 0.0))
+                .withName("Test Manual RPM & Fire"));
+
+    // B (alone) — snap manualRPM to shot calculator table value for current distance
+    TestController.b()
+        .and(TestController.back().negate())
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  manualRPM = shotCalculator.getIdealShooterVelocity().in(RPM);
+                  SmartDashboard.putNumber("Shooter/Manual RPM", manualRPM);
+                }));
+
+    // X (alone) — reset testHoodSetpoint to HOOD_UP baseline
+    TestController.x()
+        .and(TestController.back().negate())
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  testHoodSetpoint = HoodConstants.HOOD_UP;
+                  SmartDashboard.putNumber("Testing/Hood Setpoint", testHoodSetpoint);
+                  hood.setPosition(testHoodSetpoint);
+                }));
+
+    // Y — full auto aim using shot calculator (mirrors copilot A)
+    TestController.y()
+        .whileTrue(
+            turret
+                .setAngle(shotCalculator::getIdealTurretAngle)
+                .alongWith(shooter.setAngularVelocity(shotCalculator::getIdealShooterVelocity))
+                .alongWith(hood.hoodUp().unless(this::isNearTrench))
+                .alongWith(new feedWhenReady())
+                .withName("Test Auto Aim & Fire"));
+
+    // Back+B — turret encoder zero
+    TestController.back().and(TestController.b()).onTrue(turret.zeroEncoder());
+
+    // Back+X — intakePivot encoder reset to limit switch
+    TestController.back().and(TestController.x()).onTrue(intakePivot.resetEncoderToLimit());
   }
 }
