@@ -480,7 +480,6 @@ public class RobotContainer {
             turret
                 .setAngle(shotCalculator::getIdealTurretAngle)
                 .alongWith(shooter.setAngularVelocity(() -> RPM.of(manualRPM)))
-                .alongWith(hood.run(() -> hood.setPosition(testHoodSetpoint)))
                 .alongWith(spindexer.runSpinnerIndex(() -> isGatingValid() ? 0.2 : 0.0))
                 .withName("Test Manual RPM & Fire"));
 
@@ -502,7 +501,6 @@ public class RobotContainer {
                 () -> {
                   testHoodSetpoint = HoodConstants.HOOD_UP;
                   SmartDashboard.putNumber("Testing/Hood Setpoint", testHoodSetpoint);
-                  hood.setPosition(testHoodSetpoint);
                 }));
 
     // Y — full auto aim using shot calculator (mirrors copilot A)
@@ -515,6 +513,8 @@ public class RobotContainer {
                 .alongWith(new feedWhenReady())
                 .withName("Test Auto Aim & Fire"));
 
+    // NOTE: Back must be pressed before B/X for the negate() guard to prevent the solo
+    // B/X actions from also firing. For test use, this is acceptable — both actions are safe.
     // Back+B — turret encoder zero
     TestController.back().and(TestController.b()).onTrue(turret.zeroEncoder());
 
