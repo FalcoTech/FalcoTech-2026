@@ -105,7 +105,7 @@ public class RobotContainer {
 
   // Manual RPM setpoint for shooter tuning — D-pad up/down increments, Y runs it.
   public static double manualRPM = 4000.0;
-  public static double testHoodSetpoint = HoodConstants.HOOD_UP;
+  private static double testHoodSetpoint = HoodConstants.HOOD_UP;
   private boolean testSlowMode = false;
 
   public Pose2d testPose = new Pose2d(2, 2, Rotation2d.fromDegrees(0));
