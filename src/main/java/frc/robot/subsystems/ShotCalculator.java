@@ -255,13 +255,17 @@ public class ShotCalculator extends SubsystemBase {
    * and the shooter is running at a manually-set RPM.
    *
    * @param manualRPM the RPM value currently being tested
+   * @param hoodSetpoint the hood angle setpoint currently being tested
    */
-  public void logDataPoint(double manualRPM) {
+  public void logDataPoint(double manualRPM, double hoodSetpoint) {
     double distance = getDistanceToTarget();
     System.out.println(
-        String.format("SHOT_DATA | dist=%.2f | manualRPM=%.0f", distance, manualRPM));
+        String.format(
+            "SHOT_DATA | dist=%.2f | manualRPM=%.0f | hood=%.3f",
+            distance, manualRPM, hoodSetpoint));
     SmartDashboard.putString(
-        "Tuning/LastLoggedPoint", String.format("%.2fm -> %.0f RPM", distance, manualRPM));
+        "Tuning/LastLoggedPoint",
+        String.format("%.2fm -> %.0f RPM @ hood %.3f", distance, manualRPM, hoodSetpoint));
   }
 
   // ── Periodic ─────────────────────────────────────────────────────────────────
