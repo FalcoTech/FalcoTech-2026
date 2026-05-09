@@ -40,7 +40,7 @@ public class ShotCalculator extends SubsystemBase {
    * @param rpm flywheel speed in revolutions per minute
    * @param tof estimated time-of-flight in seconds
    */
-  public record ShooterParams(double rpm, double tof) {}
+  public record ShooterParams(double rpm, double tof, double hood) {}
 
   // ── Viability tuning (live-tunable via SmartDashboard) ─────────────────────
 
@@ -63,7 +63,11 @@ public class ShotCalculator extends SubsystemBase {
   private final InterpolatingTreeMap<Double, ShooterParams> SHOOTER_MAP =
       new InterpolatingTreeMap<>(
           InverseInterpolator.forDouble(),
-          (a, b, t) -> new ShooterParams(a.rpm + (b.rpm - a.rpm) * t, a.tof + (b.tof - a.tof) * t));
+          (a, b, t) ->
+              new ShooterParams(
+                  a.rpm + (b.rpm - a.rpm) * t,
+                  a.tof + (b.tof - a.tof) * t,
+                  a.hood + (b.hood - a.hood) * t));
 
   private final InterpolatingDoubleTreeMap VELOCITY_DISTANCE_MAP = new InterpolatingDoubleTreeMap();
 
@@ -73,10 +77,11 @@ public class ShotCalculator extends SubsystemBase {
   // distance (m) → RPM, time-of-flight (s) — TUNE tof values
   {
     // TODO: Get more data (Mostly new TOF)
-    put(1.26, new ShooterParams(2500, 1.2));
-    put(2.18, new ShooterParams(3000, 1.25));
-    put(2.86, new ShooterParams(3250, 1.6));
-    put(4.37, new ShooterParams(4250, 2.28));
+    // hood: 0.0 = down, 1.0 = up — HOOD_UP constant is 0.4. Tune via logDataPoint.
+    put(1.26, new ShooterParams(2500, 1.2, 0.4));
+    put(2.18, new ShooterParams(3000, 1.25, 0.4));
+    put(2.86, new ShooterParams(3250, 1.6, 0.4));
+    put(4.37, new ShooterParams(4250, 2.28, 0.4));
   }
 
   private void put(double distance, ShooterParams params) {
@@ -198,6 +203,11 @@ public class ShotCalculator extends SubsystemBase {
   /** Ideal shooter wheel speed for the current effective distance. */
   public AngularVelocity getIdealShooterVelocity() {
     return RPM.of(SHOOTER_MAP.get(getEffectiveDistance()).rpm);
+  }
+
+  /** Ideal hood servo position (0.0–1.0) for the current effective distance. */
+  public double getIdealHoodPosition() {
+    return SHOOTER_MAP.get(getEffectiveDistance()).hood;
   }
 
   /** Returns true when the robot is in the alliance zone and targeting the main hub. */

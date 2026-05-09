@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HoodConstants;
+import java.util.function.DoubleSupplier;
 
 public class Hood extends SubsystemBase {
   private static final Distance kServoLength = Millimeters.of(30);
@@ -50,6 +51,11 @@ public class Hood extends SubsystemBase {
     // targetPosition = clampedPosition;
     leftServo.set(position);
     targetPosition = position;
+  }
+
+  /** Expects a position between 0.0 and 1.0 */
+  public Command positionCommand(DoubleSupplier position) {
+    return run(() -> setPosition(position.getAsDouble()));
   }
 
   /** Expects a position between 0.0 and 1.0 */

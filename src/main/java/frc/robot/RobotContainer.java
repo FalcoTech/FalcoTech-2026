@@ -213,7 +213,7 @@ public class RobotContainer {
             turret
                 .setAngle(shotCalculator::getIdealTurretAngle)
                 .alongWith(shooter.setAngularVelocity(shotCalculator::getIdealShooterVelocity))
-                .alongWith(hood.hoodUp().unless(this::isNearTrench))
+                .alongWith(hood.positionCommand(shotCalculator::getIdealHoodPosition))
                 .alongWith(new feedWhenReady())
                 .withName("Auto Aim & Fire")); // aim + auto-feed when ready
     // Copilot.x()
@@ -232,7 +232,7 @@ public class RobotContainer {
                           manualRPM = SmartDashboard.getNumber("Shooter/Manual RPM", manualRPM);
                           return RPM.of(manualRPM);
                         }))
-                .alongWith(hood.hoodUp().unless(this::isNearTrench))
+                .alongWith(hood.positionCommand(shotCalculator::getIdealHoodPosition))
                 .alongWith(new feedWhenReady())
                 .withName("Manual RPM & Fire"));
 
@@ -512,7 +512,7 @@ public class RobotContainer {
             turret
                 .setAngle(shotCalculator::getIdealTurretAngle)
                 .alongWith(shooter.setAngularVelocity(shotCalculator::getIdealShooterVelocity))
-                .alongWith(hood.hoodUp().unless(this::isNearTrench))
+                .alongWith(hood.positionCommand(shotCalculator::getIdealHoodPosition))
                 .alongWith(new feedWhenReady())
                 .withName("Test Auto Aim & Fire"));
 
