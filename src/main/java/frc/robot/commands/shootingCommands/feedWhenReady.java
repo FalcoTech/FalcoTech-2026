@@ -92,7 +92,7 @@ public class feedWhenReady extends Command {
     feederSpeed = SmartDashboard.getNumber("Tuning/FeederSpeed", 0.8);
     stoppedThresholdMPS = SmartDashboard.getNumber("Tuning/StoppedThresholdMPS", 0.15);
     boolean shootOnTheMove = SmartDashboard.getBoolean("Tuning/ShootOnTheMove", false);
-    boolean hubShiftGating = SmartDashboard.getBoolean("Tuning/HubShiftGating", true);
+    boolean hubShiftGating = SmartDashboard.getBoolean("Tuning/HubShiftGating", false);
 
     boolean isTargetingHub = RobotContainer.shotCalculator.isTargetingHub();
     boolean windowActive =
