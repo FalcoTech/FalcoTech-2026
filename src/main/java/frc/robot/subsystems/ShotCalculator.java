@@ -81,7 +81,14 @@ public class ShotCalculator extends SubsystemBase {
     put(1.26, new ShooterParams(2500, 1.2, 0.4));
     put(2.18, new ShooterParams(3000, 1.25, 0.4));
     put(2.86, new ShooterParams(3250, 1.6, 0.4));
-    put(4.37, new ShooterParams(4250, 2.28, 0.4));
+    put(3.75, new ShooterParams(3821, 2.28, 0.650));
+    put(4.20, new ShooterParams(3821, 2.28, 0.7));
+    put(4.55, new ShooterParams(4071, 2.28, 0.7));
+    put(4.87, new ShooterParams(4071, 2.28, 0.7));
+    put(5.05, new ShooterParams(4001, 2.28, 0.8));
+    put(5.26, new ShooterParams(4101, 2.28, 0.8));
+    put(5.67, new ShooterParams(4201, 2.28, 0.8));
+    put(8.54, new ShooterParams(5000, 2.28, 1));
   }
 
   private void put(double distance, ShooterParams params) {
