@@ -324,7 +324,7 @@ public class RobotContainer {
     Copilot.povLeft()
         .onTrue(Commands.runOnce(() -> shotCalculator.logDataPoint(manualRPM, testHoodSetpoint)));
 
-    configureTestBindings();
+    // configureTestBindings(); //TODO: DISABLE/Comment out AT COMPS
   }
 
   public Command getAutonomousCommand() {
@@ -451,7 +451,7 @@ public class RobotContainer {
                             * (testSlowMode ? MaxAngularRate * 0.4 : MaxAngularRate * 0.85))));
 
     // HOOD — always tracks testHoodSetpoint
-    hood.setDefaultCommand(hood.run(() -> hood.setPosition(testHoodSetpoint)));
+    // hood.setDefaultCommand(hood.run(() -> hood.setPosition(testHoodSetpoint)));
 
     // INTAKE PIVOT — right stick Y with x^5 curve (same formula as copilot)
     intakePivot.setDefaultCommand(
